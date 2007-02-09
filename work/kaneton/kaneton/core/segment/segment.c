@@ -164,7 +164,15 @@ t_error			segment_init(void)
   STATS_RESERVE("segment", &segment->stats);
 
   // FIXME: perhaps some code is needed here
-
+  cons_msg(' ', "\n");
+  cons_msg(' ', "\n");
+  set_init();
+  i_set test;
+  set_reserve_ll(SET_OPT_NONE, 100, &test);
+  set_add_ll(test, "42");
+  set_show_ll(test);
+  cons_msg(' ', "\n");
+  cons_msg(' ', "\n");
   /*
    * 4)
    */
