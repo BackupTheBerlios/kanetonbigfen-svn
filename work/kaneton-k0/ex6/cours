@@ -1,0 +1,21 @@
+gcc -c ... .o
+ld -T script .o
+PHDRS
+{
+code PT_LOAD;
+data PT_LOAD;
+}
+SECTIONS
+{
+.=0x1000000
+.text:{*(.text*)}:code
+.=0x2000000
+.data:{*(.data*)}:code
+.rodata...
+.bss...
+}
+
+pt d entree ds le header
+
+cat bootstrap bootloader > coin // pas aligner
+cat bootstrap bootloader /dev/zero | dd if=- bs=512 count=2880 of=out

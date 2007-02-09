@@ -1,0 +1,72 @@
+En-tête ELF:
+  Magique:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Classe:                            ELF32
+  Données:                          complément à 2, système à octets de poids faible d'abord (little endian)
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  Version ABI:                       0
+  Type:                              EXEC (fichier exécutable)
+  Machine:                           Intel 80386
+  Version:                           0x1
+  Adresse du point d'entrée:               0x100000
+  Début des en-têtes de programme:          52 (octets dans le fichier)
+  Début des en-têtes de section:          8312 (octets dans le fichier)
+  Fanions:                           0x0
+  Taille de cet en-tête:             52 (bytes)
+  Taille de l'en-tête du programme:  32 (bytes)
+  Nombre d'en-tête du programme:     2
+  Taille des en-têtes de section:    40 (bytes)
+  Nombre d'en-têtes de section:      9
+  Table d'indexes des chaînes d'en-tête de section: 6
+
+En-têtes de section:
+  [Nr] Nom               Type            Adr      Décala.Taille ES Fan LN Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        00100000 001000 000065 00  AX  0   0  4
+  [ 2] .data             PROGBITS        00200000 002000 000001 00  WA  0   0  4
+  [ 3] .rodata           PROGBITS        00200001 002001 00000e 00   A  0   0  1
+  [ 4] .bss              NOBITS          00200010 00200f 000001 00  WA  0   0  4
+  [ 5] .comment          PROGBITS        00000000 00200f 00002a 00      0   0  1
+  [ 6] .shstrtab         STRTAB          00000000 002039 00003d 00      0   0  1
+  [ 7] .symtab           SYMTAB          00000000 0021e0 0000d0 10      8  10  4
+  [ 8] .strtab           STRTAB          00000000 0022b0 000013 00      0   0  1
+Clé des fanions:
+  W (écriture), A (allocation), X (exécution), M (fusion), S (chaînes)
+  I (info), L (ordre des liens), G (groupe), x (inconnu)
+  O (traiterment additionnel requis pour l'OS) o (spécifique à l'OS), p (spécifique au processeur)
+
+Il n'y a pas de groupe de section dans ce fichier.
+
+En-têtes de programme:
+  Type           Décalage Adr. vir.  Adr.phys.  T.Fich. T.Mém.  Fan Alignement
+  LOAD           0x001000 0x00100000 0x00100000 0x00065 0x00065 R E 0x1000
+  LOAD           0x002000 0x00200000 0x00200000 0x0000f 0x00011 RW  0x1000
+
+ Section à la projection de segement:
+  Sections de segment...
+   00     .text 
+   01     .data .rodata .bss 
+
+Il n'y a pas de section dynamique dans ce fichier.
+
+Il n'y a pas de relocalisation dans ce fichier.
+
+Il n'y a pas de section unwind dans ce fichier.
+
+Table de symboles « .symtab » contient 13 entrées:
+   Num:    Valeur Tail Type    Lien   Vis      Ndx Nom
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 00100000     0 SECTION LOCAL  DEFAULT    1 
+     2: 00200000     0 SECTION LOCAL  DEFAULT    2 
+     3: 00200001     0 SECTION LOCAL  DEFAULT    3 
+     4: 00200010     0 SECTION LOCAL  DEFAULT    4 
+     5: 00000000     0 SECTION LOCAL  DEFAULT    5 
+     6: 00000000     0 SECTION LOCAL  DEFAULT    6 
+     7: 00000000     0 SECTION LOCAL  DEFAULT    7 
+     8: 00000000     0 SECTION LOCAL  DEFAULT    8 
+     9: 00000000     0 FILE    LOCAL  DEFAULT  ABS kernel.c
+    10: 00200000     1 OBJECT  GLOBAL DEFAULT    2 b
+    11: 00100000   101 FUNC    GLOBAL DEFAULT    1 main
+    12: 00200010     1 OBJECT  GLOBAL DEFAULT    4 a
+
+Aucune information de version repérée dans ce fichier.

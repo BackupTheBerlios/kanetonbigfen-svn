@@ -1,0 +1,12 @@
+mov dest, src
+mov AX, 8
+mov byte [AX], 8
+mov word
+mov dword
+
+add byte [AX], 8
+add (dword implicite) [AX], EBX
+
+loop:
+test eax, ebx
+jnz loop
