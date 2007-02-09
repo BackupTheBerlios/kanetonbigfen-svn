@@ -83,6 +83,7 @@ menu()
   print "" "" "--no-newline" > ${MENU}
 
   # creates new version.
+  print "" "timeout 0" "" >> ${MENU}
   print "" "title kaneton" "" >> ${MENU}
   print "" "" "" >> ${MENU}
 
@@ -217,7 +218,7 @@ warning()
   display "" ""
   display " to cancel press CTRL^C, otherwise press enter" "?"
 
-  wait-key ""
+  #wait-key ""
 }
 
 #
