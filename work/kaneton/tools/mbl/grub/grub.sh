@@ -216,7 +216,7 @@ warning()
   display "   mdevice:                  ${_MDEVICE_}" "+"
   display "   image:                    ${_IMAGE_}" "+"
   display "" ""
-  display " to cancel press CTRL^C, otherwise press enter" "?"
+  display " to cancel press CTRL^C, otherwise press enter... assume yes" "?"
 
   #wait-key ""
 }

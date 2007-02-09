@@ -242,9 +242,8 @@ warning()
   display "   architecture:             ${_ARCHITECTURE_}" "+"
   display "   multi-bootloader:         ${_MBL_}" "+"
   display "" ""
-  display " to cancel press CTRL^C, otherwise press enter" "?"
-
-  wait-key ""
+  display " to cancel press CTRL^C, otherwise press enter... assume yes" "?"
+  #wait-key ""
 }
 
 #
