@@ -169,8 +169,16 @@ t_error			segment_init(void)
   set_init();
   i_set test;
   set_reserve_ll(SET_OPT_NONE, 100, &test);
+  set_add_ll(test, "coin");
   set_add_ll(test, "42");
+  set_add_ll(test, "69");
   set_show_ll(test);
+  t_iterator i;
+  t_state state;
+  set_foreach(SET_OPT_FORWARD, test, &i, state)
+  {
+    printf("%s\n", i.u.ll.node->data);
+  }
   cons_msg(' ', "\n");
   cons_msg(' ', "\n");
   /*
