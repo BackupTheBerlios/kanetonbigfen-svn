@@ -46,76 +46,103 @@ extern m_segment*	segment;
  */
 
 // FIXME: lot of code has been removed here
-t_setsz			segment_size()
+t_setsz			segment_size(void)
 {
 	t_setsz		set_sz	=	42;				//set size
 	set_size(segment->oseg_list, &set_sz); //get size of busymap
 	return set_sz;
 }
 
-t_error			segment_first_fit(	t_psize		size,
-						t_paddr*	address)
-{
-	t_paddr		start	=	segment->start;			//mem start
-	t_paddr		end	=	segment->start + segment->size;	//mem end
-	t_paddr		l_begin	=	start;				//tmp start zone
-	t_paddr		l_end	=	end;				//tmp end zone
-	i_set		set	=	segment->oseg_list;		//osegment busymap list
-	oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
-	oseg->start		=	start;				//
-	oseg->end		=	start + size * PAGESZ;
-// 	if (segment_size() == 0)
-// 	{
-// 		printf("null\n");
-// 		if (segment->size < size)
-// 			return	(ERROR_UNKNOWN);
-// 		else
-// 		{
-// 			*address = oseg->start;
-// 			return set_add_ll(set, oseg);
-// 		}
-// 	}
-// 	else
-	{
-		//printf("not null\n");
-		t_iterator	i;
-		t_state		state;
-		set_foreach(SET_OPT_FORWARD, set, &i, state)
-		{
-			oseg = (oseg_busymap*)i.u.ll.node->data;
-// 			printf("actual busy seg is %i -> %i\n", oseg->start, oseg->end);
-			if (l_begin - oseg->start >= size * PAGESZ)
-			{
-// 				printf("enough place between %i > %i\n", l_begin, oseg->start);
-				segment_add_sorted(l_begin, l_begin + size * PAGESZ);
-				*address = l_begin;
-				return ERROR_NONE;
-				break;
-			}
-			else
-// 				printf("not enough place between %i > %i, trying next...\n", l_begin, oseg->start);
-			l_begin = oseg->end;
-		}
-		return ERROR_UNKNOWN;
-	}
-}
-
-void			segment_dump()
+void			segment_dump(void)
 {
 	t_iterator	i;
 	t_state		state;
 	oseg_busymap*	oseg;
 	i_set		set	=	segment->oseg_list;
+	printf("+--- begin dump ----\n");
 	if (segment_size() != 0)
 	{
-		printf("+--- begin dump ----\n");
 		set_foreach(SET_OPT_FORWARD, set, &i, state)
 		{
 			oseg = (oseg_busymap*)i.u.ll.node->data;
 			printf("|%8x -> %x\n", oseg->start, oseg->end);
 		}
-		printf("+---  end  dump ----\n");
 	}
-	else
-		printf("%s\n", "Empty dump");
+	printf("+---  end  dump ----\n");
+}
+
+t_error			segment_add(t_paddr begin, t_paddr end)
+{
+	i_set		set	=	segment->oseg_list;		//osegment busymap list
+	oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
+	oseg->start		=	begin;				//
+	oseg->end		=	end;
+	return set_add_ll(set, oseg);
+}
+
+t_error			segment_add_sorted(t_paddr begin,
+					   t_paddr end)
+{
+	t_iterator	i;
+	t_state		state;
+	i_set		set	=	segment->oseg_list;		//osegment busymap list
+	oseg_busymap*	oseg_f	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
+	oseg_busymap*	oseg	=	NULL;				//osegment busymap object
+	oseg_f->start		=	begin;				//
+	oseg_f->end		=	end;
+	set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+		oseg = (oseg_busymap*)i.u.ll.node->data;
+		//printf("actual is [%i,%i]\n", oseg->start, oseg->end);
+		if (oseg->start > begin)
+		{
+			//printf("yes !\n");
+			return set_before_ll(set, i, oseg_f);
+		}
+	}
+	return ERROR_UNKNOWN;
+}
+
+t_error			segment_remove(t_paddr begin)
+{
+	t_iterator	i;
+	t_state		state;
+	i_set		set	=	segment->oseg_list;		//osegment busymap list
+	oseg_busymap*	oseg	=	NULL;				//osegment busymap object
+// 	printf("%x\n", begin);
+	set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+		oseg = (oseg_busymap*)i.u.ll.node->data;
+// 		printf("actual is [%i,%i]\n", oseg->start, oseg->end);
+		if (oseg->start == begin && begin != oseg->end)
+			return set_delete_ll(set, i);
+	}
+	return ERROR_UNKNOWN;
+}
+
+t_error			segment_first_fit(	t_psize		size,
+						t_paddr*	address)
+{
+	t_paddr		start	=	segment->start;			//mem start
+	t_paddr		l_begin	=	start;				//tmp start zone
+	i_set		set	=	segment->oseg_list;		//osegment busymap list
+	oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
+	oseg->start		=	start;				//
+	oseg->end		=	start + size * PAGESZ;
+	//printf("not null\n");
+	t_iterator	i;
+	t_state		state;
+	set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+		oseg = (oseg_busymap*)i.u.ll.node->data;
+		if (l_begin - oseg->start >= size * PAGESZ)
+		{
+			segment_add_sorted(l_begin, l_begin + size * PAGESZ);
+			*address = l_begin;
+			return ERROR_NONE;
+			break;
+		}
+		l_begin = oseg->end;
+	}
+	return ERROR_UNKNOWN;
 }

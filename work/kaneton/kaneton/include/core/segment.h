@@ -19,6 +19,7 @@
 #include <arch/machdep/machdep.h>
 #include <core/id.h>
 #include <core/types.h>
+#include <core/set.h>
 
 /*
  * ---------- macros ----------------------------------------------------------
@@ -174,6 +175,7 @@ t_error			segment_space(o_as*		as,
  * ---------- prototypes ------------------------------------------------------
  *
  *      ../../core/segment/segment.c
+ *      ../../core/segment/segment-fit.c
  */
 
 /*
@@ -210,6 +212,25 @@ t_error			segment_space(	o_as*		as,
 t_error			segment_init(void);
 
 t_error			segment_clean(void);
+
+
+/*
+ * ../../core/segment/segment-fit.c
+ */
+
+t_setsz			segment_size(void);
+
+void			segment_dump(void);
+
+t_error			segment_add(t_paddr begin, t_paddr end);
+
+t_error			segment_add_sorted(t_paddr begin,
+					   t_paddr end);
+
+t_error			segment_remove(t_paddr begin);
+
+t_error			segment_first_fit(	t_psize		size,
+						t_paddr*	address);
 
 
 /*
