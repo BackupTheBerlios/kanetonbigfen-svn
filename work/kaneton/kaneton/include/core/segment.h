@@ -77,9 +77,16 @@ typedef struct
   t_lookup			lookup;
 
   // FIXME: think about what is needed here...
-
+  i_set				oseg_list;
+  
   machdep_data(m_segment);
 }				m_segment;
+
+typedef struct
+{
+	t_paddr			start;
+	t_paddr			end;
+}				oseg_busymap;
 
 /*
  * the segment architecture-dependent interface
@@ -195,6 +202,10 @@ t_error			segment_reserve(i_as			asid,
 					i_segment*		segid);
 
 t_error			segment_release(i_segment		segid);
+
+t_error			segment_space(	o_as*		as,
+				      	t_psize		size,
+					t_paddr*	address);
 
 t_error			segment_init(void);
 

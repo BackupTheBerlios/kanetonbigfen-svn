@@ -76,8 +76,8 @@ t_error			segment_inject(i_as		asid,
 				       i_segment*	segid)
 {
   // FIXME: some code was removed here
-
-  return (ERROR_UNKNOWN);
+	printf("try to inject\n");
+	return (ERROR_UNKNOWN);
 }
 
 t_error			segment_perms(i_segment			segid,
@@ -120,6 +120,13 @@ t_error			segment_release(i_segment		segid)
   return (ERROR_UNKNOWN);
 }
 
+t_error			segment_space(	o_as*		as,
+				      	t_psize		size,
+					t_paddr*	address)
+{
+	return segment_first_fit(size, &address);
+}
+
 /*
  * this function initialises the segment manager from the init
  * variable containing segments to keep safe.
@@ -132,6 +139,38 @@ t_error			segment_release(i_segment		segid)
  * 3) tries to reserve a statistics object.
  * 4) calls the machine-dependent code.
  */
+
+t_error			segment_add(t_paddr begin, t_paddr end)
+{
+	i_set		set	=	segment->oseg_list;		//osegment busymap list
+	oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
+	oseg->start		=	begin;				//
+	oseg->end		=	end;
+	return set_add_ll(set, oseg);
+}
+
+t_error			segment_add_sorted(t_paddr begin,
+					   t_paddr end)
+{
+	t_iterator	i;
+	t_state		state;
+	i_set		set	=	segment->oseg_list;		//osegment busymap list
+	oseg_busymap*	oseg_f	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
+	oseg_busymap*	oseg	=	NULL;				//osegment busymap object
+	oseg_f->start		=	begin;				//
+	oseg_f->end		=	end;
+	set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+		oseg = (oseg_busymap*)i.u.ll.node->data;
+		//printf("actual is [%i,%i]\n", oseg->start, oseg->end);
+		if (oseg->start > begin)
+		{
+			//printf("yes !\n");
+			return set_before_ll(set, i, oseg_f);
+		}
+	}
+	return ERROR_UNKNOWN;
+}
 
 t_error			segment_init(void)
 {
@@ -164,23 +203,33 @@ t_error			segment_init(void)
   STATS_RESERVE("segment", &segment->stats);
 
   // FIXME: perhaps some code is needed here
-  cons_msg(' ', "\n");
-  cons_msg(' ', "\n");
-  set_init();
-  i_set test;
-  set_reserve_ll(SET_OPT_NONE, 100, &test);
-  set_add_ll(test, "coin");
-  set_add_ll(test, "42");
-  set_add_ll(test, "69");
-  set_show_ll(test);
-  t_iterator i;
-  t_state state;
-  set_foreach(SET_OPT_FORWARD, test, &i, state)
-  {
-    printf("%s\n", i.u.ll.node->data);
-  }
-  cons_msg(' ', "\n");
-  cons_msg(' ', "\n");
+  //printf("low=%i up=%i pages=%i\n", segment->start, segment->size + segment->start, segment->size/PAGESZ);
+  set_reserve_ll(SET_OPT_NONE, 2 + segment->size/PAGESZ, &segment->oseg_list); // pire cas, nb pages max d'elements de 1 pages chacunes
+  segment_add(segment->start + segment->size, segment->start + segment->size);
+  segment_add(segment->start, segment->start);
+  t_paddr res;
+  //segment_add_sorted(200, 400);
+//   segment_first_fit(1, &res);
+//   segment_dump();
+//   segment_first_fit(4, &res);
+//   segment_dump();
+//   cons_msg(' ', "\n");
+//   cons_msg(' ', "\n");
+//   set_init();
+//   i_set test;
+//   set_reserve_ll(SET_OPT_NONE, 100, &test);
+//   set_add_ll(test, "coin");
+//   set_add_ll(test, "42");
+//   set_add_ll(test, "69");
+//   set_show_ll(test);
+//   t_iterator i;
+//   t_state state;
+//   set_foreach(SET_OPT_FORWARD, test, &i, state)
+//   {
+//     printf("%s\n", i.u.ll.node->data);
+//   }
+//   cons_msg(' ', "\n");
+//   cons_msg(' ', "\n");
   /*
    * 4)
    */
