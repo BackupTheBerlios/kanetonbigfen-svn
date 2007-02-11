@@ -377,7 +377,6 @@ t_error			ia32_as_reserve(i_task			tskid,
       /*
        * f)
        */
-
       // FIXME: some code was deleted here
     }
 

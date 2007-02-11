@@ -60,8 +60,6 @@ m_segment*		segment;
  * ---------- functions -------------------------------------------------------
  */
 
-// FIXME: lot of code has been removed here
-
 t_error			segment_clone(i_as			asid,
 				      i_segment			old,
 				      i_segment*		new)
@@ -107,8 +105,35 @@ t_error			segment_reserve(i_as			asid,
 					t_perms			perms,
 					i_segment*		segid)
 {
-  // FIXME: some code was removed here
+  // FIXED: Lou
+o_as*			oas;
+o_segment*		oseg;
+t_iterator		i;
+t_state			state;
 
+cons_msg('!', "BEFORE     \n");
+as_show(asid);
+// Getting the o_as*
+if (as_get(asid, &oas) != ERROR_NONE)
+	SEGMENT_LEAVE(as, ERROR_UNKNOWN);
+
+  set_foreach(SET_OPT_FORWARD, oas->segments, &i, state)
+    {
+      if (set_object(oas->segments, i, (void**)&oseg) != ERROR_NONE)
+		SEGMENT_LEAVE(region, ERROR_UNKNOWN);
+	if (oseg->address == 0x0)
+		break;
+}
+// Segment Allocation
+segment_space(oas, size, &oseg->address);
+oseg->size = size;
+oseg->asid = asid;
+oseg->perms = perms;
+
+*segid = oseg->segid;
+
+cons_msg('!', "AFTER     \n");
+as_show(asid);
   return (ERROR_UNKNOWN);
 }
 
@@ -141,6 +166,9 @@ t_error			segment_space(	o_as*		as,
 
 t_error			segment_init(void)
 {
+i_segment	        seg;
+i_task			ktask = ID_UNUSED;
+i_as			asid;
   /*
    * 1)
    */
@@ -188,6 +216,15 @@ t_error			segment_init(void)
   segment_first_fit(1, &res1);
   segment_dump();
 
+ /*if (as_reserve(ktask, &asid) != ERROR_NONE)
+    {
+      cons_msg('!', "task: unable to reserve the kernel address space\n");
+
+      return (ERROR_UNKNOWN);
+    }*/
+/*if (segment_reserve(&asid, PAGESZ,
+			  PERM_READ | PERM_WRITE, &seg) != ERROR_NONE)
+	AS_LEAVE(as, ERROR_UNKNOWN);*/
   /*
    * 4)
    */

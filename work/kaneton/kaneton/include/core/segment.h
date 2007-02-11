@@ -209,6 +209,11 @@ t_error			segment_space(	o_as*		as,
 				      	t_psize		size,
 					t_paddr*	address);
 
+t_error			segment_add(t_paddr begin, t_paddr end);
+
+t_error			segment_add_sorted(t_paddr begin,
+					   t_paddr end);
+
 t_error			segment_init(void);
 
 t_error			segment_clean(void);
