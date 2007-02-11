@@ -88,6 +88,7 @@ t_error			segment_first_fit(	t_psize		size,
 			{
 // 				printf("enough place between %i > %i\n", l_begin, oseg->start);
 				segment_add_sorted(l_begin, l_begin + size * PAGESZ);
+				*address = l_begin;
 				return ERROR_NONE;
 				break;
 			}

@@ -172,6 +172,23 @@ t_error			segment_add_sorted(t_paddr begin,
 	return ERROR_UNKNOWN;
 }
 
+t_error			segment_remove(t_paddr begin)
+{
+	t_iterator	i;
+	t_state		state;
+	i_set		set	=	segment->oseg_list;		//osegment busymap list
+	oseg_busymap*	oseg	=	NULL;				//osegment busymap object
+	printf("%x\n", begin);
+	set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+		oseg = (oseg_busymap*)i.u.ll.node->data;
+// 		printf("actual is [%i,%i]\n", oseg->start, oseg->end);
+		if (oseg->start == begin && begin != oseg->end)
+			return set_delete_ll(set, i);
+	}
+	return ERROR_UNKNOWN;
+}
+
 t_error			segment_init(void)
 {
   /*
@@ -207,12 +224,19 @@ t_error			segment_init(void)
   set_reserve_ll(SET_OPT_NONE, 2 + segment->size/PAGESZ, &segment->oseg_list); // pire cas, nb pages max d'elements de 1 pages chacunes
   segment_add(segment->start + segment->size, segment->start + segment->size);
   segment_add(segment->start, segment->start);
-  t_paddr res;
+  t_paddr res1;
   //segment_add_sorted(200, 400);
-//   segment_first_fit(1, &res);
-//   segment_dump();
-//   segment_first_fit(4, &res);
-//   segment_dump();
+  segment_first_fit(2, &res1);
+  segment_dump();
+  t_paddr res2;
+  segment_first_fit(4, &res2);
+  segment_dump();
+  segment_remove(res1);
+  segment_dump();
+  segment_first_fit(1, &res1);
+  segment_dump();
+  segment_first_fit(1, &res1);
+  segment_dump();
 //   cons_msg(' ', "\n");
 //   cons_msg(' ', "\n");
 //   set_init();
