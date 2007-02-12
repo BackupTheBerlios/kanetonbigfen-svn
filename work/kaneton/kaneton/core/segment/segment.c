@@ -85,7 +85,6 @@ o->asid = asid;
 *segid = o->segid = (i_segment)o->address;
 set_add_array(oas->segments, (void*) o);
 set_add_array(segment->oseg_list, (void*) o);
-as_show(asid);
 return (ERROR_NONE);
 }
 	return (ERROR_UNKNOWN);
