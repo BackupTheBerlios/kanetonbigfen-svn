@@ -73,7 +73,20 @@ t_error			segment_inject(i_as		asid,
 				       o_segment*	o,
 				       i_segment*	segid)
 {
-  // FIXME: some code was removed here
+  // FIXME: Lou
+o_as*			oas;
+
+SEGMENT_ENTER(segment);
+// Getting the o_as*
+if (as_get(asid, &oas) == ERROR_NONE)
+{
+// Segment injection
+o->asid = asid;
+*segid = o->segid = (i_segment)o->address;
+set_add_array(oas->segments, (void*) o);
+set_add_array(segment->oseg_list, (void*)o);
+return (ERROR_NONE);
+}
 	return (ERROR_UNKNOWN);
 }
 
@@ -95,7 +108,11 @@ t_error			segment_flush(i_as			asid)
 t_error			segment_get(i_segment			segid,
 				    o_segment**			o)
 {
-  // FIXME: some code was removed here
+  // FIXME: Lou
+SEGMENT_ENTER(segment);
+
+if (set_get(segment->oseg_list, segid, (void**)o) == ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_NONE);
 
   return (ERROR_UNKNOWN);
 }
@@ -204,22 +221,27 @@ i_as			asid;
 
   // FIXME: perhaps some code is needed here
   set_reserve_ll(SET_OPT_NONE, 2 + segment->size/PAGESZ, &segment->oseg_busymap_list); // pire cas
+//   set_reserve_array(SET_OPT_NONE, 2 + segment->size/PAGESZ, &segment->oseg_list); // pire cas
+if (set_reserve(array, SET_OPT_SORT | SET_OPT_ALLOC, AS_SEGMENTS_INITSZ,
+		  sizeof(i_segment), &segment->oseg_list) != ERROR_NONE)
+      AS_LEAVE(as, ERROR_UNKNOWN);
+
   segment_add(segment->start + segment->size, segment->start + segment->size);
   segment_add(segment->start, segment->start);
-  
-    //printf("low=%i up=%i pages=%i\n", segment->start, segment->size + segment->start, segment->size/PAGESZ);
-  t_paddr res1;
-  segment_first_fit(2, &res1);
-  segment_dump();
-  t_paddr res2;
-  segment_first_fit(4, &res2);
-  segment_dump();
-  segment_remove(res1);
-  segment_dump();
-  segment_first_fit(1, &res1);
-  segment_dump();
-  segment_first_fit(1, &res1);
-  segment_dump();
+//   
+//     //printf("low=%i up=%i pages=%i\n", segment->start, segment->size + segment->start, segment->size/PAGESZ);
+//   t_paddr res1;
+//   segment_first_fit(2, &res1);
+//   segment_dump();
+//   t_paddr res2;
+//   segment_first_fit(4, &res2);
+//   segment_dump();
+//   segment_remove(res1);
+//   segment_dump();
+//   segment_first_fit(1, &res1);
+//   segment_dump();
+//   segment_first_fit(1, &res1);
+//   segment_dump();
 
  /*if (as_reserve(ktask, &asid) != ERROR_NONE)
     {
