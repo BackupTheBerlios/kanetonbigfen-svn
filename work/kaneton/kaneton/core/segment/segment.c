@@ -230,8 +230,9 @@ if (set_reserve(array, SET_OPT_SORT | SET_OPT_ALLOC, AS_SEGMENTS_INITSZ,
   segment_add(segment->start, segment->start);
 //   
 //     //printf("low=%i up=%i pages=%i\n", segment->start, segment->size + segment->start, segment->size/PAGESZ);
-//   t_paddr res1;
+   //t_paddr res1;
 //   segment_first_fit(2, &res1);
+   //segment_space(0, 4, &res1);
 //   segment_dump();
 //   t_paddr res2;
 //   segment_first_fit(4, &res2);
@@ -243,6 +244,9 @@ if (set_reserve(array, SET_OPT_SORT | SET_OPT_ALLOC, AS_SEGMENTS_INITSZ,
 //   segment_first_fit(1, &res1);
 //   segment_dump();
 
+  i_segment test;
+  segment_reserve(0, 4, PERM_READ | PERM_WRITE, &test);
+  segment_dump();
  /*if (as_reserve(ktask, &asid) != ERROR_NONE)
     {
       cons_msg('!', "task: unable to reserve the kernel address space\n");

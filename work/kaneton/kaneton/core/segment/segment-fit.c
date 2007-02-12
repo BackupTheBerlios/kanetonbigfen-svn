@@ -67,7 +67,7 @@ void			segment_dump(void)
 		{
 			oseg = (oseg_busymap*)i.u.ll.node->data;
 			size = (oseg->end - oseg->start) / PAGESZ;
-			if (size)
+			if (1 | size)
 				printf("|%8x -> %8x (%2i) |\n", oseg->start, oseg->end, size);
 		}
 	}
