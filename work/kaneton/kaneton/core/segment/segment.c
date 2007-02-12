@@ -164,6 +164,11 @@ t_error			segment_space(	o_as*		as,
  * 4) calls the machine-dependent code.
  */
 
+/**
+ * 
+ * @param  
+ * @return 
+ */
 t_error			segment_init(void)
 {
 i_segment	        seg;
@@ -198,7 +203,7 @@ i_as			asid;
   STATS_RESERVE("segment", &segment->stats);
 
   // FIXME: perhaps some code is needed here
-  set_reserve_ll(SET_OPT_NONE, 2 + segment->size/PAGESZ, &segment->oseg_list); // pire cas
+  set_reserve_ll(SET_OPT_NONE, 2 + segment->size/PAGESZ, &segment->oseg_busymap_list); // pire cas
   segment_add(segment->start + segment->size, segment->start + segment->size);
   segment_add(segment->start, segment->start);
   
