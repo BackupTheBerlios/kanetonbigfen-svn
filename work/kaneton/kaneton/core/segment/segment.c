@@ -75,7 +75,20 @@ t_error			segment_inject(i_as		asid,
 				       o_segment*	o,
 				       i_segment*	segid)
 {
-  // FIXME: some code was removed here
+  // FIXME: Lou
+o_as*			oas;
+
+SEGMENT_ENTER(segment);
+// Getting the o_as*
+if (as_get(asid, &oas) == ERROR_NONE)
+{
+// Segment injection
+o->asid = asid;
+*segid = o->segid = (i_segment)o->address;
+set_add_array(oas->segments, (void*) o);
+set_add_array(segment->oseg_list, (void*)o);
+return (ERROR_NONE);
+}
 	return (ERROR_UNKNOWN);
 }
 
@@ -97,7 +110,11 @@ t_error			segment_flush(i_as			asid)
 t_error			segment_get(i_segment			segid,
 				    o_segment**			o)
 {
-  // FIXME: some code was removed here
+  // FIXME: Lou
+SEGMENT_ENTER(segment);
+
+if (set_get(segment->oseg_list, segid, (void**)o) == ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_NONE);
 
   return (ERROR_UNKNOWN);
 }
@@ -109,6 +126,33 @@ t_error			segment_reserve(i_as			asid,
 {
   // FIXME: some code was removed here
 
+SEGMENT_ENTER(segment);
+cons_msg('!', "BEFORE     \n");
+as_show(asid);
+// Getting the o_as*
+if (as_get(asid, &oas) == ERROR_NONE)
+{
+  set_foreach(SET_OPT_FORWARD, oas->segments, &i, state)
+    {
+      if (set_object(oas->segments, i, (void**)&oseg) != ERROR_NONE)
+		SEGMENT_LEAVE(region, ERROR_UNKNOWN);
+	if (oseg->address == 0x0)
+		break;
+}
+// Segment Allocation
+segment_space(oas, size, &oseg->address);
+oseg->size = size;
+oseg->asid = asid;
+oseg->perms = perms;
+
+*segid = oseg->segid = (i_segment)oseg->address;
+set_add_array(segment->oseg_list, (void*)oseg);
+
+cons_msg('!', "AFTER     \n");
+as_show(asid);
+
+SEGMENT_LEAVE(region, ERROR_NONE);
+}
   return (ERROR_UNKNOWN);
 }
 
