@@ -84,7 +84,8 @@ if (as_get(asid, &oas) == ERROR_NONE)
 o->asid = asid;
 *segid = o->segid = (i_segment)o->address;
 set_add_array(oas->segments, (void*) o);
-set_add_array(segment->oseg_list, (void*)o);
+set_add_array(segment->oseg_list, (void*) o);
+as_show(asid);
 return (ERROR_NONE);
 }
 	return (ERROR_UNKNOWN);
@@ -147,8 +148,9 @@ oseg->size = size;
 oseg->asid = asid;
 oseg->perms = perms;
 
-*segid = oseg->segid;
-
+*segid = oseg->segid = (i_segment)oseg->address;
+set_add_array(oas->segments, (void*) oseg);
+set_add_array(segment->oseg_list, (void*) oseg);
 cons_msg('!', "AFTER     \n");
 as_show(asid);
   return (ERROR_UNKNOWN);
@@ -221,7 +223,6 @@ i_as			asid;
 
   // FIXME: perhaps some code is needed here
   set_reserve_ll(SET_OPT_NONE, 2 + segment->size/PAGESZ, &segment->oseg_busymap_list); // pire cas
-//   set_reserve_array(SET_OPT_NONE, 2 + segment->size/PAGESZ, &segment->oseg_list); // pire cas
 if (set_reserve(array, SET_OPT_SORT | SET_OPT_ALLOC, AS_SEGMENTS_INITSZ,
 		  sizeof(i_segment), &segment->oseg_list) != ERROR_NONE)
       AS_LEAVE(as, ERROR_UNKNOWN);
