@@ -78,17 +78,17 @@ typedef struct
   t_lookup			lookup;
 
   // FIXME: think about what is needed here...
-//   i_set				oseg_busymap_list;
   i_set				oseg_list;
+  i_set				oseg_busymap_list;
   
   machdep_data(m_segment);
 }				m_segment;
 
-// typedef struct
-// {
-// 	t_paddr			start;
-// 	t_paddr			end;
-// }				oseg_busymap;
+typedef struct
+{
+	t_paddr			start;
+	t_paddr			end;
+}				oseg_busymap;
 
 /*
  * the segment architecture-dependent interface
@@ -222,8 +222,6 @@ t_error			segment_clean(void);
 t_setsz			segment_size(void);
 
 void			segment_dump(void);
-
-t_psize			segment_beginend2size(t_paddr begin, t_paddr end);
 
 t_error			segment_add(t_paddr begin, t_paddr end);
 
