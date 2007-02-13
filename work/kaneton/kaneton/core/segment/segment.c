@@ -93,8 +93,15 @@ return (ERROR_NONE);
 t_error			segment_perms(i_segment			segid,
 				      t_perms			perms)
 {
-  // FIXME: some code was removed here
+o_segment*			o;
 
+  // FIXME: Lou
+SEGMENT_ENTER(segment);
+if (segment_get(segid, (void**)&o) == ERROR_NONE)
+{
+o->perms = perms;
+SEGMENT_LEAVE(segment, ERROR_NONE);
+}
   return (ERROR_UNKNOWN);
 }
 
@@ -132,12 +139,12 @@ cons_msg('!', "BEFORE     \n");
 as_show(asid);
 // Getting the o_as*
 if (as_get(asid, &oas) != ERROR_NONE)
-	SEGMENT_LEAVE(as, ERROR_UNKNOWN);
+	SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 
   set_foreach(SET_OPT_FORWARD, oas->segments, &i, state)
     {
       if (set_object(oas->segments, i, (void**)&oseg) != ERROR_NONE)
-		SEGMENT_LEAVE(region, ERROR_UNKNOWN);
+		SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 	if (oseg->address == 0x0)
 		break;
 }
@@ -166,7 +173,53 @@ t_error			segment_space(	o_as*		as,
 				      	t_psize		size,
 					t_paddr*	address)
 {
+// FIXED: Fensoft
 	return segment_first_fit(size, address);
+}
+
+t_error			(*segment_read)(i_segment id,
+					t_paddr offset,
+					void* buffer,
+					t_psize size)
+{
+o_segment*			o;
+
+// FIXED: Lou
+SEGMENT_ENTER(segment);
+if (segment_get(id, (void**)&o) == ERROR_NONE)
+{
+memcpy(buffer, o->address + offset, size);
+
+SEGMENT_LEAVE(segment, ERROR_NONE);
+}
+  return (ERROR_UNKNOWN);
+}
+
+t_error			(*segment_write)(i_segment id,
+					 t_paddr offset,
+					 const void* buffer,
+					 t_psize size)
+{
+o_segment*			o;
+
+// FIXED: Lou
+SEGMENT_ENTER(segment);
+if (segment_get(id, (void**)&o) == ERROR_NONE)
+{
+memcpy(o->address + offset, buffer, size);
+
+SEGMENT_LEAVE(segment, ERROR_NONE);
+}
+  return (ERROR_UNKNOWN);
+}
+
+t_error			(*segment_copy)(i_segment dst,
+						t_paddr offd,
+						i_segment src,
+						t_paddr offs,
+						t_psize size)
+{
+
 }
 
 /*
@@ -244,9 +297,11 @@ if (set_reserve(array, SET_OPT_SORT | SET_OPT_ALLOC, AS_SEGMENTS_INITSZ,
 //   segment_first_fit(1, &res1);
 //   segment_dump();
 
-  i_segment test;
-  segment_reserve(0, 4, PERM_READ | PERM_WRITE, &test);
-  segment_dump();
+//   i_segment test;
+// i_as a = 0;
+//   segment_reserve(as, 41, PERM_READ | PERM_WRITE, &test);
+//   segment_dump();
+
  /*if (as_reserve(ktask, &asid) != ERROR_NONE)
     {
       cons_msg('!', "task: unable to reserve the kernel address space\n");
