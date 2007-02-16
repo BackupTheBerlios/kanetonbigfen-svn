@@ -97,7 +97,7 @@ o_segment*			o;
 
   // FIXME: Lou
 SEGMENT_ENTER(segment);
-if (segment_get(segid, (void**)&o) == ERROR_NONE)
+if (segment_get(segid,&o) == ERROR_NONE)
 {
 o->perms = perms;
 SEGMENT_LEAVE(segment, ERROR_NONE);
@@ -176,7 +176,7 @@ t_error			segment_space(	o_as*		as,
 // FIXED: Fensoft
 	return segment_first_fit(size, address);
 }
-
+/*
 t_error			(*segment_read)(i_segment id,
 					t_paddr offset,
 					void* buffer,
@@ -221,7 +221,7 @@ t_error			(*segment_copy)(i_segment dst,
 {
 
 }
-
+*/
 /*
  * this function initialises the segment manager from the init
  * variable containing segments to keep safe.

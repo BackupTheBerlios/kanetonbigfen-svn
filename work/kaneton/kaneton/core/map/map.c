@@ -54,8 +54,21 @@ void*			mmap(void*			start,
 			     int			fd,
 			     off_t			offset)
 {
-  // FIXME: some easy code has been removed here
+t_perms			perms;
+t_vaddr*		addr = NULL;
 
+if (prot & PROT_READ)
+perms &= PERM_READ;
+
+if (prot & PROT_WRITE)
+perms &= PERM_WRITE;
+
+if (prot & PROT_EXEC)
+perms &= PERM_EXEC;
+
+  // FIXED: Lou - some easy code has been removed here
+map_reserve(kasid, MAP_OPT_PRIVILEGED, length, perms, addr);
+	return addr;
   return NULL;
 }
 
@@ -81,9 +94,23 @@ t_error			map_reserve(i_as		asid,
 				    t_perms		perms,
 				    t_vaddr*		addr)
 {
-  // FIXME: some easy code has been removed here
+MAP_ENTER(map);
+  // FIXED: Lou - some easy code has been removed here
+i_segment*		segid;
+i_region*		regid;
+o_region*		oreg;
 
-  return (ERROR_UNKNOWN);
+if (segment_reserve(asid, size, perms, segid) != ERROR_NONE)
+	MAP_LEAVE(map, ERROR_UNKNOWN);
+
+if (region_reserve(asid, *segid, 0, opts, *addr, size, regid) != ERROR_NONE)
+	MAP_LEAVE(map, ERROR_UNKNOWN);
+
+if (region_get(asid, *regid, &oreg) != ERROR_NONE)
+    	MAP_LEAVE(map, ERROR_UNKNOWN)
+*addr = oreg->address;
+
+  return (ERROR_NONE);
 }
 
 /*
@@ -93,9 +120,41 @@ t_error			map_reserve(i_as		asid,
 t_error			map_release(i_as		asid,
 				    t_vaddr		addr)
 {
-  // FIXME: some easy code has been removed here
+  o_as*			oas;
+  t_state		state;
+  o_region*		data;
+  t_iterator		i;
+  i_region		regid;
+  i_segment		segid;
+MAP_ENTER(map);
 
-  return (ERROR_UNKNOWN);
+  // FIXED: Lou - some easy code has been removed here
+
+if (as_get(asid, &oas) != ERROR_NONE)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
+set_foreach(SET_OPT_FORWARD, oas->regions, &i, state)
+    {
+      if (set_object(oas->regions, i, (void**)&data) != ERROR_NONE)
+	{
+	  cons_msg('!', "region: cannot find the region object "
+		   "corresponding to its identifier\n");
+
+	  MAP_LEAVE(map, ERROR_UNKNOWN);
+	}
+if (data->address == addr)
+{
+regid = data->regid;
+segid = data->segid;
+break;
+}
+}
+if (region_release(asid, regid) != ERROR_NONE)
+	MAP_LEAVE(map, ERROR_UNKNOWN);
+
+if (segment_release(segid) != ERROR_NONE)
+	MAP_LEAVE(map, ERROR_UNKNOWN);
+
+  return (ERROR_NONE);
 }
 
 /*
