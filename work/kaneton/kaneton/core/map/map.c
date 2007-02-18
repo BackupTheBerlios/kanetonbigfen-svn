@@ -34,7 +34,7 @@
 /*
  * the map manager structure.
  */
-
+extern i_as	kasid;
 m_map*		map;
 
 /*
@@ -79,7 +79,9 @@ map_reserve(kasid, MAP_OPT_PRIVILEGED, length, perms, addr);
 int			munmap(void*			start,
 			       size_t			length)
 {
-  // FIXME: some easy code has been removed here
+  // FIXME: Lou - some easy code has been removed here
+  length = length;
+  map_release(kasid, *(t_vaddr*) start);
 
   return 0;
 }
