@@ -57,8 +57,8 @@ t_error			segment_read(i_segment id,
 					t_psize size)
 {
 o_segment*			o;
-/*
-region_reserve(i_as			asid,
+
+/*region_reserve(i_as			asid,
 				       i_segment		segid,
 				       t_paddr			offset,
 				       t_opts			opts,
