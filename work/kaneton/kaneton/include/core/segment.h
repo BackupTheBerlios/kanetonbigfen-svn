@@ -21,6 +21,7 @@
 #include <core/types.h>
 #include <core/set.h>
 
+
 /*
  * ---------- macros ----------------------------------------------------------
  */
@@ -163,13 +164,42 @@ typedef struct
     return (_error_);							\
   }
 
+// t_error			segment_get (	i_segment	segid,
+// 					o_segment**	o);
+// 					
+// t_error			segment_reserve (	i_as		asid,
+// 						t_psize		size,
+// 			  			t_perms		perms,
+//   						i_segment*	segid );
+//   						
+// t_error			segment_inject (i_as		asid,
+// 					o_segment*	o,
+// 					i_segment*	segid );
+// 					
+// t_error			segment_perms ( i_segment	segid,
+// 					t_perms		perms );
+// 
+// t_error			segment_flush ( i_as	asid );
+// 
+// t_error			segment_get (	i_segment	segid,
+// 					o_segment**	o );
+// 
+// t_error			segment_release ( i_segment		segid );
+// 
+// t_error			segment_space (	o_as*		as,
+// 					t_psize		size,
+//      					t_paddr*	address );
+//      					
+//      					
+// t_error			segment_init ( void );
+
 /*
  * ---------- common prototypes -----------------------------------------------
  */
 
-t_error			segment_space(o_as*		as,
-				      t_psize		size,
-				      t_paddr*		address);
+// t_error			segment_space(o_as*		as,
+// 				      t_psize		size,
+// 				      t_paddr*		address);
 
 
 /*

@@ -20,6 +20,7 @@
 #include <core/id.h>
 #include <core/types.h>
 #include <core/wait.h>
+#include <core/task.h>
 
 /*
  * ---------- macros ----------------------------------------------------------

@@ -45,6 +45,59 @@ extern m_region*       region;
  * ---------- functions -------------------------------------------------------
  */
 
+
+t_error			region_add_sorted(	o_as*	as,
+					  	t_vaddr begin,
+					   	t_vaddr end)
+{
+	t_iterator	i;
+	t_state		state;
+	i_set		set	=	as->regions;		//oregion busymap list
+	o_region*	oreg_f	=	malloc(sizeof(o_region));	//oregion busymap object
+	o_region*	oreg	=	NULL;				//oregion busymap object
+	oreg_f->address		=	begin;				//
+	oreg_f->size		=	(end - begin) / PAGESZ;
+	set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+		oreg = (o_region*)i.u.ll.node->data;
+		//printf("actual is [%i,%i]\n", oseg->start, oseg->end);
+		if (oreg->address > begin)
+		{
+			//printf("yes !\n");
+			return set_before_ll(set, i, oreg_f);
+		}
+	}
+	return ERROR_UNKNOWN;
+}
+
+t_error			region_first_fit(	o_as*		as,
+					 	t_vsize		size,
+						t_vaddr*	address)
+{
+	t_vaddr		start	=	region->start;			//mem start
+	t_vaddr		l_begin	=	start;				//tmp start zone
+	i_set		set	=	as->regions;			//oregion busymap list
+ 	o_region*	oreg	=	malloc(sizeof(o_region));	//oregion busymap object
+ 	oreg->address		=	start;				//
+ 	oreg->size		=	PAGESZ;
+ 	//printf("not null\n");
+ 	t_iterator	i;
+ 	t_state		state;
+ 	set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+// 		oreg = (o_region*)i.u.ll.node->data;
+// 		if (l_begin - oreg->address >= size * PAGESZ)
+// 		{
+// 			region_add_sorted(as, l_begin, l_begin + size * PAGESZ);
+// 			*address = l_begin;
+// 			return ERROR_NONE;
+// 			break;
+// 		}
+// 		l_begin = oreg->address + oreg->size * PAGESZ;
+	}
+	return ERROR_UNKNOWN;
+}
+
 // FIXME: some code has been removed here
 
 /*

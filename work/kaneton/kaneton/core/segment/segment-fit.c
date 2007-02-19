@@ -76,7 +76,7 @@ void			segment_dump(void)
 
 t_error			segment_add(t_paddr begin, t_paddr end)
 {
-	i_set		set	=	segment->oseg_busymap_list;		//osegment busymap list
+	i_set		set	=	segment->oseg_busymap_list;	//osegment busymap list
 	oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
 	oseg->start		=	begin;				//
 	oseg->end		=	end;

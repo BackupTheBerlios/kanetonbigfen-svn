@@ -68,6 +68,8 @@ t_error			ia32_as_reserve(i_task			tskid,
  * ../../../../core/arch/machdep/region.c
  */
 
+t_error			map_page(t_paddr paddr, t_vaddr *vaddr);
+
 t_error			ia32_region_reserve(i_as			asid,
 					i_segment		segid,
 				     	t_paddr			offset,
