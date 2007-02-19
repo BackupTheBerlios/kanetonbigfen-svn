@@ -50,7 +50,7 @@ d_segment		segment_dispatch =
  */
 
 // FIXME: lot of code has been removed here
-
+/*
 t_error			(*segment_read)(i_segment id,
 					t_paddr offset,
 					void* buffer,
@@ -96,7 +96,7 @@ t_error			(*segment_copy)(i_segment dst,
 
 }
 
-
+*/
 /*
  * this function just initialises the machine-dependent segment manager.
  *
