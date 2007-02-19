@@ -141,21 +141,7 @@ void			kaneton(t_init*				bootloader)
 #ifdef APP
   APP();
 #endif
-  
-  o_as** as;
-  as = malloc(1024);
-  as[0] = malloc(1024);
-  as_get(0, as);
-  printf("%i\n", (int)(as));
-  
-//    extern i_as				asid;	  
-// printf("%i\n", (int)(asid));
-//extern m_as* as;
-//  as_get(asid, &as);
-t_vaddr address;
- region_first_fit(as, 8, &address);
 
-cons_msg('Q', "pomme coin\n"); 
   while(1)
     ;
 

@@ -23,7 +23,6 @@
 
 #include <klibc.h>
 #include <kaneton.h>
-#include <core/segment.h>
 
 /*
  * ---------- extern ----------------------------------------------------------

@@ -77,7 +77,7 @@ typedef struct
   i_stats			stats;
 
   machdep_data(m_region);
-}				m_region; //global here
+}				m_region;
 
 /*
  * the region architecture-dependent interface

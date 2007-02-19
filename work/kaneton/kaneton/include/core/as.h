@@ -19,8 +19,6 @@
 #include <arch/machdep/machdep.h>
 #include <core/id.h>
 #include <core/types.h>
-#include <core/segment.h>
-
 
 /*
  * ---------- macros ----------------------------------------------------------
