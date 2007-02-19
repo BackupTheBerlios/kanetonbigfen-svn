@@ -207,7 +207,7 @@ t_error			segment_reserve(i_as			asid,
 t_error			segment_release(i_segment		segid);
 
 t_error			segment_space(	o_as*		as,
-				     	t_psize		size,
+				      	t_psize		size,
 					t_paddr*	address);
 
 t_error			segment_init(void);

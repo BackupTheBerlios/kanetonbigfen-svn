@@ -51,6 +51,69 @@ d_region		region_dispatch =
  */
 
 // FIXME: lot of code has been removed here
+t_error			map_page(t_paddr paddr, t_vaddr *vaddr)
+{
+  o_as*			kas;
+  t_ia32_pde		pde;
+  t_ia32_pde		pte;
+  t_ia32_directory	dir;
+  t_ia32_table		table;
+  t_ia32_page		page;
+  o_region*		oreg;
+  i_segment		segid;
+  o_segment*		segment;
+
+  REGION_ENTER(region);
+
+  if (as_get(kasid, &kas) != ERROR_NONE)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
+
+  if (region_space(kas, PAGESZ, vaddr) != ERROR_NONE)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
+
+  if ((oreg = malloc(sizeof(o_segment*))) == NULL)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
+
+  if (region_inject(kasid, oreg) != ERROR_NONE)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
+
+  oreg->address = *vaddr;
+  oreg->regid = (i_region)oreg->address;
+  oreg->opts = REGION_OPT_PRIVILEGED;
+  oreg->size = PAGESZ;
+  oreg->offset = paddr;
+  oreg->segid = (i_segment)oreg->offset;
+
+  region_inject(kasid, oreg);
+
+  // Page Dir
+  dir = kas->machdep.pd;
+  pde = PDE_ENTRY(*vaddr);
+
+  if (pd_get_table(&dir, pde, &table) == ERROR_UNKNOWN)
+    {
+      segment_reserve(kasid, 1, PERM_READ | PERM_WRITE, &segid);
+      if (segment_get(segid, &segment) != ERROR_NONE)
+	REGION_LEAVE(region, ERROR_UNKNOWN);
+      pt_build(segment->address, &table, 0);
+      table.present = 0;
+      table.rw = 0;
+      table.user = 0;
+      table.cached = 0;
+      table.writeback = 0;
+      pd_add_table(&dir, pde, table);
+    }
+  else
+    table.entries = ENTRY_ADDR(PD_MIRROR, pde);
+  // Page Table
+  pte = PTE_ENTRY(*vaddr);
+
+  page.addr = paddr;
+  pt_add_page(&table, pte, page);
+
+  REGION_LEAVE(region, ERROR_NONE);
+}
+
 t_error			ia32_region_reserve(i_as			asid,
 					i_segment		segid,
 				     	t_paddr			offset,
@@ -59,31 +122,59 @@ t_error			ia32_region_reserve(i_as			asid,
 				     	t_vsize			size,
 				     	i_region*		regid)
 {
-/*t_uint16			pde_start;
-t_uint16			pde_end;
-t_uint16			pte_start;
-t_uint16			pte_end;
-t_ia32_table*			table = NULL;
-i_segment	        	table_id;
-int				i = 0;
+  t_ia32_pde			pde_start;
+  t_ia32_pde			pde_end;
+  t_ia32_pte			pte_start;
+  t_ia32_pte			pte_end;
+  t_ia32_table			table;
+  i_segment	        	table_id;
+  t_ia32_directory		pd;
+  o_as*				oas;
+  t_ia32_page			page;
+  t_paddr			base;
+  t_vaddr			pd_addr;
+  o_segment*			segment;
+  int				i = 0;
+  int				j = 0;
+  int				x = 0;
 
-REGION_ENTER(region);
-pde_start = PDE_ENTRY(address);
-pde_end = PDE_ENTRY(address + size);
-pte_start = PTE_ENTRY(address);
-pte_end = PTE_ENTRY(address + size);
+  REGION_ENTER(region);
+  if (as_get(asid, &oas) != ERROR_NONE)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
 
-for (i = pde_start; i != pde_end; i++)
-{
-pd_get_table(NULL, i, table);
-if (table == NULL)
-{
-segment_reserve(asid, PAGESZ, PERM_READ | PERM_WRITE, &table_id);
+  pd = oas->machdep.pd;
+  base = MK_BASE(pd);
+  // Mapping PD into Kernel
+  map_page(base, &pd_addr);
 
-pd_add_table(NULL, i,t_ia32_table		table)
-}
-}*/
-REGION_LEAVE(region, ERROR_NONE);
+  pde_start = PDE_ENTRY(pd_addr);
+  pde_end = PDE_ENTRY(pd_addr + size);
+  pte_start = PTE_ENTRY(pd_addr);
+  pte_end = PTE_ENTRY(pd_addr + size);
+
+  for (i = pde_start; i != pde_end; i++)
+    {
+      if (pd_get_table(&pd_addr, i, &table) == ERROR_UNKNOWN)
+	{
+	  segment_reserve(kasid, 1, PERM_READ | PERM_WRITE, &segid);
+	  if (segment_get(segid, &segment) != ERROR_NONE)
+	    REGION_LEAVE(region, ERROR_UNKNOWN);
+	  pt_build(segment->address, &table, 0);
+	  table.present = 0;
+	  table.rw = 0;
+	  table.user = 0;
+	  table.cached = 0;
+	  table.writeback = 0;
+	  pd_add_table(&pd_addr, i, table);
+	}
+      for (j = (i == pde_start ? pte_start : 0); j != (i == pde_end ? pte_end : 1023); j++)
+	{
+	  page.addr = offset + x;
+	  pt_add_page(&table, j, page);
+	  x += PAGESZ;
+	}
+    }
+  REGION_LEAVE(region, ERROR_NONE);
 }
 
 /*

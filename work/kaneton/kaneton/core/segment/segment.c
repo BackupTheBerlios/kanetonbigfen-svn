@@ -120,8 +120,7 @@ SEGMENT_ENTER(segment);
 
 if (set_get(segment->oseg_list, segid, (void**)o) == ERROR_NONE)
     SEGMENT_LEAVE(segment, ERROR_NONE);
-
-  return (ERROR_UNKNOWN);
+SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 }
 
 t_error			segment_reserve(i_as			asid,
@@ -130,35 +129,40 @@ t_error			segment_reserve(i_as			asid,
 					i_segment*		segid)
 {
   // FIXED: Lou
-o_as*			oas;
-o_segment*		oseg;
-t_iterator		i;
-t_state			state;
+  o_as*			oas;
+  o_segment*		oseg;
+  t_iterator		i;
+  t_state			state;
+  int			add = 1;
 
-cons_msg('!', "BEFORE     \n");
-as_show(asid);
-// Getting the o_as*
-if (as_get(asid, &oas) != ERROR_NONE)
-	SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+  /*  cons_msg('!', "BEFORE     \n"); */
+  /*as_show(asid);**/
+  // Getting the o_as*
+  if (as_get(asid, &oas) != ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 
   set_foreach(SET_OPT_FORWARD, oas->segments, &i, state)
     {
       if (set_object(oas->segments, i, (void**)&oseg) != ERROR_NONE)
-		SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
-	if (oseg->address == 0x0)
-		break;
-}
-// Segment Allocation
-segment_space(oas, size, &oseg->address);
-oseg->size = size;
-oseg->asid = asid;
-oseg->perms = perms;
-
-*segid = oseg->segid = (i_segment)oseg->address;
-set_add_array(oas->segments, (void*) oseg);
-set_add_array(segment->oseg_list, (void*) oseg);
-cons_msg('!', "AFTER     \n");
-as_show(asid);
+	SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+      if (oseg->address == 0x0)
+	{
+	  add = 0;
+	  break;
+	}
+    }
+  // Segment Allocation
+  segment_space(oas, size, &oseg->address);
+  oseg->size = size;
+  oseg->asid = asid;
+  oseg->perms = perms;
+  oseg->type = SEGMENT_TYPE_MEMORY;
+  *segid = oseg->segid = (i_segment)oseg->address;
+  if(add)
+  set_add_array(oas->segments, (void*) oseg);
+  set_add_array(segment->oseg_list, (void*) oseg);
+  /* cons_msg('!', "AFTER     \n"); */
+  /*  as_show(asid);*/
   return (ERROR_UNKNOWN);
 }
 
