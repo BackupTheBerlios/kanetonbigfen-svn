@@ -43,7 +43,13 @@ d_region		region_dispatch =
   {
 
 // FIXME: don't forget to fill this structure
-
+    NULL,
+    NULL,
+    region_reserve,
+    region_release,
+    NULL,
+    NULL,
+    NULL
   };
 
 /*
@@ -154,9 +160,9 @@ t_error			ia32_region_reserve(i_as			asid,
 
   for (i = pde_start; i != pde_end; i++)
     {
-      if (pd_get_table(&pd_addr, i, &table) == ERROR_UNKNOWN)
+      if (pd_get_table(&pd, i, &table) == ERROR_UNKNOWN)
 	{
-	  segment_reserve(kasid, 1, PERM_READ | PERM_WRITE, &segid);
+	  segment_reserve(asid, 1, PERM_READ | PERM_WRITE, &segid);
 	  if (segment_get(segid, &segment) != ERROR_NONE)
 	    REGION_LEAVE(region, ERROR_UNKNOWN);
 	  pt_build(segment->address, &table, 0);
@@ -165,16 +171,22 @@ t_error			ia32_region_reserve(i_as			asid,
 	  table.user = 0;
 	  table.cached = 0;
 	  table.writeback = 0;
-	  pd_add_table(&pd_addr, i, table);
+	  pd_add_table(&pd, i, table);
 	}
       for (j = (i == pde_start ? pte_start : 0); j != (i == pde_end ? pte_end : 1023); j++)
 	{
-	  page.addr = offset + x;
+	  page.addr = x + offset;
 	  pt_add_page(&table, j, page);
 	  x += PAGESZ;
 	}
     }
   REGION_LEAVE(region, ERROR_NONE);
+}
+
+t_error			ia32_region_release(i_as			asid,
+					    i_region			regid)
+{
+
 }
 
 /*
