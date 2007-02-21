@@ -174,13 +174,34 @@ t_error			segment_space(	o_as*		as,
 	return segment_first_fit((size + PAGESZ -1) / PAGESZ, address);
 }
 
-/* t_error			segment_read(i_segment id, */
-/* 					t_paddr offset, */
-/* 					void* buffer, */
-/* 					t_psize size) */
-/* { */
+t_error			segment_read(i_segment id,
+					t_paddr offset,
+					void* buffer,
+					t_psize size)
+{
 
-/* } */
+if (machdep_call(segment, segment_read, id, offset, buffer, size) != ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+}
+
+t_error			segment_write(i_segment id,
+					 t_paddr offset,
+					 const void* buffer,
+					 t_psize size)
+{
+if (machdep_call(segment, segment_write, id, offset, buffer, size) != ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+}
+
+t_error			segment_copy(i_segment dst,
+						t_paddr offd,
+						i_segment src,
+						t_paddr offs,
+						t_psize size)
+{
+if (machdep_call(segment, segment_copy, dst, offd, src, offs, size) != ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+}
 
 /*
  * this function initialises the segment manager from the init
@@ -202,9 +223,9 @@ t_error			segment_space(	o_as*		as,
  */
 t_error			segment_init(void)
 {
-i_segment	        seg;
-i_task			ktask = ID_UNUSED;
-i_as			asid;
+/* i_segment	        seg; */
+/* i_task			ktask = ID_UNUSED; */
+/* i_as			asid; */
   /*
    * 1)
    */
@@ -246,8 +267,23 @@ i_as			asid;
 /*     SEGMENT_LEAVE(segment, ERROR_UNKNOWN);*/
 
   segment_add(segment->start + segment->size, segment->start + segment->size);
-  segment_add(segment->start, segment->start + 1);
+  segment_add(segment->start, segment->start);
 //
+//     //printf("low=%i up=%i pages=%i\n", segment->start, segment->size + segment->start, segment->size/PAGESZ);
+   //t_paddr res1;
+//   segment_first_fit(2, &res1);
+   //segment_space(0, 4, &res1);
+//   segment_dump();
+//   t_paddr res2;
+//   segment_first_fit(4, &res2);
+//   segment_dump();
+//   segment_remove(res1);
+//   segment_dump();
+//   segment_first_fit(1, &res1);
+//   segment_dump();
+//   segment_first_fit(1, &res1);
+//   segment_dump();
+
 
 //   i_segment test;
 // i_as a = 0;
