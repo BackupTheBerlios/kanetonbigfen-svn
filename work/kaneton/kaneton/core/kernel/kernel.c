@@ -175,6 +175,14 @@ void			kernel_init(void)
   if (thread_init() != ERROR_NONE)
     core_error("cannot initialise the thread manager\n");
 
+  /*
+   * 10)
+   */
+
+  cons_msg('+', "starting cpu manager\n");
+
+  if (cpu_init() != ERROR_NONE)
+    core_error("cannot initialise the cpu manager\n");
 
   /*
    * 11)

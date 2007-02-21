@@ -81,6 +81,9 @@ t_error			map_page(t_paddr paddr, t_vaddr *vaddr)
   if ((oreg = malloc(sizeof(o_segment*))) == NULL)
     REGION_LEAVE(region, ERROR_UNKNOWN);
 
+  if ((segment = malloc(sizeof(o_segment))) == NULL)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
+
   if (region_inject(kasid, oreg) != ERROR_NONE)
     REGION_LEAVE(region, ERROR_UNKNOWN);
 
@@ -153,8 +156,8 @@ t_error			ia32_region_reserve(i_as			asid,
   if (as_get(asid, &oas) != ERROR_NONE)
     REGION_LEAVE(region, ERROR_UNKNOWN);
 
-  if (segment_get(segid, &segment) != ERROR_NONE)
-    REGION_LEAVE(region, ERROR_UNKNOWN);
+if (segment_get(segid, &segment) != ERROR_NONE)
+	    REGION_LEAVE(region, ERROR_UNKNOWN);
 
   ram_paddr = segment->address;
   pd = oas->machdep.pd;
@@ -175,18 +178,18 @@ t_error			ia32_region_reserve(i_as			asid,
 	  if (segment_get(segid, &segment) != ERROR_NONE)
 	    REGION_LEAVE(region, ERROR_UNKNOWN);
 	  pt_build(segment->address, &table, 0);
-	  map_page(segment->address, &pt_addr);
-	  table.entries = pt_addr;
+	  table.present = 0;
+	  table.rw = 0;
+	  table.user = 0;
+	  table.cached = 0;
+	  table.writeback = 0;
 	  pd_add_table((t_ia32_directory *) &pd_addr, i, table);
 	  clear = 1;
 	}
-      if (clear)
-	memset(&pt_addr, '\0', sizeof (t_ia32_table));
-      else
-	{
-	  map_page(segment->address, &pt_addr);
-	  table.entries = pt_addr;
-	}
+       map_page(segment->address, &pt_addr);
+       table.entries = pt_addr;
+       if (clear)
+	 memset(&pt_addr, '\0', sizeof (t_ia32_table));
       for (j = (i == pde_start ? pte_start : 0); j <= (i == pde_end ? pte_end : 1023); j++)
 	{
 	  page.addr = x + (offset + ram_paddr);

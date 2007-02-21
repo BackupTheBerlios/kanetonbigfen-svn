@@ -48,8 +48,8 @@ extern m_segment*	segment;
 // FIXME: lot of code has been removed here
 t_setsz			segment_size(void)
 {
-	t_setsz		set_sz	=	42;				//set size
-	set_size(segment->oseg_busymap_list, &set_sz); //get size of busymap
+	t_setsz		set_sz	=	42;		//set size
+	set_size(segment->oseg_busymap_list, &set_sz);	//get size of busymap
 	return set_sz;
 }
 
@@ -60,7 +60,7 @@ void			segment_dump(void)
 	oseg_busymap*	oseg;
 	i_set		set	=	segment->oseg_busymap_list;
 	t_psize		size;
-	printf("/--------------------------\\\n");
+	printf("/----------------------------\\\n");
 	if (segment_size() != 0)
 	{
 		set_foreach(SET_OPT_FORWARD, set, &i, state)
@@ -68,19 +68,19 @@ void			segment_dump(void)
 			oseg = (oseg_busymap*)i.u.ll.node->data;
 			size = (oseg->end - oseg->start) / PAGESZ;
 			if (1 | size)
-				printf("|%8x -> %8x (%2i) |\n", oseg->start, oseg->end, size);
+				printf("|%8x -> %8x (%4i) |\n", oseg->start, oseg->end, size);
 		}
 	}
-	printf("\\--------------------------/\n");
+	printf("\\----------------------------/\n");
 }
 
 t_error			segment_add(t_paddr begin, t_paddr end)
 {
-	i_set		set	=	segment->oseg_busymap_list;		//osegment busymap list
+	i_set		set	=	segment->oseg_busymap_list;	//osegment busymap list
 	oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
 	oseg->start		=	begin;				//
 	oseg->end		=	end;
-	return set_add_ll(set, oseg);
+	return set_add(set, oseg);
 }
 
 t_error			segment_add_sorted(t_paddr begin,
@@ -100,7 +100,7 @@ t_error			segment_add_sorted(t_paddr begin,
 		if (oseg->start > begin)
 		{
 			//printf("yes !\n");
-			return set_before_ll(set, i, oseg_f);
+			return set_before(set, i, oseg_f);
 		}
 	}
 	return ERROR_UNKNOWN;
@@ -128,7 +128,7 @@ t_error			segment_first_fit(	t_psize		size,
 {
 	t_paddr		start	=	segment->start;			//mem start
 	t_paddr		l_begin	=	start;				//tmp start zone
-	i_set		set	=	segment->oseg_busymap_list;		//osegment busymap list
+	i_set		set	=	segment->oseg_busymap_list;	//osegment busymap list
 	oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
 	oseg->start		=	start;				//
 	oseg->end		=	start + size * PAGESZ;

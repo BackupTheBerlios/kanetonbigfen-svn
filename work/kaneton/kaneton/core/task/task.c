@@ -74,7 +74,7 @@ static t_error		task_current(i_task*			tsk)
 
   TASK_ENTER(task);
 
-  if (!sched)
+  if (1 || !sched) // <--- this line has changed.
     {
       *tsk = ktask;
 

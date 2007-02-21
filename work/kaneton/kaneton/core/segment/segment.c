@@ -73,21 +73,23 @@ t_error			segment_inject(i_as		asid,
 				       o_segment*	o,
 				       i_segment*	segid)
 {
+/*   printf("must inject at @%x(%i)\n", o->address, o->size / PAGESZ); */
   // FIXME: Lou
-o_as*			oas;
+  o_as*			oas;
 
-SEGMENT_ENTER(segment);
-// Getting the o_as*
-if (as_get(asid, &oas) == ERROR_NONE)
-{
-// Segment injection
-o->asid = asid;
-*segid = o->segid = (i_segment)o->address;
-set_add_array(oas->segments, (void*) o);
-set_add_array(segment->oseg_list, (void*) o);
-return (ERROR_NONE);
-}
-	return (ERROR_UNKNOWN);
+  SEGMENT_ENTER(segment);
+  // Getting the o_as*
+  if (as_get(asid, &oas) == ERROR_NONE)
+    {
+      // Segment injection
+      o->asid = asid;
+      *segid = o->segid = (i_segment)o->address;
+      set_add(oas->segments, (void*) o);
+      set_add(segment->oseg_list, (void*) o);
+      segment_add_sorted(o->address, o->address + o->size /** PAGESZ*/);
+      return (ERROR_NONE);
+    }
+  return (ERROR_UNKNOWN);
 }
 
 t_error			segment_perms(i_segment			segid,
@@ -116,11 +118,15 @@ t_error			segment_get(i_segment			segid,
 				    o_segment**			o)
 {
   // FIXME: Lou
-SEGMENT_ENTER(segment);
+  SEGMENT_ENTER(segment);
 
-if (set_get(segment->oseg_list, segid, (void**)o) == ERROR_NONE)
-    SEGMENT_LEAVE(segment, ERROR_NONE);
-SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+  if (set_get(segment->oseg_list, segid, (void**)o) == ERROR_NONE)
+    {
+/*       printf("ok!\n"); */
+      SEGMENT_LEAVE(segment, ERROR_NONE);
+    }
+/*   printf("error!\n"); */
+  SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 }
 
 t_error			segment_reserve(i_as			asid,
@@ -129,28 +135,13 @@ t_error			segment_reserve(i_as			asid,
 					i_segment*		segid)
 {
   // FIXED: Lou
-  o_as*			oas;
-  o_segment*		oseg;
-  t_iterator		i;
-  t_state			state;
-  int			add = 1;
+  o_as*			oas = malloc(sizeof(o_as));
+  o_segment*		oseg = malloc(sizeof(o_segment));
 
-  /*  cons_msg('!', "BEFORE     \n"); */
-  /*as_show(asid);**/
   // Getting the o_as*
   if (as_get(asid, &oas) != ERROR_NONE)
     SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 
-  set_foreach(SET_OPT_FORWARD, oas->segments, &i, state)
-    {
-      if (set_object(oas->segments, i, (void**)&oseg) != ERROR_NONE)
-	SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
-      if (oseg->address == 0x0)
-	{
-	  add = 0;
-	  break;
-	}
-    }
   // Segment Allocation
   segment_space(oas, size, &oseg->address);
   oseg->size = size;
@@ -158,11 +149,13 @@ t_error			segment_reserve(i_as			asid,
   oseg->perms = perms;
   oseg->type = SEGMENT_TYPE_MEMORY;
   *segid = oseg->segid = (i_segment)oseg->address;
-  if(add)
+
+/*   printf("<\n"); */
   set_add_array(oas->segments, (void*) oseg);
+/*   printf("%i %i %i\n", oseg->segid, oseg->address, oseg->size); */
   set_add_array(segment->oseg_list, (void*) oseg);
-  /* cons_msg('!', "AFTER     \n"); */
-  /*  as_show(asid);*/
+/*   printf(">\n"); */
+
   return (ERROR_UNKNOWN);
 }
 
@@ -178,7 +171,7 @@ t_error			segment_space(	o_as*		as,
 					t_paddr*	address)
 {
 // FIXED: Fensoft
-	return segment_first_fit(size, address);
+	return segment_first_fit((size + PAGESZ -1) / PAGESZ, address);
 }
 
 t_error			segment_read(i_segment id,
@@ -203,9 +196,9 @@ t_error			segment_read(i_segment id,
  */
 
 /**
- * 
- * @param  
- * @return 
+ *
+ * @param
+ * @return
  */
 t_error			segment_init(void)
 {
@@ -241,28 +234,20 @@ i_as			asid;
   STATS_RESERVE("segment", &segment->stats);
 
   // FIXME: perhaps some code is needed here
-  set_reserve_ll(SET_OPT_NONE, 2 + segment->size/PAGESZ, &segment->oseg_busymap_list); // pire cas
-if (set_reserve(array, SET_OPT_SORT | SET_OPT_ALLOC, AS_SEGMENTS_INITSZ,
-		  sizeof(i_segment), &segment->oseg_list) != ERROR_NONE)
-      AS_LEAVE(as, ERROR_UNKNOWN);
+  if (set_reserve(ll, SET_OPT_ALLOC, 2 + segment->size/PAGESZ, &segment->oseg_busymap_list) != ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+  /* set_reserve_ll(SET_OPT_NONE, 2 + segment->size/PAGESZ, &segment->oseg_busymap_list); // pire cas */
+  // FIXME: probably a bug here. if not, see segment_get
+  if (set_reserve(ll, SET_OPT_SORT | SET_OPT_FREE,
+		  sizeof(o_segment), &segment->oseg_list) != ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+/*   if (set_reserve(array, SET_OPT_SORT | SET_OPT_ALLOC, AS_SEGMENTS_INITSZ, */
+/* 		  sizeof(o_segment), &segment->oseg_list) != ERROR_NONE) */
+/*     SEGMENT_LEAVE(segment, ERROR_UNKNOWN);*/
 
   segment_add(segment->start + segment->size, segment->start + segment->size);
-  segment_add(segment->start, segment->start);
-//   
-//     //printf("low=%i up=%i pages=%i\n", segment->start, segment->size + segment->start, segment->size/PAGESZ);
-   //t_paddr res1;
-//   segment_first_fit(2, &res1);
-   //segment_space(0, 4, &res1);
-//   segment_dump();
-//   t_paddr res2;
-//   segment_first_fit(4, &res2);
-//   segment_dump();
-//   segment_remove(res1);
-//   segment_dump();
-//   segment_first_fit(1, &res1);
-//   segment_dump();
-//   segment_first_fit(1, &res1);
-//   segment_dump();
+  segment_add(segment->start, segment->start + 1);
+//
 
 //   i_segment test;
 // i_as a = 0;

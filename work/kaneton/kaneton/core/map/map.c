@@ -54,22 +54,21 @@ void*			mmap(void*			start,
 			     int			fd,
 			     off_t			offset)
 {
-t_perms			perms;
-t_vaddr*		addr = NULL;
+  t_perms			perms;
+  t_vaddr*		addr = NULL;
 
-if (prot & PROT_READ)
-perms &= PERM_READ;
+  if (prot & PROT_READ)
+    perms &= PERM_READ;
 
-if (prot & PROT_WRITE)
-perms &= PERM_WRITE;
+  if (prot & PROT_WRITE)
+    perms &= PERM_WRITE;
 
-if (prot & PROT_EXEC)
-perms &= PERM_EXEC;
+  if (prot & PROT_EXEC)
+    perms &= PERM_EXEC;
 
   // FIXED: Lou - some easy code has been removed here
-map_reserve(kasid, MAP_OPT_PRIVILEGED, length, perms, addr);
-	return addr;
-  return NULL;
+  map_reserve(kasid, MAP_OPT_PRIVILEGED, length, perms, addr);
+  return addr;
 }
 
 /*
@@ -96,21 +95,21 @@ t_error			map_reserve(i_as		asid,
 				    t_perms		perms,
 				    t_vaddr*		addr)
 {
-MAP_ENTER(map);
+  MAP_ENTER(map);
   // FIXED: Lou - some easy code has been removed here
-i_segment*		segid;
-i_region*		regid;
-o_region*		oreg;
+  i_segment*		segid;
+  i_region*		regid;
+  o_region*		oreg;
 
-if (segment_reserve(asid, size, perms, segid) != ERROR_NONE)
-	MAP_LEAVE(map, ERROR_UNKNOWN);
+  if (segment_reserve(asid, size, perms, segid) != ERROR_NONE)
+    MAP_LEAVE(map, ERROR_UNKNOWN);
 
-if (region_reserve(asid, *segid, 0, opts, *addr, size, regid) != ERROR_NONE)
-	MAP_LEAVE(map, ERROR_UNKNOWN);
+  if (region_reserve(asid, *segid, 0, opts, *addr, size, regid) != ERROR_NONE)
+    MAP_LEAVE(map, ERROR_UNKNOWN);
 
-if (region_get(asid, *regid, &oreg) != ERROR_NONE)
-    	MAP_LEAVE(map, ERROR_UNKNOWN)
-*addr = oreg->address;
+  if (region_get(asid, *regid, &oreg) != ERROR_NONE)
+    MAP_LEAVE(map, ERROR_UNKNOWN)
+      *addr = oreg->address;
 
   return (ERROR_NONE);
 }
