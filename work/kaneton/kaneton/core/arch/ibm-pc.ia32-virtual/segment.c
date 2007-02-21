@@ -51,7 +51,7 @@ d_segment		segment_dispatch =
 
 // FIXME: lot of code has been removed here
 
-t_error			segment_read(i_segment id,
+t_error			ia32_segment_read(i_segment id,
 					t_paddr offset,
 					void* buffer,
 					t_psize size)
@@ -77,7 +77,7 @@ SEGMENT_LEAVE(segment, ERROR_NONE);
   return (ERROR_UNKNOWN);
 }
 
-t_error			segment_write(i_segment id,
+t_error			ia32_segment_write(i_segment id,
 					 t_paddr offset,
 					 const void* buffer,
 					 t_psize size)
@@ -97,7 +97,7 @@ SEGMENT_LEAVE(segment, ERROR_NONE);
   return (ERROR_UNKNOWN);
 }
 
-t_error			segment_copy(i_segment dst,
+t_error			ia32_segment_copy(i_segment dst,
 						t_paddr offd,
 						i_segment src,
 						t_paddr offs,
