@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Wed Feb 21 23:41:00 2007 vincent fenet
+** Last update Thu Feb 22 00:19:49 2007 vincent fenet
 */
 
 #include <klibc.h>
@@ -39,7 +39,7 @@ void check_2(void)
   mysleep();
   as_show(kasid);
   i_segment segid;
-  mysleep();;
+  mysleep();
   segment_reserve(kasid, 110 * PAGESZ, 0, &segid);
   mysleep();
   o_segment *oseg;
