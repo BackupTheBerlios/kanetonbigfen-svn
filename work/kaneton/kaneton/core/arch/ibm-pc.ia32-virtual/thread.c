@@ -46,9 +46,9 @@ extern i_as		kasid;
  * the thread manager dispatch.
  */
 
+// FIXME: don't forget to fill this structure
 d_thread			thread_dispatch =
   {
-
 // FIXME: don't forget to fill this structure
 /*     NULL, */
 /*     NULL, */

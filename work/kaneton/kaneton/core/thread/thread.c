@@ -738,6 +738,7 @@ t_error			thread_init(void)
       return ERROR_UNKNOWN;
     }
 
+
   /*
    * 3)
    */
