@@ -151,9 +151,9 @@ t_error			segment_reserve(i_as			asid,
   *segid = oseg->segid = (i_segment)oseg->address;
 
 /*   printf("<\n"); */
-  set_add_array(oas->segments, (void*) oseg);
+  set_add(oas->segments, (void*) oseg);
 /*   printf("%i %i %i\n", oseg->segid, oseg->address, oseg->size); */
-  set_add_array(segment->oseg_list, (void*) oseg);
+  set_add(segment->oseg_list, (void*) oseg);
 /*   printf(">\n"); */
 
   return (ERROR_UNKNOWN);

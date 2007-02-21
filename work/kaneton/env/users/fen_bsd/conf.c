@@ -5,42 +5,71 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Wed Feb 21 15:03:45 2007 vincent fenet
+** Last update Wed Feb 21 23:41:00 2007 vincent fenet
 */
 
 #include <klibc.h>
 #include <kaneton.h>
+int mysleep(void);
+void check_1(void);
+void check_2(void);
 
 extern int kasid;
 
+int num = 0;
+int mysleep(void)
+{
+  printf("sleep\n");
+  int i, j, ret;
+  for (j = 0; j != 200; j++)
+    for (i = 0; i != 100000; i++)
+      ret = i + j;
+  return ret;
+}
+
+
 void check_tests(void)
 {
-  check_1();
-  /* printf("%i\n", kasid); */
-  /* as_show(kasid); */
+  check_2();
+}
+
+void check_2(void)
+{
+  printf("%i\n", kasid);
+  mysleep();
+  as_show(kasid);
   i_segment segid;
-  segment_reserve(kasid, 10, 0, &segid);
-  o_segment *oseg;// = malloc(sizeof(o_segment));
+  mysleep();;
+  segment_reserve(kasid, 110 * PAGESZ, 0, &segid);
+  mysleep();
+  o_segment *oseg;
+  mysleep();
   segment_get(segid, &oseg);
-/*   segment_get(16777216, &oseg); */
+  mysleep();
+  segment_dump();
+  printf("look at 110 at the beginning\n");
+  mysleep();
+  printf("end of check_2\n");
 }
 
 extern m_segment* segment;
-
 void check_1(void)
 {
-  /* printf("low=%i up=%i pages=%i\n", segment->start, segment->size + segment->start, segment->size/PAGESZ); */
-/*   t_paddr res1; */
-/*   segment_first_fit(2, &res1); */
-/*   segment_space(0, 4, &res1); */
-/*   segment_dump(); */
-/*   t_paddr res2; */
-/*   segment_first_fit(4, &res2); */
-/*   segment_dump(); */
-/*   segment_remove(res1); */
-/*   segment_dump(); */
-/*   segment_first_fit(1, &res1); */
-/*   segment_dump(); */
-/*   segment_first_fit(1, &res1); */
+  t_paddr res1;
+  segment_first_fit(102, &res1);
+  segment_space(0, 104, &res1);
+  segment_dump();
+  t_paddr res2;
+  segment_first_fit(104, &res2);
+  mysleep();
+  segment_dump();
+  segment_remove(res1);
+  mysleep();
+  segment_dump();
+  segment_first_fit(101, &res1);
+  mysleep();
+  segment_dump();
+  segment_first_fit(101, &res1);
+  mysleep();
   segment_dump();
 }
