@@ -17,7 +17,7 @@
 #
 
 # disable checks
-_CHECK_LO_	:=
+_CHECK_LO_	:= $(_CORE_CONF_DIR_)/conf.lo
 
 # for using gdb with qemu
 _CFLAGS_	+=	-ggdb

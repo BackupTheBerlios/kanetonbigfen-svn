@@ -76,7 +76,7 @@
  * this define starts the tests by hand.
  */
 
-#undef CONF_ENABLE_CHECK
+#define CONF_ENABLE_CHECK
 
 /*
  * the configuration debug
@@ -107,6 +107,8 @@
 /*
  * ../../core/conf/conf.c
  */
+
+void			 check_tests(void);
 
 
 /*

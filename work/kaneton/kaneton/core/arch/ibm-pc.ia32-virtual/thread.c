@@ -50,7 +50,18 @@ d_thread			thread_dispatch =
   {
 
 // FIXME: don't forget to fill this structure
-
+/*     NULL, */
+/*     NULL, */
+/*     NULL, */
+/*     NULL, */
+/*     NULL, */
+/*     NULL, */
+/*     NULL, */
+/*     NULL, */
+/*     NULL, */
+/*     NULL, */
+/*     ia32_thread_init, */
+/*     NULL, */
   };
 
 /*
