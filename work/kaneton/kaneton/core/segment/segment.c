@@ -174,13 +174,13 @@ t_error			segment_space(	o_as*		as,
 	return segment_first_fit((size + PAGESZ -1) / PAGESZ, address);
 }
 
-t_error			segment_read(i_segment id,
-					t_paddr offset,
-					void* buffer,
-					t_psize size)
-{
+/* t_error			segment_read(i_segment id, */
+/* 					t_paddr offset, */
+/* 					void* buffer, */
+/* 					t_psize size) */
+/* { */
 
-}
+/* } */
 
 /*
  * this function initialises the segment manager from the init
