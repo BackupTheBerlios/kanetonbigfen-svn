@@ -86,6 +86,7 @@ t_error			segment_write(i_segment id,
 					 const void* buffer,
 					 t_psize size)
 {
+  i_region			regid;
   o_region*			oreg;
   o_segment*			o;
 
