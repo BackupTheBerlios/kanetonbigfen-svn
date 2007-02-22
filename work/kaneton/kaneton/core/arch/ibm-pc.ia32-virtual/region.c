@@ -45,8 +45,8 @@ d_region		region_dispatch =
 // FIXME: don't forget to fill this structure
     NULL,
     NULL,
-    region_reserve,
-    region_release,
+    ia32_region_reserve,
+    ia32_region_release,
     NULL,
     NULL,
     NULL
@@ -94,7 +94,8 @@ t_error			map_page(t_paddr paddr, t_vaddr *vaddr)
   oreg->offset = paddr;
   oreg->segid = (i_segment)oreg->offset;
 
-  region_inject(kasid, oreg);
+  if (region_inject(kasid, oreg) != ERROR_NONE)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
 
   // Page Dir
   dir = kas->machdep.pd;
@@ -114,7 +115,7 @@ t_error			map_page(t_paddr paddr, t_vaddr *vaddr)
    memset(ENTRY_ADDR(PD_MIRROR, pde), '\0', PAGESZ);
   // Page Table
   pte = PTE_ENTRY(*vaddr);
-
+  page.present = 1;
   page.addr = paddr;
   pt_add_page(&table, pte, page);
 
@@ -142,12 +143,19 @@ t_error			ia32_region_reserve(i_as			asid,
   t_vaddr			pd_addr;
   t_paddr			pt_addr;
   o_segment*			segment;
+  o_region*			oreg;
   int				i = 0;
   int				j = 0;
   int				x = 0;
   int				clear = 0;
 
   REGION_ENTER(region);
+  if (as_get(asid, &oas) != ERROR_NONE)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
+
+if (region_get(asid, regid, &oreg) != ERROR_NONE)
+  REGION_LEAVE(region, ERROR_UNKNOWN);
+
   if (as_get(asid, &oas) != ERROR_NONE)
     REGION_LEAVE(region, ERROR_UNKNOWN);
 
@@ -160,10 +168,10 @@ if (segment_get(segid, &segment) != ERROR_NONE)
   // Mapping PD into Kernel
   map_page(base, &pd_addr);
 
-  pde_start = PDE_ENTRY(address);
-  pde_end = PDE_ENTRY(address + size);
-  pte_start = PTE_ENTRY(address);
-  pte_end = PTE_ENTRY(address + size);
+  pde_start = PDE_ENTRY(oreg->address);
+  pde_end = PDE_ENTRY(oreg->address + size);
+  pte_start = PTE_ENTRY(oreg->address);
+  pte_end = PTE_ENTRY(oreg->address + size);
 
   for (i = pde_start; i <= pde_end; i++)
     {
@@ -183,6 +191,7 @@ if (segment_get(segid, &segment) != ERROR_NONE)
       for (j = (i == pde_start ? pte_start : 0); j <= (i == pde_end ? pte_end : 1023); j++)
 	{
 	  page.addr = x + (offset + ram_paddr);
+	  page.present = 1;
 	  pt_add_page(&table, j, page);
 	  x += PAGESZ;
 	}
