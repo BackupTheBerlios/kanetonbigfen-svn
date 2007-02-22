@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Thu Feb 22 11:19:38 2007 vincent fenet
+** Last update Thu Feb 22 11:43:42 2007 vincent fenet
 */
 
 #include <klibc.h>
@@ -33,23 +33,27 @@ void check_tests(void)
 void check_2(void)
 {
   printf("%i\n", kasid);
-  mysleep(200);
+  mysleep(100);
   as_show(kasid);
   i_segment segid;
-  mysleep(200);
+  mysleep(100);
   segment_reserve(kasid, 110 * PAGESZ, 0, &segid);
-  mysleep(200);
+  mysleep(100);
   o_segment *oseg;
-  mysleep(200);
+  mysleep(100);
   segment_get(segid, &oseg);
-  mysleep(200);
+  mysleep(100);
   segment_dump();
   printf("look at 110 at the beginning\n");
-  mysleep(1000);
+  mysleep(100);
   segment_release(segid);
   segment_dump();
   printf("look at 110 deletion at the beginning\n");
-  mysleep(1000);
+  mysleep(100);
+  if (segment_get(segid, &oseg) == ERROR_NONE)
+    printf("found, bugged !\n");
+  else
+    printf("not found, seems ok!\n");
   printf("end of check_2\n");
 }
 
