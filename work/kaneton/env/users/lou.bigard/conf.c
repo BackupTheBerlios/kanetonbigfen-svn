@@ -5,7 +5,7 @@
 ** Login   <bigard_l@epita.fr>
 **
 ** Started on  Wed Feb 21 22:56:03 2007 lou bigard
-** Last update Thu Feb 22 14:45:53 2007 lou bigard
+** Last update Thu Feb 22 19:32:11 2007 lou bigard
 */
 #include <klibc.h>
 #include <kaneton.h>
@@ -43,5 +43,5 @@ return;
 
 cons_msg('#', "After Segmentt Reserve\n");
 
-region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 10 * PAGESZ, &regid);
+//region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 10 * PAGESZ, &regid);
 }
