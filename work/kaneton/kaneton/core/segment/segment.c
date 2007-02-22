@@ -145,14 +145,15 @@ t_error			segment_reserve(i_as			asid,
   oseg->asid = asid;
   oseg->perms = perms;
   oseg->type = SEGMENT_TYPE_MEMORY;
+  segid = malloc(sizeof(i_segment));
   *segid = oseg->segid = (i_segment)oseg->address;
 
   if (set_add(oas->segments, (void*) oseg) != ERROR_NONE)
     SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
   if (set_add(segment->oseg_list, (void*) oseg) != ERROR_NONE)
     SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
-
-/*   SEGMENT_LEAVE(segment, ERROR_NONE); */
+ SEGMENT_LEAVE(segment, ERROR_NONE);
+  return (ERROR_UNKNOWN);
 }
 
 t_error			segment_release(i_segment		segid)
