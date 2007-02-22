@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Thu Feb 22 17:41:19 2007 vincent fenet
+** Last update Thu Feb 22 18:33:07 2007 vincent fenet
 */
 
 #include <klibc.h>
@@ -27,19 +27,13 @@ int mysleep(int k)
 
 void check_tests(void)
 {
-  check_1();
-  mysleep(2000);
-  check_2();
-  mysleep(2000);
-  check_3();
-  mysleep(2000);
+/*   check_1(); */
+/*   check_2(); */
+/*   check_3(); */
+/*   check_5(); */
   check_4();
-  mysleep(2000);
-  check_5();
-  mysleep(2000);
-  check_6();
-  mysleep(2000);
-  check_7();
+/*   mysleep(2000); */
+/*   check_7(); */
 }
 
 void check_7(void)
@@ -96,15 +90,15 @@ void check_5(void)
 
 void check_4(void)
 {
-  i_task taskid;
-  task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING,
-	       &taskid);
-  i_as asid;
-  as_reserve(taskid, &asid);
-  i_segment segid;
-  segment_reserve(asid, 20000, 0, &segid);
-  printf("end of check_4\n");
-
+  o_as* as;
+  as_get(kasid, &as);
+  t_vaddr res;
+  region_first_fit(as, 169 * PAGESZ, &res);
+  printf("%i\n", res);
+  region_first_fit(as, 169 * PAGESZ, &res);
+  printf("%i\n", res);
+  printf("end of check_3\n");
+  mysleep(2000);
 }
 
 void check_3(void)
@@ -112,46 +106,40 @@ void check_3(void)
   i_task taskid;
   task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING,
 	       &taskid);
-  mysleep(100);
   i_as asid;
   as_reserve(taskid, &asid);
-  mysleep(100);
   i_segment segid;
-  segment_reserve(asid, 20000, 0, &segid);
-  mysleep(100);
+  segment_reserve(asid, 169 * PAGESZ, 0, &segid);
   segment_dump2(asid);
-  mysleep(100);
+  printf("look at 169 at the beginning\n");
+  mysleep(2000);
   segment_flush(asid);
-  mysleep(100);
   segment_dump2(asid);
+  printf("look at * removal\n");
   printf("end of check_3\n");
+  mysleep(2000);
 }
 
 void check_2(void)
 {
-  printf("%i\n", kasid);
-  mysleep(100);
   as_show(kasid);
   i_segment segid;
-  mysleep(100);
   segment_reserve(kasid, 110 * PAGESZ, 0, &segid);
-  mysleep(100);
   o_segment *oseg;
-  mysleep(100);
   segment_get(segid, &oseg);
-  mysleep(100);
   segment_dump();
   printf("look at 110 at the beginning\n");
-  mysleep(100);
+  mysleep(2000);
   segment_release(segid);
   segment_dump();
   printf("look at 110 deletion at the beginning\n");
-  mysleep(100);
+  mysleep(2000);
   if (segment_get(segid, &oseg) == ERROR_NONE)
     printf("found, bugged !\n");
   else
     printf("not found, seems ok!\n");
   printf("end of check_2\n");
+  mysleep(2000);
 }
 
 extern m_segment* segment;
@@ -161,19 +149,24 @@ void check_1(void)
   segment_first_fit(102 * PAGESZ, &res1);
   segment_space(0, 104 * PAGESZ, &res1);
   segment_dump();
-  printf("look at 104\n");
-  mysleep(1000);
+  printf("look at 102 104\n");
+  mysleep(2000);
   t_paddr res2;
   segment_first_fit(104 * PAGESZ, &res2);
-  mysleep(200);
   segment_dump();
+  printf("look at 102 104 104\n");
+  mysleep(2000);
   segment_remove(res1);
-  mysleep(200);
   segment_dump();
+  printf("look at 102 --- 104\n");
+  mysleep(2000);
   segment_first_fit(101 * PAGESZ, &res1);
-  mysleep(200);
   segment_dump();
-  segment_first_fit(101 * PAGESZ, &res1);
-  mysleep(200);
+  printf("look at 102 101 --- 104\n");
+  mysleep(2000);
+  segment_first_fit(3 * PAGESZ, &res1);
   segment_dump();
+  printf("look at 102 101 3 104\n");
+  printf("end of check_2\n");
+  mysleep(2000);
 }

@@ -260,8 +260,10 @@ t_error			region_reserve(i_as			asid,
 	  if (set_object(as->regions, i, (void**)&data) != ERROR_NONE)
 	    REGION_LEAVE(region, ERROR_UNKNOWN);
 
-	  if (o->address <= address && o->address + o->size > address)
-	    REGION_LEAVE(region, ERROR_UNKNOWN);
+/* 	  if (o->address <= address && o->address + o->size > address) */
+/* 	    REGION_LEAVE(region, ERROR_UNKNOWN); */
+	  if (data->address <= address && data->address + data->size > address)
+            REGION_LEAVE(region, ERROR_UNKNOWN);
 	}
 
       o->address = address;
