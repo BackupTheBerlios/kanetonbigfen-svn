@@ -102,21 +102,16 @@ t_error			map_page(t_paddr paddr, t_vaddr *vaddr)
 
   if (pd_get_table(&dir, pde, &table) == ERROR_UNKNOWN)
     {
-      segment_reserve(kasid, 1, PERM_READ | PERM_WRITE, &segid);
+      segment_reserve(kasid, PAGESZ, PERM_READ | PERM_WRITE, &segid);
       if (segment_get(segid, &segment) != ERROR_NONE)
 	REGION_LEAVE(region, ERROR_UNKNOWN);
       pt_build(segment->address, &table, 0);
-      table.present = 0;
-      table.rw = 0;
-      table.user = 0;
-      table.cached = 0;
-      table.writeback = 0;
       pd_add_table(&dir, pde, table);
       clear = 1;
     }
  table.entries = ENTRY_ADDR(PD_MIRROR, pde);
  if (clear)
-   memset(&table, '\0', sizeof (t_ia32_table));
+   memset(ENTRY_ADDR(PD_MIRROR, pde), '\0', PAGESZ);
   // Page Table
   pte = PTE_ENTRY(*vaddr);
 
@@ -165,35 +160,30 @@ if (segment_get(segid, &segment) != ERROR_NONE)
   // Mapping PD into Kernel
   map_page(base, &pd_addr);
 
-  pde_start = PDE_ENTRY(pd_addr);
-  pde_end = PDE_ENTRY(pd_addr + size);
-  pte_start = PTE_ENTRY(pd_addr);
-  pte_end = PTE_ENTRY(pd_addr + size);
+  pde_start = PDE_ENTRY(address);
+  pde_end = PDE_ENTRY(address + size);
+  pte_start = PTE_ENTRY(address);
+  pte_end = PTE_ENTRY(address + size);
 
   for (i = pde_start; i <= pde_end; i++)
     {
       if (pd_get_table((t_ia32_directory *) &pd_addr, i, &table) == ERROR_UNKNOWN)
 	{
-	  segment_reserve(asid, 1, PERM_READ | PERM_WRITE, &segid);
+	  segment_reserve(asid, PAGESZ, PERM_READ | PERM_WRITE, &segid);
 	  if (segment_get(segid, &segment) != ERROR_NONE)
 	    REGION_LEAVE(region, ERROR_UNKNOWN);
 	  pt_build(segment->address, &table, 0);
-	  table.present = 0;
-	  table.rw = 0;
-	  table.user = 0;
-	  table.cached = 0;
-	  table.writeback = 0;
 	  pd_add_table((t_ia32_directory *) &pd_addr, i, table);
 	  clear = 1;
 	}
        map_page(segment->address, &pt_addr);
        table.entries = pt_addr;
        if (clear)
-	 memset(&pt_addr, '\0', sizeof (t_ia32_table));
+	 memset((void*)pt_addr, '\0', PAGESZ);
       for (j = (i == pde_start ? pte_start : 0); j <= (i == pde_end ? pte_end : 1023); j++)
 	{
 	  page.addr = x + (offset + ram_paddr);
-	  pt_add_page((t_ia32_table *) &pt_addr, j, page);
+	  pt_add_page(&table, j, page);
 	  x += PAGESZ;
 	}
     }

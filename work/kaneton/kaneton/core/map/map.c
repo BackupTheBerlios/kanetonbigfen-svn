@@ -97,17 +97,17 @@ t_error			map_reserve(i_as		asid,
 {
   MAP_ENTER(map);
   // FIXED: Lou - some easy code has been removed here
-  i_segment*		segid;
-  i_region*		regid;
+  i_segment		segid;
+  i_region		regid;
   o_region*		oreg;
 
-  if (segment_reserve(asid, size, perms, segid) != ERROR_NONE)
+  if (segment_reserve(asid, size, perms, &segid) != ERROR_NONE)
     MAP_LEAVE(map, ERROR_UNKNOWN);
 
-  if (region_reserve(asid, *segid, 0, opts, *addr, size, regid) != ERROR_NONE)
+  if (region_reserve(asid, &segid, 0, opts, *addr, size, &regid) != ERROR_NONE)
     MAP_LEAVE(map, ERROR_UNKNOWN);
 
-  if (region_get(asid, *regid, &oreg) != ERROR_NONE)
+  if (region_get(asid, &regid, &oreg) != ERROR_NONE)
     MAP_LEAVE(map, ERROR_UNKNOWN)
       *addr = oreg->address;
 

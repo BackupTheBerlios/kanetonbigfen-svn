@@ -5,7 +5,7 @@
 ** Login   <bigard_l@epita.fr>
 **
 ** Started on  Wed Feb 21 22:56:03 2007 lou bigard
-** Last update Thu Feb 22 12:01:39 2007 lou bigard
+** Last update Thu Feb 22 14:45:53 2007 lou bigard
 */
 #include <klibc.h>
 #include <kaneton.h>
@@ -38,18 +38,10 @@ return;
 
  cons_msg('#', "Testing Segment Reserve\n");
 
- // as_show(kasid);
   if (segment_reserve(kasid, 10 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE)
    cons_msg('!', "Error Segment Reserve\n");
 
 cons_msg('#', "After Segmentt Reserve\n");
-/* as_show(kasid);*/
 
-/* region_reserve(i_as			asid, */
-/* 				       i_segment		segid, */
-/* 				       t_paddr			offset, */
-/* 				       t_opts			opts, */
-/* 				       t_vaddr			address, */
-/* 				       t_vsize			size, */
-/* 	       i_region*		regid); */
+region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 10 * PAGESZ, &regid);
 }

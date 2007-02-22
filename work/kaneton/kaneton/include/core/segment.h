@@ -210,21 +210,21 @@ t_error			segment_space(	o_as*		as,
 				      	t_psize		size,
 					t_paddr*	address);
 
-t_error			segment_read(i_segment id,
-					t_paddr offset,
-					void* buffer,
-					t_psize size);
+t_error			segment_read(i_segment	id,
+				     t_paddr	offset,
+				     void*	buffer,
+				     t_psize	size);
 
-t_error			segment_write(i_segment id,
-					 t_paddr offset,
-					 const void* buffer,
-					 t_psize size);
+t_error			segment_write(i_segment		id,
+				      t_paddr		offset,
+				      const void*	buffer,
+				      t_psize		size);
 
-t_error			segment_copy(i_segment dst,
-						t_paddr offd,
-						i_segment src,
-						t_paddr offs,
-						t_psize size);
+t_error			segment_copy(i_segment	dst,
+				     t_paddr	offd,
+				     i_segment	src,
+				     t_paddr	offs,
+				     t_psize	size);
 
 t_error			segment_init(void);
 

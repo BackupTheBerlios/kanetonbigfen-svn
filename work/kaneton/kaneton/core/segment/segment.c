@@ -145,7 +145,6 @@ t_error			segment_reserve(i_as			asid,
   oseg->asid = asid;
   oseg->perms = perms;
   oseg->type = SEGMENT_TYPE_MEMORY;
-  segid = malloc(sizeof(i_segment));
   *segid = oseg->segid = (i_segment)oseg->address;
 
   if (set_add(oas->segments, (void*) oseg) != ERROR_NONE)

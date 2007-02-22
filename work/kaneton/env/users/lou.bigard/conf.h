@@ -108,6 +108,8 @@
  * ../../core/conf/conf.c
  */
 
+int mysleep(int k);
+
 void			 check_tests(void);
 
 
