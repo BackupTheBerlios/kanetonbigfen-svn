@@ -45,7 +45,7 @@ extern m_region*       region;
  * ---------- functions -------------------------------------------------------
  */
 
-// FIXME: some code has been removed here
+// FIXED: fensoft
 
 /*
  * this function calls the good algorithm.
@@ -132,7 +132,7 @@ t_error			region_first_fit(	o_as*		as,
       set_object(set, i, (void**)&oreg);
       if (l_begin - oreg->address >= size)
 	{
-	  region_add_sorted(as, l_begin, size);
+/* 	  region_add_sorted(as, l_begin, size); */
 	  *address = l_begin;
 	  return ERROR_NONE;
 	}

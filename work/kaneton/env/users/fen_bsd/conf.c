@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Thu Feb 22 18:33:07 2007 vincent fenet
+** Last update Thu Feb 22 19:09:44 2007 vincent fenet
 */
 
 #include <klibc.h>
@@ -75,6 +75,7 @@ void check_5(void)
   task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING,
 	       &taskid);
   i_as asid;
+
   as_reserve(taskid, &asid);
   /////
   i_segment segid;
@@ -93,10 +94,11 @@ void check_4(void)
   o_as* as;
   as_get(kasid, &as);
   t_vaddr res;
-  region_first_fit(as, 169 * PAGESZ, &res);
-  printf("%i\n", res);
-  region_first_fit(as, 169 * PAGESZ, &res);
-  printf("%i\n", res);
+  region_space(as, 169 * PAGESZ, &res);
+  printf("%x\n", res);
+  region_space(as, 169 * PAGESZ, &res);
+  printf("%x\n", res);
+  region_dump2(as);
   printf("end of check_3\n");
   mysleep(2000);
 }
