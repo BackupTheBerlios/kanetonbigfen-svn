@@ -87,11 +87,13 @@ void			region_dump2(o_as* as)
   t_psize	size;
   printf("/--------- asid = %3i -------\\\n", as->asid);
   t_setsz s = region_size(as);
-  if (region_size(as) != 0)
+  if (s != 0)
     {
       set_foreach(SET_OPT_FORWARD, set, &i, state)
 	{
-	  oreg = (o_region*)i.u.ll.node->data;
+	  set_object(set, i, (void**)&oreg);
+/* 	  oreg = (i_region*)i.u.array.array; */
+/* 	  printf("%i\n", oreg); */
 	  size = oreg->size;
 	  printf("|%8x -> %8x (%4i) |\n", oreg->address, oreg->address + size, size / PAGESZ);
 	}
@@ -113,7 +115,7 @@ t_error			region_add_sorted(	o_as*	as,
   oreg_f->size		=	(end - begin) / PAGESZ;
   set_foreach(SET_OPT_FORWARD, set, &i, state)
     {
-      oreg = (o_region*)i.u.ll.node->data;
+      set_object(set, i, (void**)&oreg);
       if (oreg->address > begin)
 	{
 	  return set_before(set, i, oreg_f);
@@ -136,7 +138,7 @@ t_error			region_first_fit(	o_as*		as,
   t_state		state;
   set_foreach(SET_OPT_FORWARD, set, &i, state)
     {
-      oreg = (o_region*)i.u.ll.node->data;
+      set_object(set, i, (void**)&oreg);
       if (l_begin - oreg->address >= size * PAGESZ)
 	{
 	  region_add_sorted(as, l_begin, l_begin + size * PAGESZ);

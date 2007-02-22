@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Thu Feb 22 15:54:17 2007 vincent fenet
+** Last update Thu Feb 22 16:12:56 2007 vincent fenet
 */
 
 #include <klibc.h>
@@ -34,8 +34,9 @@ void check_7(void)
 {
   mysleep(100);
   o_as* as;
-/*   as_get(kasid, &as); */
-/*   region_dump2(as); */
+  as_get(kasid, &as);
+  region_dump(kasid);
+  region_dump2(as);
   printf("end of check_7\n");
 }
 
