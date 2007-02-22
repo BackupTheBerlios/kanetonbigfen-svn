@@ -162,6 +162,7 @@ t_error			segment_reserve(i_as			asid,
 t_error			segment_release(i_segment		segid)
 {
   // FIXED: fensoft
+  SEGMENT_ENTER(segment);
   // get the o_segment
   o_segment	oseg;
   if (segment_get(segid, &oseg) != ERROR_NONE)
@@ -171,18 +172,18 @@ t_error			segment_release(i_segment		segid)
   if (as_get(oseg->asid, &oas) == ERROR_NONE)
     return (ERROR_UNKNOWN);
 
-  SEGMENT_ENTER(segment);
-  // Getting the o_as*
-  if (as_get(asid, &oas) == ERROR_NONE)
-    {
-      // Segment injection
-      o->asid = asid;
-      *segid = o->segid = (i_segment)o->address;
-      set_add(oas->segments, (void*) o);
-      set_add(segment->oseg_list, (void*) o);
-      segment_add_sorted(o->address, o->address + o->size /** PAGESZ*/);
-      return (ERROR_NONE);
-    }
+
+/*   // Getting the o_as* */
+/*   if (as_get(asid, &oas) == ERROR_NONE) */
+/*     { */
+/*       // Segment injection */
+/*       o->asid = asid; */
+/*       *segid = o->segid = (i_segment)o->address; */
+/*       set_add(oas->segments, (void*) o); */
+/*       set_add(segment->oseg_list, (void*) o); */
+/*       segment_add_sorted(o->address, o->address + o->size /\** PAGESZ*\/); */
+/*       return (ERROR_NONE); */
+/*     } */
   return (ERROR_UNKNOWN);
 }
 
