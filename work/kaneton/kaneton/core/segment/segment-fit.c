@@ -45,7 +45,7 @@ extern m_segment*	segment;
  * ---------- functions -------------------------------------------------------
  */
 
-// FIXME: lot of code has been removed here
+// FIXED: fensoft
 t_setsz			segment_size(void)
 {
 	t_setsz		set_sz	=	42;		//set size

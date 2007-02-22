@@ -169,8 +169,8 @@ t_error			segment_release(i_segment		segid)
     return (ERROR_UNKNOWN);
   // get the o_as
   o_as*			oas;
-  if (as_get(oseg->asid, &oas) == ERROR_NONE)
-    return (ERROR_UNKNOWN);
+/*   if (as_get(oseg->asid, &oas) == ERROR_NONE) */
+/*     return (ERROR_UNKNOWN) */;
 
 
 /*   // Getting the o_as* */
