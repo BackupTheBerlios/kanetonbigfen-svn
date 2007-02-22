@@ -96,7 +96,7 @@ t_error			segment_perms(i_segment			segid,
 {
   o_segment*			o;
 
-  // FIXME: Lou
+  // FIXED: Lou
   SEGMENT_ENTER(segment);
   if (segment_get(segid,&o) == ERROR_NONE)
     {
@@ -108,8 +108,23 @@ t_error			segment_perms(i_segment			segid,
 
 t_error			segment_flush(i_as			asid)
 {
-  // FIXME: some code was removed here
+  // FIXED: fensoft
 
+  t_iterator	i;
+  t_state	state;
+  o_segment*	oseg;
+  i_set		set	=	segment->oseg_list;
+  t_psize	size;
+  if (segment_size() != 0)
+    {
+      set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+	  oseg = (o_segment*)i.u.ll.node->data;
+	  size = oseg->size;
+	  if (oseg->asid == asid)
+	    segment_release(oseg->segid);
+	}
+    }
   return (ERROR_UNKNOWN);
 }
 

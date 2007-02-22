@@ -61,11 +61,91 @@ t_error			region_space(o_as*		as,
     {
       case FIT_FIRST:
 	{
-	  // FIXME: call you first-fit algorithm here
-
+	  // FIXED: fensoft
+	  region_first_fit(as, size, address);
 	  break;
 	}
       default:
 	REGION_LEAVE(region, ERROR_UNKNOWN);
     }
+  return (ERROR_NONE);
 }
+
+t_setsz			region_size(o_as *as)
+{
+  t_setsz		set_sz	=	42;
+  set_size(as->regions, &set_sz);
+  return set_sz;
+}
+
+void			region_dump2(o_as* as)
+{
+  t_iterator	i;
+  t_state	state;
+  o_region*	oreg;
+  i_set		set	=	as->regions;
+  t_psize	size;
+  printf("/--------- asid = %3i -------\\\n", as->asid);
+  t_setsz s = region_size(as);
+  if (region_size(as) != 0)
+    {
+      set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+	  oreg = (o_region*)i.u.ll.node->data;
+	  size = oreg->size;
+	  printf("|%8x -> %8x (%4i) |\n", oreg->address, oreg->address + size, size / PAGESZ);
+	}
+    }
+  printf("\\----------------------------/\n");
+}
+
+
+t_error			region_add_sorted(	o_as*	as,
+					  	t_vaddr begin,
+					   	t_vaddr end)
+{
+  t_iterator	i;
+  t_state	state;
+  i_set		set	=	as->regions;
+  o_region*	oreg_f	=	malloc(sizeof(o_region));
+  o_region*	oreg	=	NULL;
+  oreg_f->address	=	begin;
+  oreg_f->size		=	(end - begin) / PAGESZ;
+  set_foreach(SET_OPT_FORWARD, set, &i, state)
+    {
+      oreg = (o_region*)i.u.ll.node->data;
+      if (oreg->address > begin)
+	{
+	  return set_before(set, i, oreg_f);
+	}
+    }
+  return ERROR_UNKNOWN;
+}
+
+t_error			region_first_fit(	o_as*		as,
+					 	t_vsize		size,
+						t_vaddr*	address)
+{
+  t_vaddr		start	=	region->start;
+  t_vaddr		l_begin	=	start;
+  i_set			set	=	as->regions;
+  o_region*		oreg	=	malloc(sizeof(o_region));
+  oreg->address			=	start;
+  oreg->size			=	PAGESZ;
+  t_iterator		i;
+  t_state		state;
+  set_foreach(SET_OPT_FORWARD, set, &i, state)
+    {
+      oreg = (o_region*)i.u.ll.node->data;
+      if (l_begin - oreg->address >= size * PAGESZ)
+	{
+	  region_add_sorted(as, l_begin, l_begin + size * PAGESZ);
+	  *address = l_begin;
+	  return ERROR_NONE;
+	  break;
+	}
+      l_begin = oreg->address + oreg->size * PAGESZ;
+    }
+  return ERROR_UNKNOWN;
+}
+

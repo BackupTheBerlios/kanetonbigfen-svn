@@ -54,6 +54,7 @@ void*			mmap(void*			start,
 			     int			fd,
 			     off_t			offset)
 {
+  return 0;
   t_perms			perms;
   t_vaddr*		addr = NULL;
 

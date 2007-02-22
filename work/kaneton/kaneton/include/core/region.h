@@ -152,6 +152,7 @@ t_error			region_space(o_as*		as,
  * ---------- prototypes ------------------------------------------------------
  *
  *      ../../core/region/region.c
+ *      ../../core/region/region-fit.c
  */
 
 /*
@@ -187,6 +188,27 @@ t_error			region_init(t_vaddr			start,
 				    t_vsize			size);
 
 t_error			region_clean(void);
+
+
+/*
+ * ../../core/region/region-fit.c
+ */
+
+t_error			region_space(o_as*		as,
+				     t_vsize		size,
+				     t_vaddr*		address);
+
+t_setsz			region_size(o_as *as);
+
+void			region_dump2(o_as* as);
+
+t_error			region_add_sorted(	o_as*	as,
+					  	t_vaddr begin,
+					   	t_vaddr end);
+
+t_error			region_first_fit(	o_as*		as,
+					 	t_vsize		size,
+						t_vaddr*	address);
 
 
 /*

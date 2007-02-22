@@ -239,6 +239,8 @@ t_setsz			segment_size(void);
 
 void			segment_dump(void);
 
+void			segment_dump2(i_as asid);
+
 t_error			segment_add(t_paddr begin, t_paddr end);
 
 t_error			segment_add_sorted(t_paddr begin,

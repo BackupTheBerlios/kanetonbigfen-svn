@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Thu Feb 22 11:43:42 2007 vincent fenet
+** Last update Thu Feb 22 15:54:17 2007 vincent fenet
 */
 
 #include <klibc.h>
@@ -27,7 +27,88 @@ int mysleep(int k)
 
 void check_tests(void)
 {
-  check_2();
+  check_7();
+}
+
+void check_7(void)
+{
+  mysleep(100);
+  o_as* as;
+/*   as_get(kasid, &as); */
+/*   region_dump2(as); */
+  printf("end of check_7\n");
+}
+
+void check_6(void)
+{
+  i_task taskid;
+  mysleep(100);
+  task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING,
+	       &taskid);
+  printf("taskid=%i\n", taskid);
+  mysleep(100);
+  i_as asid;
+  as_reserve(taskid, &asid);
+  mysleep(100);
+  o_as* as;
+  as_get(asid, &as);
+  mysleep(100);
+  region_dump2(as);
+  mysleep(100);
+/*   region_add_sorted(as, 1000, 2000); */
+  printf("end of check_6\n");
+}
+
+void check_5(void)
+{
+  i_task taskid;
+  task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING,
+	       &taskid);
+  i_as asid;
+  as_reserve(taskid, &asid);
+  /////
+  i_segment segid;
+  segment_reserve(asid, 20000, 0, &segid);
+  /////
+  char* test = "135792468";
+  segment_write(segid, 0, test, 10);
+  char* res =  "abcdefghi";
+  segment_read(segid, 0, test, 10);
+  printf("must be %s = %s\n", test, res);
+  printf("end of check_5\n");
+}
+
+void check_4(void)
+{
+  i_task taskid;
+  task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING,
+	       &taskid);
+  i_as asid;
+  as_reserve(taskid, &asid);
+  i_segment segid;
+  segment_reserve(asid, 20000, 0, &segid);
+  printf("end of check_4\n");
+
+}
+
+void check_3(void)
+{
+  i_task taskid;
+  task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING,
+	       &taskid);
+  mysleep(100);
+  i_as asid;
+  as_reserve(taskid, &asid);
+  mysleep(100);
+  i_segment segid;
+  segment_reserve(asid, 20000, 0, &segid);
+  mysleep(100);
+  segment_dump2(asid);
+  mysleep(100);
+  segment_flush(asid);
+  mysleep(100);
+  segment_dump2(asid);
+  printf("end of check_3\n");
 }
 
 void check_2(void)

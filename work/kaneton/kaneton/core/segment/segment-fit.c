@@ -48,37 +48,58 @@ extern m_segment*	segment;
 // FIXED: fensoft
 t_setsz			segment_size(void)
 {
-	t_setsz		set_sz	=	42;		//set size
-	set_size(segment->oseg_busymap_list, &set_sz);	//get size of busymap
+	t_setsz		set_sz	=	42;
+	set_size(segment->oseg_busymap_list, &set_sz);
 	return set_sz;
 }
 
 void			segment_dump(void)
 {
-	t_iterator	i;
-	t_state		state;
-	oseg_busymap*	oseg;
-	i_set		set	=	segment->oseg_busymap_list;
-	t_psize		size;
-	printf("/----------------------------\\\n");
-	if (segment_size() != 0)
+  t_iterator	i;
+  t_state	state;
+  oseg_busymap*	oseg;
+  i_set		set	=	segment->oseg_busymap_list;
+  t_psize	size;
+  printf("/----------------------------\\\n");
+  if (segment_size() != 0)
+    {
+      set_foreach(SET_OPT_FORWARD, set, &i, state)
 	{
-		set_foreach(SET_OPT_FORWARD, set, &i, state)
-		{
-			oseg = (oseg_busymap*)i.u.ll.node->data;
-			size = (oseg->end - oseg->start) / PAGESZ;
-			if (1 | size)
-				printf("|%8x -> %8x (%4i) |\n", oseg->start, oseg->end, size);
-		}
+	  oseg = (oseg_busymap*)i.u.ll.node->data;
+	  size = (oseg->end - oseg->start) / PAGESZ;
+	  if (1 | size)
+	    printf("|%8x -> %8x (%4i) |\n", oseg->start, oseg->end, size);
 	}
-	printf("\\----------------------------/\n");
+    }
+  printf("\\----------------------------/\n");
+}
+
+void			segment_dump2(i_as asid)
+{
+  t_iterator	i;
+  t_state		state;
+  o_segment*	oseg;
+  i_set		set	=	segment->oseg_list;
+  t_psize		size;
+  printf("/--------- asid = %3i -------\\\n", asid);
+  if (segment_size() != 0)
+    {
+      set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+	  oseg = (o_segment*)i.u.ll.node->data;
+	  size = oseg->size;
+	  if (oseg->asid == asid)
+	    printf("|%8x -> %8x (%4i) |\n", oseg->address, oseg->address + size, size / PAGESZ);
+	}
+    }
+  printf("\\----------------------------/\n");
 }
 
 t_error			segment_add(t_paddr begin, t_paddr end)
 {
-	i_set		set	=	segment->oseg_busymap_list;	//osegment busymap list
-	oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
-	oseg->start		=	begin;				//
+	i_set		set	=	segment->oseg_busymap_list;
+	oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));
+	oseg->start		=	begin;
 	oseg->end		=	end;
 	return set_add(set, oseg);
 }
@@ -88,20 +109,16 @@ t_error			segment_add_sorted(t_paddr begin,
 {
 	t_iterator	i;
 	t_state		state;
-	i_set		set	=	segment->oseg_busymap_list;		//osegment busymap list
-	oseg_busymap*	oseg_f	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
-	oseg_busymap*	oseg	=	NULL;				//osegment busymap object
-	oseg_f->start		=	begin;				//
+	i_set		set	=	segment->oseg_busymap_list;
+	oseg_busymap*	oseg_f	=	malloc(sizeof(oseg_busymap));
+	oseg_busymap*	oseg	=	NULL;
+	oseg_f->start		=	begin;
 	oseg_f->end		=	end;
 	set_foreach(SET_OPT_FORWARD, set, &i, state)
 	{
 		oseg = (oseg_busymap*)i.u.ll.node->data;
-		//printf("actual is [%i,%i]\n", oseg->start, oseg->end);
 		if (oseg->start > begin)
-		{
-			//printf("yes !\n");
-			return set_before(set, i, oseg_f);
-		}
+		  return set_before(set, i, oseg_f);
 	}
 	return ERROR_UNKNOWN;
 }
@@ -110,13 +127,11 @@ t_error			segment_remove(t_paddr begin)
 {
 	t_iterator	i;
 	t_state		state;
-	i_set		set	=	segment->oseg_busymap_list;		//osegment busymap list
-	oseg_busymap*	oseg	=	NULL;				//osegment busymap object
-// 	printf("%x\n", begin);
+	i_set		set	=	segment->oseg_busymap_list;
+	oseg_busymap*	oseg	=	NULL;
 	set_foreach(SET_OPT_FORWARD, set, &i, state)
 	{
 		oseg = (oseg_busymap*)i.u.ll.node->data;
-// 		printf("actual is [%i,%i]\n", oseg->start, oseg->end);
 		if (oseg->start == begin && begin != oseg->end)
 			return set_delete_ll(set, i);
 	}
