@@ -74,7 +74,7 @@ t_error			segment_inject(i_as		asid,
 				       i_segment*	segid)
 {
 /*   printf("must inject at @%x(%i)\n", o->address, o->size / PAGESZ); */
-  // FIXME: Lou
+  // FIXED: Lou
   o_as*			oas;
 
   SEGMENT_ENTER(segment);
@@ -117,7 +117,7 @@ t_error			segment_flush(i_as			asid)
 t_error			segment_get(i_segment			segid,
 				    o_segment**			o)
 {
-  // FIXME: Lou
+  // FIXED: Lou
   SEGMENT_ENTER(segment);
 
   if (set_get(segment->oseg_list, segid, (void**)o) == ERROR_NONE)
@@ -161,8 +161,28 @@ t_error			segment_reserve(i_as			asid,
 
 t_error			segment_release(i_segment		segid)
 {
-  // FIXME: some code was removed here
+  // FIXED: fensoft
+  // get the o_segment
+  o_segment	oseg;
+  if (segment_get(segid, &oseg) != ERROR_NONE)
+    return (ERROR_UNKNOWN);
+  // get the o_as
+  o_as*			oas;
+  if (as_get(oseg->asid, &oas) == ERROR_NONE)
+    return (ERROR_UNKNOWN);
 
+  SEGMENT_ENTER(segment);
+  // Getting the o_as*
+  if (as_get(asid, &oas) == ERROR_NONE)
+    {
+      // Segment injection
+      o->asid = asid;
+      *segid = o->segid = (i_segment)o->address;
+      set_add(oas->segments, (void*) o);
+      set_add(segment->oseg_list, (void*) o);
+      segment_add_sorted(o->address, o->address + o->size /** PAGESZ*/);
+      return (ERROR_NONE);
+    }
   return (ERROR_UNKNOWN);
 }
 
