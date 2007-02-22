@@ -153,7 +153,7 @@ t_error			ia32_region_reserve(i_as			asid,
   if (as_get(asid, &oas) != ERROR_NONE)
     REGION_LEAVE(region, ERROR_UNKNOWN);
 
-if (region_get(asid, regid, &oreg) != ERROR_NONE)
+if (region_get(asid, *regid, &oreg) != ERROR_NONE)
   REGION_LEAVE(region, ERROR_UNKNOWN);
 
   if (as_get(asid, &oas) != ERROR_NONE)
