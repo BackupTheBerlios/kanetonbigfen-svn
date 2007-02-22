@@ -141,26 +141,26 @@ t_error			segment_remove(t_paddr begin)
 t_error			segment_first_fit(	t_psize		size,
 						t_paddr*	address)
 {
-	t_paddr		start	=	segment->start;			//mem start
-	t_paddr		l_begin	=	start;				//tmp start zone
-	i_set		set	=	segment->oseg_busymap_list;	//osegment busymap list
-	oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));	//osegment busymap object
-	oseg->start		=	start;				//
-	oseg->end		=	start + size * PAGESZ;
-	//printf("not null\n");
-	t_iterator	i;
-	t_state		state;
-	set_foreach(SET_OPT_FORWARD, set, &i, state)
+  size = ((size + PAGESZ - 1 ) / PAGESZ) * PAGESZ;
+  t_paddr	start	=	segment->start;
+  t_paddr	l_begin	=	start;
+  i_set		set	=	segment->oseg_busymap_list;
+  oseg_busymap*	oseg	=	malloc(sizeof(oseg_busymap));
+  oseg->start		=	start;
+  oseg->end		=	start + size;
+  t_iterator	i;
+  t_state		state;
+  set_foreach(SET_OPT_FORWARD, set, &i, state)
+    {
+      oseg = (oseg_busymap*)i.u.ll.node->data;
+      if (l_begin - oseg->start >= size)
 	{
-		oseg = (oseg_busymap*)i.u.ll.node->data;
-		if (l_begin - oseg->start >= size * PAGESZ)
-		{
-			segment_add_sorted(l_begin, l_begin + size * PAGESZ);
-			*address = l_begin;
-			return ERROR_NONE;
-			break;
-		}
-		l_begin = oseg->end;
+	  segment_add_sorted(l_begin, l_begin + size);
+	  *address = l_begin;
+	  return ERROR_NONE;
+	  break;
 	}
-	return ERROR_UNKNOWN;
+      l_begin = oseg->end;
+    }
+  return ERROR_UNKNOWN;
 }

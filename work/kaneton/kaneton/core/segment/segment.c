@@ -193,7 +193,8 @@ t_error			segment_space(	o_as*		as,
 					t_paddr*	address)
 {
   // FIXED: Fensoft
-  return segment_first_fit((size + PAGESZ -1) / PAGESZ, address);
+  size = ((size + PAGESZ - 1 ) / PAGESZ) * PAGESZ;
+  return segment_first_fit(size, address);
 }
 
 t_error			segment_read(i_segment	id,

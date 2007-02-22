@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Thu Feb 22 16:12:56 2007 vincent fenet
+** Last update Thu Feb 22 17:41:19 2007 vincent fenet
 */
 
 #include <klibc.h>
@@ -27,6 +27,18 @@ int mysleep(int k)
 
 void check_tests(void)
 {
+  check_1();
+  mysleep(2000);
+  check_2();
+  mysleep(2000);
+  check_3();
+  mysleep(2000);
+  check_4();
+  mysleep(2000);
+  check_5();
+  mysleep(2000);
+  check_6();
+  mysleep(2000);
   check_7();
 }
 
@@ -35,7 +47,10 @@ void check_7(void)
   mysleep(100);
   o_as* as;
   as_get(kasid, &as);
-  region_dump(kasid);
+  region_dump2(as);
+  mysleep(1000);
+  t_vaddr ret;
+  region_space(as, 142 * PAGESZ + 1, &ret);
   region_dump2(as);
   printf("end of check_7\n");
 }
@@ -143,20 +158,22 @@ extern m_segment* segment;
 void check_1(void)
 {
   t_paddr res1;
-  segment_first_fit(102, &res1);
-  segment_space(0, 104, &res1);
+  segment_first_fit(102 * PAGESZ, &res1);
+  segment_space(0, 104 * PAGESZ, &res1);
   segment_dump();
+  printf("look at 104\n");
+  mysleep(1000);
   t_paddr res2;
-  segment_first_fit(104, &res2);
+  segment_first_fit(104 * PAGESZ, &res2);
   mysleep(200);
   segment_dump();
   segment_remove(res1);
   mysleep(200);
   segment_dump();
-  segment_first_fit(101, &res1);
+  segment_first_fit(101 * PAGESZ, &res1);
   mysleep(200);
   segment_dump();
-  segment_first_fit(101, &res1);
+  segment_first_fit(101 * PAGESZ, &res1);
   mysleep(200);
   segment_dump();
 }

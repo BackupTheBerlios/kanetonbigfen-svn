@@ -85,42 +85,32 @@ void			region_dump2(o_as* as)
   o_region*	oreg;
   i_set		set	=	as->regions;
   t_psize	size;
-  printf("/--------- asid = %3i -------\\\n", as->asid);
   t_setsz s = region_size(as);
+  printf("/----------- asid = %3i (", as->asid);
+  printf("%3i) -----------\\\n", s);
   if (s != 0)
     {
       set_foreach(SET_OPT_FORWARD, set, &i, state)
 	{
 	  set_object(set, i, (void**)&oreg);
-/* 	  oreg = (i_region*)i.u.array.array; */
-/* 	  printf("%i\n", oreg); */
 	  size = oreg->size;
-	  printf("|%8x -> %8x (%4i) |\n", oreg->address, oreg->address + size, size / PAGESZ);
+	  printf("|%12x -> %12x (%8li) |\n", oreg->address, oreg->address + size - 1, size / PAGESZ);
 	}
     }
-  printf("\\----------------------------/\n");
+  printf("\\----------------------------------------/\n");
 }
 
 
 t_error			region_add_sorted(	o_as*	as,
 					  	t_vaddr begin,
-					   	t_vaddr end)
+					   	t_vsize size)
 {
-  t_iterator	i;
-  t_state	state;
   i_set		set	=	as->regions;
   o_region*	oreg_f	=	malloc(sizeof(o_region));
-  o_region*	oreg	=	NULL;
   oreg_f->address	=	begin;
-  oreg_f->size		=	(end - begin) / PAGESZ;
-  set_foreach(SET_OPT_FORWARD, set, &i, state)
-    {
-      set_object(set, i, (void**)&oreg);
-      if (oreg->address > begin)
-	{
-	  return set_before(set, i, oreg_f);
-	}
-    }
+  oreg_f->regid		=	(i_region)begin;
+  oreg_f->size		=	size;
+  set_add(set, oreg_f);
   return ERROR_UNKNOWN;
 }
 
@@ -128,25 +118,25 @@ t_error			region_first_fit(	o_as*		as,
 					 	t_vsize		size,
 						t_vaddr*	address)
 {
+  size = ((size + PAGESZ - 1 ) / PAGESZ) * PAGESZ;
   t_vaddr		start	=	region->start;
   t_vaddr		l_begin	=	start;
   i_set			set	=	as->regions;
   o_region*		oreg	=	malloc(sizeof(o_region));
   oreg->address			=	start;
-  oreg->size			=	PAGESZ;
+  oreg->size			=	size;
   t_iterator		i;
   t_state		state;
   set_foreach(SET_OPT_FORWARD, set, &i, state)
     {
       set_object(set, i, (void**)&oreg);
-      if (l_begin - oreg->address >= size * PAGESZ)
+      if (l_begin - oreg->address >= size)
 	{
-	  region_add_sorted(as, l_begin, l_begin + size * PAGESZ);
+	  region_add_sorted(as, l_begin, size);
 	  *address = l_begin;
 	  return ERROR_NONE;
-	  break;
 	}
-      l_begin = oreg->address + oreg->size * PAGESZ;
+      l_begin = oreg->address + oreg->size;
     }
   return ERROR_UNKNOWN;
 }
