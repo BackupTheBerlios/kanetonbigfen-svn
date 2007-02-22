@@ -5,7 +5,7 @@
 ** Login   <bigard_l@epita.fr>
 **
 ** Started on  Wed Feb 21 22:56:03 2007 lou bigard
-** Last update Thu Feb 22 19:44:49 2007 lou bigard
+** Last update Thu Feb 22 23:07:36 2007 lou bigard
 */
 #include <klibc.h>
 #include <kaneton.h>
@@ -38,34 +38,34 @@ return;
 
  cons_msg('#', "Testing Segment Reserve\n");
 
-  if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE)
-   cons_msg('!', "Error Segment Reserve\n");
-  region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid);
- cons_msg('#', "After Segmentt Reserve %x\n", (t_vaddr) regid);
+/*   if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE) */
+/*    cons_msg('!', "Error Segment Reserve\n"); */
+/*   region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid); */
+/*  cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid); */
+
+
+/*   if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE) */
+/*    cons_msg('!', "Error Segment Reserve\n"); */
+/*   region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid); */
+/*  cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid); */
+
+
+/*   if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE) */
+/*    cons_msg('!', "Error Segment Reserve\n"); */
+/*   region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid); */
+/*  cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid); */
+
+
+/*   if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE) */
+/*    cons_msg('!', "Error Segment Reserve\n"); */
+/*   region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid); */
+/*  cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid); */
 
 
   if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE)
    cons_msg('!', "Error Segment Reserve\n");
-  region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid);
- cons_msg('#', "After Segmentt Reserve %x\n", (t_vaddr) regid);
-
-
-  if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE)
-   cons_msg('!', "Error Segment Reserve\n");
-  region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid);
- cons_msg('#', "After Segmentt Reserve %x\n", (t_vaddr) regid);
-
-
-  if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE)
-   cons_msg('!', "Error Segment Reserve\n");
-  region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid);
- cons_msg('#', "After Segmentt Reserve %x\n", (t_vaddr) regid);
-
-
-  if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE)
-   cons_msg('!', "Error Segment Reserve\n");
-  region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid);
- cons_msg('#', "After Segmentt Reserve %x\n", (t_vaddr) regid);
-
-
+    region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid);
+ cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid);
+ // region_dump(kasid);
+ // region_dump(kasid);
 }

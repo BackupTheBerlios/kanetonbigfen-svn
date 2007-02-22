@@ -100,7 +100,7 @@ void			region_dump2(o_as* as)
   printf("\\----------------------------------------/\n");
 }
 
-
+/*
 t_error			region_add_sorted(	o_as*	as,
 					  	t_vaddr begin,
 					   	t_vsize size)
@@ -113,7 +113,7 @@ t_error			region_add_sorted(	o_as*	as,
   set_add(set, oreg_f);
   return ERROR_UNKNOWN;
 }
-
+*/
 t_error			region_first_fit(	o_as*		as,
 					 	t_vsize		size,
 						t_vaddr*	address)
@@ -122,15 +122,15 @@ t_error			region_first_fit(	o_as*		as,
   t_vaddr		start	=	region->start;
   t_vaddr		l_begin	=	start;
   i_set			set	=	as->regions;
-  o_region*		oreg	=	malloc(sizeof(o_region));
-  oreg->address			=	start;
-  oreg->size			=	size;
+  o_region*		oreg;
+
   t_iterator		i;
   t_state		state;
+
   set_foreach(SET_OPT_FORWARD, set, &i, state)
     {
       set_object(set, i, (void**)&oreg);
-      if (l_begin - oreg->address >= size)
+      if (oreg->address - l_begin >= size)
 	{
 /* 	  region_add_sorted(as, l_begin, size); */
 	  *address = l_begin;

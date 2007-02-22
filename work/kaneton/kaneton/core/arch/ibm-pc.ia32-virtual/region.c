@@ -78,21 +78,15 @@ t_error			map_page(t_paddr paddr, t_vaddr *vaddr)
   if (region_space(kas, PAGESZ, vaddr) != ERROR_NONE)
     REGION_LEAVE(region, ERROR_UNKNOWN);
 
-  if ((oreg = malloc(sizeof(o_segment*))) == NULL)
-    REGION_LEAVE(region, ERROR_UNKNOWN);
-
-  if ((segment = malloc(sizeof(o_segment))) == NULL)
-    REGION_LEAVE(region, ERROR_UNKNOWN);
-
-  if (region_inject(kasid, oreg) != ERROR_NONE)
+  if ((oreg = malloc(sizeof(o_region))) == NULL)
     REGION_LEAVE(region, ERROR_UNKNOWN);
 
   oreg->address = *vaddr;
   oreg->regid = (i_region)oreg->address;
   oreg->opts = REGION_OPT_PRIVILEGED;
   oreg->size = PAGESZ;
-  oreg->offset = paddr;
-  oreg->segid = (i_segment)oreg->offset;
+  oreg->offset = 0;
+  oreg->segid = (i_segment) paddr;
 
   if (region_inject(kasid, oreg) != ERROR_NONE)
     REGION_LEAVE(region, ERROR_UNKNOWN);
@@ -106,6 +100,7 @@ t_error			map_page(t_paddr paddr, t_vaddr *vaddr)
       segment_reserve(kasid, PAGESZ, PERM_READ | PERM_WRITE, &segid);
       if (segment_get(segid, &segment) != ERROR_NONE)
 	REGION_LEAVE(region, ERROR_UNKNOWN);
+      table.rw = PT_WRITABLE;
       pt_build(segment->address, &table, 0);
       pd_add_table(&dir, pde, table);
       clear = 1;
@@ -117,7 +112,10 @@ t_error			map_page(t_paddr paddr, t_vaddr *vaddr)
   pte = PTE_ENTRY(*vaddr);
   page.present = 1;
   page.addr = paddr;
+  page.rw = PG_WRITABLE;
   pt_add_page(&table, pte, page);
+
+  tlb_invalidate(*vaddr);
 
   REGION_LEAVE(region, ERROR_NONE);
 }
@@ -156,9 +154,6 @@ t_error			ia32_region_reserve(i_as			asid,
 if (region_get(asid, *regid, &oreg) != ERROR_NONE)
   REGION_LEAVE(region, ERROR_UNKNOWN);
 
-  if (as_get(asid, &oas) != ERROR_NONE)
-    REGION_LEAVE(region, ERROR_UNKNOWN);
-
 if (segment_get(segid, &segment) != ERROR_NONE)
 	    REGION_LEAVE(region, ERROR_UNKNOWN);
 
@@ -167,6 +162,10 @@ if (segment_get(segid, &segment) != ERROR_NONE)
   base = MK_BASE(pd);
   // Mapping PD into Kernel
   map_page(base, &pd_addr);
+
+/*   printf("pd %x\n", pd_addr); */
+
+/*   printf("%x\n", oreg->address); */
 
   pde_start = PDE_ENTRY(oreg->address);
   pde_end = PDE_ENTRY(oreg->address + size);
@@ -180,11 +179,15 @@ if (segment_get(segid, &segment) != ERROR_NONE)
 	  segment_reserve(asid, PAGESZ, PERM_READ | PERM_WRITE, &segid);
 	  if (segment_get(segid, &segment) != ERROR_NONE)
 	    REGION_LEAVE(region, ERROR_UNKNOWN);
+      table.rw = PT_WRITABLE;
 	  pt_build(segment->address, &table, 0);
 	  pd_add_table((t_ia32_directory *) &pd_addr, i, table);
 	  clear = 1;
 	}
-       map_page(segment->address, &pt_addr);
+      else
+	clear = 0;
+       map_page(table.entries, &pt_addr);
+/*   printf(" pt %x\n", pt_addr); */
        table.entries = pt_addr;
        if (clear)
 	 memset((void*)pt_addr, '\0', PAGESZ);
@@ -192,10 +195,14 @@ if (segment_get(segid, &segment) != ERROR_NONE)
 	{
 	  page.addr = x + (offset + ram_paddr);
 	  page.present = 1;
+	  /* FIXME */	  
+	  page.rw = 1;
 	  pt_add_page(&table, j, page);
 	  x += PAGESZ;
 	}
     }
+
+  tlb_flush();
   REGION_LEAVE(region, ERROR_NONE);
 }
 

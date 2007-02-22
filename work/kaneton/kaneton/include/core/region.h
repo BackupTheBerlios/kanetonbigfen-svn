@@ -202,10 +202,6 @@ t_setsz			region_size(o_as *as);
 
 void			region_dump2(o_as* as);
 
-t_error			region_add_sorted(	o_as*	as,
-					  	t_vaddr begin,
-					   	t_vsize size);
-
 t_error			region_first_fit(	o_as*		as,
 					 	t_vsize		size,
 						t_vaddr*	address);
