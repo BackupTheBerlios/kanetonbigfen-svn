@@ -237,6 +237,8 @@ t_error			segment_clean(void);
 
 t_setsz			segment_size(void);
 
+void			segment_count(void);
+
 void			segment_dump(void);
 
 void			segment_dump2(i_as asid);

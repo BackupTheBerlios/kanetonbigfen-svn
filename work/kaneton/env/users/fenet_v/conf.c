@@ -5,18 +5,27 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Thu Feb 22 19:09:44 2007 vincent fenet
+** Last update Tue Mar 13 13:15:19 2007 fensoft
 */
 
 #include <klibc.h>
 #include <kaneton.h>
+#define MYCHECK(_str_, _fct_)                                    \
+{	  			                                 \
+  int _res_ = (int)_fct_;                                        \
+  printf("%s...%s\n", _str_, _res_ ? "ok" : "ko");               \
+  if (!_res_)                                                    \
+    while (1)                                                    \
+      ;                                                          \
+}
 
 extern int kasid;
 
 int sleep_num = 1;
 int mysleep(int k)
 {
-  printf("sleep time=%3ims seq=%3i\n", k, sleep_num++);
+  //  printf("sleep time=%3ims seq=%3i\n", k, sleep_num++);
+  printf("%i,", sleep_num++);
   int i, j, ret;
   for (j = 0; j != k; j++)
     for (i = 0; i != 100000; i++)
@@ -27,13 +36,72 @@ int mysleep(int k)
 
 void check_tests(void)
 {
-/*   check_1(); */
-/*   check_2(); */
-/*   check_3(); */
-/*   check_5(); */
-  check_4();
-/*   mysleep(2000); */
-/*   check_7(); */
+  check_5();
+}
+
+void check_a(void)
+{
+/*   i_task taskid; */
+/*   task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING, */
+/* 	       &taskid); */
+/*   i_as asid; */
+/*   as_reserve(taskid, &asid); */
+/*   o_as* as; */
+/*   as_get(asid, &as); */
+/*   region_dump2(as); */
+/*   segment_dump2(asid); */
+/*   i_segment segid; */
+/*   segment_count(); */
+/*   segment_reserve(as->asid, 1234, 0, &segid); */
+/*   printf("t1(valid)  :%i\n", ERROR_NONE == (int)segment_perms(segid, PERM_READ)); */
+/*   printf("t2(unvalid):%i\n", ERROR_UNKNOWN == (int)segment_perms(segid, 0)); */
+/*   printf("t3(too big):%i\n", ERROR_UNKNOWN == (int)segment_perms(segid, 42)); */
+/*   cons_msg('+', "end of check_9\n"); */
+}
+
+// CHECK SEGMENT_PERMS (valid perms ?)
+void check_9(void)
+{
+  i_task taskid;
+  task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING,
+	       &taskid);
+  i_as asid;
+  as_reserve(taskid, &asid);
+  o_as* as;
+  as_get(asid, &as);
+  region_dump2(as);
+  segment_dump2(asid);
+  i_segment segid;
+  segment_count();
+  segment_reserve(as->asid, 1234, 0, &segid);
+  printf("t1(valid)  :%i\n", ERROR_NONE == (int)segment_perms(segid, PERM_READ));
+  printf("t2(unvalid):%i\n", ERROR_UNKNOWN == (int)segment_perms(segid, 0));
+  printf("t3(too big):%i\n", ERROR_UNKNOWN == (int)segment_perms(segid, 42));
+  cons_msg('+', "end of check_9\n");
+}
+
+// CHECK SEGMENT_FLUSH
+void check_8(void)
+{
+  printf("kernel asid=%i\n", kasid);
+  i_task taskid;
+  task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING,
+	       &taskid);
+  i_as asid;
+  as_reserve(taskid, &asid);
+  o_as* as;
+  as_get(asid, &as);
+  region_dump2(as);
+  segment_dump2(asid);
+  i_segment res;
+  segment_count();
+  segment_reserve(as->asid, 1234, 0, &res);
+  segment_count();
+  region_dump2(as);
+  segment_dump2(asid);
+  segment_flush(asid);
+  segment_count();
+  cons_msg('+', "end of check_8\n");
 }
 
 void check_7(void)
@@ -46,7 +114,7 @@ void check_7(void)
   t_vaddr ret;
   region_space(as, 142 * PAGESZ + 1, &ret);
   region_dump2(as);
-  printf("end of check_7\n");
+  cons_msg('+', "end of check_7\n");
 }
 
 void check_6(void)
@@ -66,7 +134,7 @@ void check_6(void)
   region_dump2(as);
   mysleep(100);
 /*   region_add_sorted(as, 1000, 2000); */
-  printf("end of check_6\n");
+  cons_msg('+', "end of check_6\n");
 }
 
 void check_5(void)
@@ -81,12 +149,14 @@ void check_5(void)
   i_segment segid;
   segment_reserve(asid, 20000, 0, &segid);
   /////
-  char* test = "135792468";
-  segment_write(segid, 0, test, 10);
-  char* res =  "abcdefghi";
-  segment_read(segid, 0, test, 10);
-  printf("must be %s = %s\n", test, res);
-  printf("end of check_5\n");
+  char* test = "t";
+  MYCHECK("writting", segment_write(segid, 0, test, 10) == ERROR_NONE);
+  char* res =  "f";
+  MYCHECK("reading", segment_read(segid, 0, res, 10) == ERROR_NONE);
+  //  MYCHECK("checking r&w", test[0] == res[0]);
+  MYCHECK("checking r&w", strcmp(test, res) == 0);
+  //  printf("? %s%s\n", test, res);
+  cons_msg('+', "end of check_5\n");
 }
 
 void check_4(void)
@@ -99,7 +169,7 @@ void check_4(void)
   region_space(as, 169 * PAGESZ, &res);
   printf("%x\n", res);
   region_dump2(as);
-  printf("end of check_3\n");
+  cons_msg('+', "end of check_3\n");
   mysleep(2000);
 }
 
@@ -118,7 +188,7 @@ void check_3(void)
   segment_flush(asid);
   segment_dump2(asid);
   printf("look at * removal\n");
-  printf("end of check_3\n");
+  cons_msg('+', "end of check_3\n");
   mysleep(2000);
 }
 
@@ -140,7 +210,7 @@ void check_2(void)
     printf("found, bugged !\n");
   else
     printf("not found, seems ok!\n");
-  printf("end of check_2\n");
+  cons_msg('+', "end of check_2\n");
   mysleep(2000);
 }
 
@@ -169,6 +239,6 @@ void check_1(void)
   segment_first_fit(3 * PAGESZ, &res1);
   segment_dump();
   printf("look at 102 101 3 104\n");
-  printf("end of check_2\n");
+  cons_msg('+', "end of check_2\n");
   mysleep(2000);
 }

@@ -76,7 +76,7 @@
  * this define starts the tests by hand.
  */
 
-#undef CONF_ENABLE_CHECK
+#define CONF_ENABLE_CHECK
 
 /*
  * the configuration debug
@@ -111,6 +111,10 @@
 int mysleep(int k);
 
 void check_tests(void);
+
+void check_9(void);
+
+void check_8(void);
 
 void check_7(void);
 

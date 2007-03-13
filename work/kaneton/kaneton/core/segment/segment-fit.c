@@ -53,6 +53,27 @@ t_setsz			segment_size(void)
 	return set_sz;
 }
 
+void			segment_count(void)
+{
+  t_iterator	i;
+  t_state	state;
+  oseg_busymap*	oseg;
+  i_set		set	=	segment->oseg_busymap_list;
+  t_psize	size;
+  int count = 0;
+  if (segment_size() != 0)
+    {
+      set_foreach(SET_OPT_FORWARD, set, &i, state)
+	{
+	  oseg = (oseg_busymap*)i.u.ll.node->data;
+	  size = (oseg->end - oseg->start) / PAGESZ;
+	  if (1 | size)
+	    count++;
+	}
+    }
+  printf("there is %i segments\n", count);
+}
+
 void			segment_dump(void)
 {
   t_iterator	i;
@@ -60,6 +81,7 @@ void			segment_dump(void)
   oseg_busymap*	oseg;
   i_set		set	=	segment->oseg_busymap_list;
   t_psize	size;
+
   printf("/----------------------------\\\n");
   if (segment_size() != 0)
     {

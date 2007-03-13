@@ -98,7 +98,9 @@ t_error			segment_perms(i_segment			segid,
 
   // FIXED: Lou
   SEGMENT_ENTER(segment);
-  if (segment_get(segid,&o) == ERROR_NONE)
+  if ( segment_get(segid,&o) == ERROR_NONE            &&
+      (perms & (PERM_READ | PERM_WRITE | PERM_EXEC))  &&
+      (perms <= (PERM_READ | PERM_WRITE | PERM_EXEC))  )
     {
       o->perms = perms;
       SEGMENT_LEAVE(segment, ERROR_NONE);
@@ -203,9 +205,9 @@ t_error			segment_read(i_segment	id,
 				     void*	buffer,
 				     t_psize	size)
 {
-  if (machdep_call(segment, segment_read, id, offset, buffer, size) != ERROR_NONE)
-    SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
-  SEGMENT_LEAVE(segment, ERROR_NONE);
+  if (machdep_call(segment, segment_read, id, offset, buffer, size) == ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_NONE);
+  SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 }
 
 t_error			segment_write(i_segment		id,
@@ -213,9 +215,9 @@ t_error			segment_write(i_segment		id,
 				      const void*	buffer,
 				      t_psize		size)
 {
-  if (machdep_call(segment, segment_write, id, offset, buffer, size) != ERROR_NONE)
-    SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
-  SEGMENT_LEAVE(segment, ERROR_NONE);
+  if (machdep_call(segment, segment_write, id, offset, buffer, size) == ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_NONE);
+  SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 }
 
 t_error			segment_copy(i_segment	dst,

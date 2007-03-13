@@ -52,9 +52,9 @@ d_segment		segment_dispatch =
 // FIXME: lot of code has been removed here
 
 t_error                 ia32_segment_read(i_segment id,
-	                                         t_paddr offset,
-	                                         void* buffer,
-	                                         t_psize size)
+					  t_paddr offset,
+					  void* buffer,
+					  t_psize size)
 {
   i_region                      regid;
   o_region*                     oreg;
@@ -63,30 +63,30 @@ t_error                 ia32_segment_read(i_segment id,
   // FIXED: Lou
   SEGMENT_ENTER(segment);
 
-	  if (segment_get(id, &o) != ERROR_NONE)
-	    SEGMENT_LEAVE(segment, ERROR_NONE);
+  if (segment_get(id, &o) != ERROR_NONE)
+    SEGMENT_LEAVE(segment, ERROR_NONE);
 
   if (region_reserve(o->asid, id, 0, REGION_OPT_NONE, 0, size, &regid) == ERROR_NONE)
     {
       if (region_get(o->asid, regid, &oreg) != ERROR_NONE)
-	        REGION_LEAVE(segment, ERROR_UNKNOWN);
+	REGION_LEAVE(segment, ERROR_UNKNOWN);
       memcpy(buffer, (void*)(oreg->address + offset), size);
 
       if (region_release(o->asid, regid) != ERROR_NONE)
-	 	        SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+	SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
       SEGMENT_LEAVE(segment, ERROR_NONE);
     }
   SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 }
 
 t_error			ia32_segment_write(i_segment id,
-					 t_paddr offset,
-					 const void* buffer,
-					 t_psize size)
+					   t_paddr offset,
+					   const void* buffer,
+					   t_psize size)
 {
-   i_region			regid;
-   o_region*			oreg;
-   o_segment*			o;
+  i_region			regid;
+  o_region*			oreg;
+  o_segment*			o;
 
   // FIXED: Lou
   SEGMENT_ENTER(segment);
@@ -110,11 +110,11 @@ t_error			ia32_segment_write(i_segment id,
 }
 
 t_error			ia32_segment_copy(i_segment dst,
- 						t_paddr offd,
- 						i_segment src,
-						t_paddr offs,
- 						t_psize size)
- {
+					  t_paddr offd,
+					  i_segment src,
+					  t_paddr offs,
+					  t_psize size)
+{
   char *buffer = NULL;
 
   SEGMENT_ENTER(segment);
@@ -130,7 +130,7 @@ t_error			ia32_segment_copy(i_segment dst,
 
   SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 
- }
+}
 
 /*
  * this function just initialises the machine-dependent segment manager.
