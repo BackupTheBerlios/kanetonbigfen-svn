@@ -105,9 +105,10 @@ t_error			map_page(t_paddr paddr, t_vaddr *vaddr)
       pd_add_table(&dir, pde, table);
       clear = 1;
     }
- table.entries = ENTRY_ADDR(PD_MIRROR, pde);
- if (clear)
-   memset(ENTRY_ADDR(PD_MIRROR, pde), '\0', PAGESZ);
+  table.entries = ENTRY_ADDR(PD_MIRROR, pde);
+  //fixme
+  if (clear)
+    memset(ENTRY_ADDR(PD_MIRROR, pde), '\0', PAGESZ);
   // Page Table
   pte = PTE_ENTRY(*vaddr);
   page.present = 1;
@@ -151,11 +152,11 @@ t_error			ia32_region_reserve(i_as			asid,
   if (as_get(asid, &oas) != ERROR_NONE)
     REGION_LEAVE(region, ERROR_UNKNOWN);
 
-if (region_get(asid, *regid, &oreg) != ERROR_NONE)
-  REGION_LEAVE(region, ERROR_UNKNOWN);
+  if (region_get(asid, *regid, &oreg) != ERROR_NONE)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
 
-if (segment_get(segid, &segment) != ERROR_NONE)
-	    REGION_LEAVE(region, ERROR_UNKNOWN);
+  if (segment_get(segid, &segment) != ERROR_NONE)
+    REGION_LEAVE(region, ERROR_UNKNOWN);
 
   ram_paddr = segment->address;
   pd = oas->machdep.pd;
@@ -179,23 +180,23 @@ if (segment_get(segid, &segment) != ERROR_NONE)
 	  segment_reserve(asid, PAGESZ, PERM_READ | PERM_WRITE, &segid);
 	  if (segment_get(segid, &segment) != ERROR_NONE)
 	    REGION_LEAVE(region, ERROR_UNKNOWN);
-      table.rw = PT_WRITABLE;
+	  table.rw = PT_WRITABLE;
 	  pt_build(segment->address, &table, 0);
 	  pd_add_table((t_ia32_directory *) &pd_addr, i, table);
 	  clear = 1;
 	}
       else
 	clear = 0;
-       map_page(table.entries, &pt_addr);
-/*   printf(" pt %x\n", pt_addr); */
-       table.entries = pt_addr;
-       if (clear)
-	 memset((void*)pt_addr, '\0', PAGESZ);
+      map_page(table.entries, &pt_addr);
+      /*   printf(" pt %x\n", pt_addr); */
+      table.entries = pt_addr;
+      if (clear)
+	memset((void*)pt_addr, '\0', PAGESZ);
       for (j = (i == pde_start ? pte_start : 0); j <= (i == pde_end ? pte_end : 1023); j++)
 	{
 	  page.addr = x + (offset + ram_paddr);
 	  page.present = 1;
-	  /* FIXME */	  
+	  /* FIXME */
 	  page.rw = 1;
 	  pt_add_page(&table, j, page);
 	  x += PAGESZ;
@@ -209,7 +210,8 @@ if (segment_get(segid, &segment) != ERROR_NONE)
 t_error			ia32_region_release(i_as			asid,
 					    i_region			regid)
 {
-
+  REGION_ENTER(region);
+  REGION_LEAVE(region, ERROR_NONE);
 }
 
 /*

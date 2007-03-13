@@ -107,7 +107,7 @@ t_error			map_reserve(i_as		asid,
   if (region_reserve(asid, segid, 0, opts, 0, size, &regid) != ERROR_NONE)
     MAP_LEAVE(map, ERROR_UNKNOWN);
 
-  if (region_get(asid, &regid, &oreg) != ERROR_NONE)
+  if (region_get(asid, regid, &oreg) != ERROR_NONE)
     MAP_LEAVE(map, ERROR_UNKNOWN)
       *addr = oreg->address;
 

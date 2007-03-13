@@ -204,6 +204,7 @@ t_error			segment_read(i_segment	id,
 {
   if (machdep_call(segment, segment_read, id, offset, buffer, size) != ERROR_NONE)
     SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+  SEGMENT_LEAVE(segment, ERROR_NONE);
 }
 
 t_error			segment_write(i_segment		id,
@@ -213,6 +214,7 @@ t_error			segment_write(i_segment		id,
 {
   if (machdep_call(segment, segment_write, id, offset, buffer, size) != ERROR_NONE)
     SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+  SEGMENT_LEAVE(segment, ERROR_NONE);
 }
 
 t_error			segment_copy(i_segment	dst,
@@ -223,6 +225,7 @@ t_error			segment_copy(i_segment	dst,
 {
   if (machdep_call(segment, segment_copy, dst, offd, src, offs, size) != ERROR_NONE)
     SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+  SEGMENT_LEAVE(segment, ERROR_NONE);
 }
 
 /*

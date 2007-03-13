@@ -840,7 +840,7 @@ t_error			task_init(void)
   i_as			asid;
   t_uint32		i;
   i_segment		segments[INIT_SEGMENTS];
-  i_thread		needless;
+/*   i_thread		needless; */
   o_region*		tmp;
   o_segment*		tmp2;
 
