@@ -103,7 +103,8 @@ t_error			segment_perms(i_segment			segid,
       o->perms = perms;
       SEGMENT_LEAVE(segment, ERROR_NONE);
     }
-  return (ERROR_UNKNOWN);
+  return ERROR_UNKNOWN;
+  //  SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 }
 
 t_error			segment_flush(i_as			asid)
@@ -125,7 +126,7 @@ t_error			segment_flush(i_as			asid)
 	    segment_release(oseg->segid);
 	}
     }
-  return (ERROR_UNKNOWN);
+  return (ERROR_NONE);
 }
 
 t_error			segment_get(i_segment			segid,
