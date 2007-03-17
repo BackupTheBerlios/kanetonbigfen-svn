@@ -112,6 +112,8 @@ int mysleep(int k);
 
 void check_tests(void);
 
+void check_a(void);
+
 void check_9(void);
 
 void check_8(void);
