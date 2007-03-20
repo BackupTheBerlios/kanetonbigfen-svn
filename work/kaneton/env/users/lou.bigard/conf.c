@@ -31,13 +31,13 @@ void			 check_tests(void)
   o_region*		oreg;
   i_segment		segid;
   i_region		regid;
-
-
+  t_vaddr		addr;
+  
 if (as_get(kasid, &oas) != ERROR_NONE)
 return;
 
  cons_msg('#', "Testing Segment Reserve\n");
-
+  
 /*   if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE) */
 /*    cons_msg('!', "Error Segment Reserve\n"); */
 /*   region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid); */
@@ -62,10 +62,20 @@ return;
 /*  cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid); */
 
 
-  if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE)
+/*  if (segment_reserve(kasid, 3 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE)
    cons_msg('!', "Error Segment Reserve\n");
-    region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid);
+    region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 3 * PAGESZ, &regid);
  cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid);
+*/
+  if (map_reserve(kasid,
+		  MAP_OPT_PRIVILEGED,
+		  3 * PAGESZ,
+		  PERM_READ | PERM_WRITE,
+		  &addr) != ERROR_NONE)
+cons_msg('#', "Error Map Reserve %x\n", (t_vaddr) addr);
+cons_msg('#', "After Map Reserve %x\n", (t_vaddr) addr);
+
  // region_dump(kasid);
  // region_dump(kasid);
 }
+

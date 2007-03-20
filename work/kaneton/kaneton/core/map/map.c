@@ -109,7 +109,7 @@ t_error			map_reserve(i_as		asid,
   if (region_reserve(asid, segid, 0, opts, 0, size, &regid) != ERROR_NONE)
     MAP_LEAVE(map, ERROR_UNKNOWN);
 
-  if (region_get(asid, &regid, &oreg) != ERROR_NONE)
+  if (region_get(asid, regid, &oreg) != ERROR_NONE)
     MAP_LEAVE(map, ERROR_UNKNOWN)
       *addr = oreg->address;
 
@@ -134,7 +134,7 @@ MAP_ENTER(map);
   // FIXED: Lou - some easy code has been removed here
 
 if (as_get(asid, &oas) != ERROR_NONE)
-    REGION_LEAVE(region, ERROR_UNKNOWN);
+    MAP_LEAVE(region, ERROR_UNKNOWN);
 set_foreach(SET_OPT_FORWARD, oas->regions, &i, state)
     {
       if (set_object(oas->regions, i, (void**)&data) != ERROR_NONE)
