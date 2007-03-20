@@ -75,6 +75,22 @@ return;
 cons_msg('#', "Error Map Reserve %x\n", (t_vaddr) addr);
 cons_msg('#', "After Map Reserve %x\n", (t_vaddr) addr);
 
+  if (map_reserve(kasid,
+		  MAP_OPT_PRIVILEGED,
+		  10 * PAGESZ,
+		  PERM_READ | PERM_WRITE,
+		  &addr) != ERROR_NONE)
+cons_msg('#', "Error Map Reserve %x\n", (t_vaddr) addr);
+cons_msg('#', "After Map Reserve 2 - %x\n", (t_vaddr) addr);
+
+  if (map_reserve(kasid,
+		  MAP_OPT_PRIVILEGED,
+		  25 * PAGESZ,
+		  PERM_READ | PERM_WRITE,
+		  &addr) != ERROR_NONE)
+cons_msg('#', "Error Map Reserve %x\n", (t_vaddr) addr);
+cons_msg('#', "After Map Reserve %x\n", (t_vaddr) addr);
+
  // region_dump(kasid);
  // region_dump(kasid);
 }
