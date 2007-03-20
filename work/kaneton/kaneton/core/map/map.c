@@ -54,7 +54,7 @@ void*			mmap(void*			start,
 			     int			fd,
 			     off_t			offset)
 {
-  t_perms			perms;
+  t_perms		perms;
   t_vaddr*		addr = NULL;
 
   if (prot & PROT_READ)
@@ -67,6 +67,8 @@ void*			mmap(void*			start,
     perms &= PERM_EXEC;
 
   // FIXED: Lou - some easy code has been removed here
+  if ((addr = malloc(sizeof (t_vaddr))) == NULL)
+    MAP_LEAVE(map, ERROR_UNKNOWN);
   map_reserve(kasid, MAP_OPT_PRIVILEGED, length, perms, addr);
   return addr;
 }
