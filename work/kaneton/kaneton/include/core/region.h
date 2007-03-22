@@ -147,7 +147,8 @@ typedef struct
 t_error			region_space(o_as*		as,
 				     t_vsize		size,
 				     t_vaddr*		address);
-
+t_error			map_page(t_paddr paddr, t_vaddr *vaddr);
+t_error			unmap_page (t_vaddr *vaddr);
 /*
  * ---------- prototypes ------------------------------------------------------
  *

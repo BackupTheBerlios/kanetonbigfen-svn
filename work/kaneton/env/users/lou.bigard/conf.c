@@ -1,97 +1,181 @@
-/*
-** conf.c for Kaneton in /goinfre/goinfre/SVN/kaneton
-**
-** Made by lou bigard
-** Login   <bigard_l@epita.fr>
-**
-** Started on  Wed Feb 21 22:56:03 2007 lou bigard
-** Last update Thu Feb 22 23:07:36 2007 lou bigard
-*/
 #include <klibc.h>
 #include <kaneton.h>
 
-extern i_as kasid;
+extern m_region*	region;
+extern i_as		kasid;
 
-int sleep_num = 1;
-int mysleep(int k)
+static long		pg1024[1024] =
+  {
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, //100
+
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, //200
+
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, //300
+
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, //400
+
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, //500
+
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, //600
+
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, //700
+
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, //800
+
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, //900
+
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, //1000
+
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    0, 1, 2, 3
+  };
+
+void		check_tests(void)
 {
-  printf("sleep time=%3ims seq=%3i\n", k, sleep_num++);
-  int i, j, ret;
-  for (j = 0; j != k; j++)
-    for (i = 0; i != 100000; i++)
-      ret = i + j;
-  return ret;
+  i_segment	segid;
+  i_region	regid;
+  i_segment	segid2;
+  i_region	regid2;
+  i_region	regid3;
+  t_error	err;
+  o_as*		oas;
+  long		pg10[10] = { 100, 100, 100, 100, 100,  100, 100, 100, 100, 100 };
+  long		*pgp;
+  int		i;
+
+/*   cons_msg('!', "segment_reserve 15724544 ... "); */
+  err = segment_reserve(kasid, 15 * 4096, PERM_READ | PERM_WRITE, &segid);
+  if (err == ERROR_NONE)
+    {
+      cons_msg('!', "seg_res ok... ");
+      err = region_reserve(kasid, segid, 0, REGION_OPT_PRIVILEGED, 0, 15 * 4096, &regid);
+      if (err == ERROR_NONE)
+	cons_msg('!', "reg_res ok\n");
+      else
+	cons_msg('!', "reg_res failed\n");
+    }
+  else
+    cons_msg('!', "seg_res failed\n");
+/*   if (as_get(kasid, &oas) != ERROR_NONE) */
+/*     SEGMENT_LEAVE(segment, ERROR_UNKNOWN); */
+
+/* /\*   printf("regid = %X\n", regid); *\/ */
+
+/*   if (segment_write(segid, 0, pg1024, sizeof(pg1024)) != ERROR_NONE) */
+/*     printf("write ouille\n"); */
+
+/*   cons_msg('!', "segment_reserve 4096 ... "); */
+/*   err = segment_reserve(kasid, 4096, PERM_READ | PERM_WRITE, &segid2); */
+/*   if (err == ERROR_NONE) */
+/*     { */
+/*       cons_msg('!', "seg_res ok... "); */
+/*       err = region_reserve(kasid, segid2, 0, REGION_OPT_PRIVILEGED, 0, 4096, &regid2); */
+/*       if (err == ERROR_NONE) */
+/* 	cons_msg('!', "reg_res ok\n"); */
+/*       else */
+/* 	cons_msg('!', "reg_res failed\n"); */
+/*     } */
+/*   else */
+/*     cons_msg('!', "seg_res failed\n"); */
+/*   printf("segid2 = %X\n", segid2); */
+/*   printf("regid2 = %X\n", regid2); */
+
+/*   if (segment_read(segid, 0, pg10, sizeof(pg10)) != ERROR_NONE) */
+/*     printf("read ouille\n"); */
+
+/*   for (i = 0; i < 10; i++) */
+/*     printf("%i ", pg10[i]); */
+/*   printf("\n"); */
+
+/*   if (segment_copy(segid2, 0, segid, 5, sizeof(pg10)) != ERROR_NONE) */
+/*     printf("read ouille\n"); */
+
+/*   if (segment_perms(segid, PERM_READ | PERM_WRITE | PERM_EXEC) != ERROR_NONE) */
+/*     printf("seg perm 1 GARGL\n"); */
+
+/*   if (segment_perms(segid, 8) != ERROR_NONE) */
+/*     printf("seg perm 2 GARGL\n"); */
+
+/*   if (segment_perms(segid, -345) != ERROR_NONE) */
+/*     printf("seg perm 3 GARGL\n"); */
+
+/*   if (segment_clone(kasid, segid, &segid2) != ERROR_NONE) */
+/*     printf("OUF!!!\n"); */
+/**********************************************************************/
+  if (region_release(kasid, regid) != ERROR_NONE)
+    printf("reg rel regid ouille\n");
+
+  if (segment_release(segid) != ERROR_NONE)
+    printf("seg rel segid ouille\n");
+/**********************************************************************/
+/*   if (segment_release(segid2) != ERROR_NONE) */
+/*     printf("seg rel segid ouille\n"); */
+
+
+/*   if (segment_read(segid2, 0, pg10, sizeof(pg10)) != ERROR_NONE) */
+/*     printf("read ouille 2\n"); */
+
+/*   for (i = 0; i < 10; i++) */
+/*     printf("%i ", pg10[i]); */
+
+
+/*   pgp = malloc(sizeof(pg1024)); */
+
+/*   if (segment_read(segid2, 0, pgp, sizeof(pg1024)) != ERROR_NONE) */
+/*     printf("read ouille 2\n"); */
+
+/*   for (i = 1014; i <= 1023; i++) */
+/*     printf("%i ", pgp[i]); */
+/*    region_show(kasid, 0x102000); */
+/*    region_show(kasid, 0x104000); */
+/*    region_show(kasid, 0x10C000); */
+/*    region_show(kasid, 0x10E000); */
+
+/*   if (region_release(kasid, regid2) != ERROR_NONE) */
+/*     printf("reg rel regid2 ouille\n"); */
+
+/*   if (segment_release(segid2) != ERROR_NONE) */
+/*     printf("seg rel segid2 ouille\n"); */
+
+  cons_msg('+', "TESTS FINIS\n");
 }
-
-
-void			 check_tests(void)
-{
-  o_as*			 oas;
-  o_segment*		oseg;
-  o_region*		oreg;
-  i_segment		segid;
-  i_region		regid;
-  t_vaddr		addr;
-  
-if (as_get(kasid, &oas) != ERROR_NONE)
-return;
-
- cons_msg('#', "Testing Segment Reserve\n");
-  
-/*   if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE) */
-/*    cons_msg('!', "Error Segment Reserve\n"); */
-/*   region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid); */
-/*  cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid); */
-
-
-/*   if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE) */
-/*    cons_msg('!', "Error Segment Reserve\n"); */
-/*   region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid); */
-/*  cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid); */
-
-
-/*   if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE) */
-/*    cons_msg('!', "Error Segment Reserve\n"); */
-/*   region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid); */
-/*  cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid); */
-
-
-/*   if (segment_reserve(kasid, 1 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE) */
-/*    cons_msg('!', "Error Segment Reserve\n"); */
-/*   region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 1 * PAGESZ, &regid); */
-/*  cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid); */
-
-
-/*  if (segment_reserve(kasid, 3 * PAGESZ, PERM_READ | PERM_WRITE, &segid) != ERROR_NONE)
-   cons_msg('!', "Error Segment Reserve\n");
-    region_reserve(kasid, segid, 0, REGION_OPT_NONE, 0, 3 * PAGESZ, &regid);
- cons_msg('#', "After Segment Reserve %x\n", (t_vaddr) regid);
-*/
-  if (map_reserve(kasid,
-		  MAP_OPT_PRIVILEGED,
-		  3 * PAGESZ,
-		  PERM_READ | PERM_WRITE,
-		  &addr) != ERROR_NONE)
-cons_msg('#', "Error Map Reserve %x\n", (t_vaddr) addr);
-cons_msg('#', "After Map Reserve %x\n", (t_vaddr) addr);
-
-  if (map_reserve(kasid,
-		  MAP_OPT_PRIVILEGED,
-		  10 * PAGESZ,
-		  PERM_READ | PERM_WRITE,
-		  &addr) != ERROR_NONE)
-cons_msg('#', "Error Map Reserve %x\n", (t_vaddr) addr);
-cons_msg('#', "After Map Reserve 2 - %x\n", (t_vaddr) addr);
-
-  if (map_reserve(kasid,
-		  MAP_OPT_PRIVILEGED,
-		  25 * PAGESZ,
-		  PERM_READ | PERM_WRITE,
-		  &addr) != ERROR_NONE)
-cons_msg('#', "Error Map Reserve %x\n", (t_vaddr) addr);
-cons_msg('#', "After Map Reserve %x\n", (t_vaddr) addr);
-
- // region_dump(kasid);
- // region_dump(kasid);
-}
-
