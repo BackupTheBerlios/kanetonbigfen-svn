@@ -167,7 +167,7 @@ int			idt_init()
 
 t_error ia32_event_init(void)
 {
-  idt_init();
+  //idt_init();
  /*  asm volatile ("int $1"); */
   int a = 42;
   int b = 0;
