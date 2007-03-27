@@ -101,6 +101,33 @@ void			set_gate(t_uint8	number,
   gl_idt[number].field[7] = (offsetH >> 8) & 0xFF;
 }
 
+/* #define _handler_(_num_, _string_)	\ */
+/* void int__num_()			\ */
+/* {					\ */
+/*   printf(_string_);			\ */
+/*   while (1)				\ */
+/*     ;					\ */
+/* } */
+
+/* _handler_(0, "Divide Error"); */
+/* 1 Debug Exceptions  */
+/* 2 Intel reserved  */
+/* 3 Breakpoint  */
+/* 4 Overflow  */
+/* 5 Bounds Check  */
+/* 6 Invalid Opcode  */
+/* 7 Coprocessor Not Available  */
+/* 8 Double Fault  */
+/* 9 Coprocessor Segment Overrun  */
+/* 10 Invalid TSS  */
+/* 11 Segment Not Present  */
+/* 12 Stack Exception  */
+/* 13 General Protection Exception(Triple Fault)  */
+/* 14 Page Fault  */
+/* 15 Intel reserved  */
+/* 16 Coprocessor Error  */
+
+
 void dbz()
 {
   printf("Division by zero : Looser...\n");
@@ -165,13 +192,37 @@ int			idt_init()
   return 0;
 }
 
+t_error event_reserve(i_event event,
+		      t_uint32 type,
+		      u_event_handler handler)
+{
+  if (type == EVENT_FUNCTION)
+    {
+      t_uint16		kcs;
+      if (gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs) == ERROR_UNKNOWN)
+	return ERROR_UNKNOWN;
+      /* set_gate(event, handler.function, kcs); */
+    }
+  else
+    if (type == EVENT_MESSAGE)
+      {
+	return ERROR_UNKNOWN;
+      }
+}
+
 t_error ia32_event_init(void)
 {
-  //idt_init();
- /*  asm volatile ("int $1"); */
-  int a = 42;
-  int b = 0;
-  int c;
-  //c = a / b;
+  int			i;
+  int			j;
+
+  for (j = 0; j < 256; ++j)
+    for (i = 0; i < 8; ++i)
+      gl_idt[j].field[i] = 0x00;
+
+  struct s_idt_ptr	idtr;
+
+  idtr.limit = 256 * 8;
+  idtr.base = (unsigned int) gl_idt;
+  LIDT(idtr);
   return ERROR_NONE;
 }

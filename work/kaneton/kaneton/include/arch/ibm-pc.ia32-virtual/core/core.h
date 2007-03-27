@@ -126,6 +126,10 @@ void			lidt__(void *base, unsigned short limit);
 
 int			idt_init();
 
+t_error event_reserve(i_event event,
+		      t_uint32 type,
+		      u_event_handler handler);
+
 t_error ia32_event_init(void);
 
 
