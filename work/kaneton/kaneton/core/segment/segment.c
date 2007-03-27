@@ -64,9 +64,36 @@ t_error			segment_clone(i_as			asid,
 				      i_segment			old,
 				      i_segment*		new)
 {
-  // FIXME: some code was removed here
+  // FIXED: some code was removed here
+  t_perms		perms;
+  o_segment*		oseg;
 
-  return (ERROR_UNKNOWN);
+  if (as_get(asid, &oas) == ERROR_NONE)
+    {
+if (segment_get(old, &oseg) != ERROR_NONE)
+SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+
+ perms = oseg->perms; 
+
+ if (segment_reserve(asid, oseg->size, PERM_READ | PERM_WRITE, new) != ERROR_NONE)
+SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+
+if (segment_perms(old, PERM_READ | PERM_WRITE) != ERROR_NONE)
+SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+
+if (segment_copy(*new, 0, old, 0, oseg->size) != ERROR_NONE)
+SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+
+if (segment_perms(old, perms) != ERROR_NONE)
+SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+
+if (segment_perms(*new, perms) != ERROR_NONE)
+SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+    }
+  else
+SEGMENT_LEAVE(segment, ERROR_UNKNOWN);   
+    
+SEGMENT_LEAVE(segment, ERROR_NONE);   
 }
 
 t_error			segment_inject(i_as		asid,

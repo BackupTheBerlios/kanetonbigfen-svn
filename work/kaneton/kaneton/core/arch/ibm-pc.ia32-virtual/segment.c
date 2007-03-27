@@ -60,7 +60,7 @@ d_segment		segment_dispatch =
  * ---------- functions -------------------------------------------------------
  */
 
-// FIXME: lot of code has been removed here
+// FIXED: lot of code has been removed here
 
 t_error                 ia32_segment_read(i_segment id,
 					  t_paddr offset,
@@ -103,7 +103,10 @@ t_error			ia32_segment_write(i_segment id,
   SEGMENT_ENTER(segment);
 
   if (segment_get(id, &o) != ERROR_NONE)
-    SEGMENT_LEAVE(segment, ERROR_NONE);
+    SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
+
+  if (! (o->perms & PERM_WRITE))
+SEGMENT_LEAVE(segment, ERROR_UNKNOWN);
 
   if (region_reserve(o->asid, id, 0, REGION_OPT_NONE, 0, size, &regid) == ERROR_NONE)
     {
