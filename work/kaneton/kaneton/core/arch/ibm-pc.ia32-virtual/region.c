@@ -272,6 +272,7 @@ t_error			ia32_region_release(i_as			asid,
   o_region*			oreg;
   int				i = 0;
   int				j = 0;
+  t_ia32_pte*			t;
 
   REGION_ENTER(region);
   if (as_get(asid, &oas) != ERROR_NONE)
@@ -305,6 +306,8 @@ t_error			ia32_region_release(i_as			asid,
 
       for (j = (i == pde_start ? pte_start : 0); j <= (i == pde_end ? pte_end : 1023); j++)
 	{
+	  t = (t_ia32_pte*)table.entries;
+       if (t[j] != 0)
       if (pt_delete_page(&table, j) != ERROR_NONE)
     REGION_LEAVE(region, ERROR_UNKNOWN);
 	}
