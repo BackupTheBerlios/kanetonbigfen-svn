@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-Last update Tue Mar 27 18:29:39 2007 FENET Vincent
+Last update Tue Mar 27 19:20:28 2007 FENET Vincent
 */
 
 #include <klibc.h>
@@ -77,11 +77,9 @@ void ia32_pf_handler(t_id id,
     ;
 }
 
-
-
 void check_2()
 {
-  event_reserve(14, EVENT_FUNCTION, EVENT_HANDLER(ia32_pf_handler));
+  event_reserve(0, EVENT_FUNCTION, EVENT_HANDLER(ia32_pf_handler));
 }
 
 void check_tests(void)
