@@ -49,7 +49,7 @@ d_region		region_dispatch =
     ia32_region_release,
     NULL,
     NULL,
-    NULL
+    ia32_region_clean
   };
 
 /*

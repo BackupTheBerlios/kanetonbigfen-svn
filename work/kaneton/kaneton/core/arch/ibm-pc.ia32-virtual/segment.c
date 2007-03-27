@@ -40,8 +40,19 @@ extern m_segment*	segment;
 
 d_segment		segment_dispatch =
   {
-
-// FIXME: don't forget to fill this structure
+    NULL,
+    NULL,
+    NULL,
+    segment_read,
+    segment_write,
+    segment_copy,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    segment_init,
+    segment_clean
+// FIXED: don't forget to fill this structure
 
   };
 
