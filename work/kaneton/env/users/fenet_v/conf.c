@@ -47,18 +47,18 @@ void check_1(void)
   j = 0;
   /* printf(" ready... "); */
 /*   mysleep(100); */
-  idt_init();
+//  idt_init();
 /*   printf(" initialized... "); */
 /*   mysleep(100); */
-  event_dump();
-  u_event_handler c;
-  c.function = coin;
+//  event_dump();
+//  u_event_handler c;
+//  c.function = coin;
 /*   for (i=0; i<256; i++) */
 /*     event_reserve(i, EVENT_FUNCTION, c); */
-  for (i=0; i<256; i++)
-    set_gate( i, (unsigned long)dbz, 257);
+//  for (i=0; i<256; i++)
+//    set_gate( i, (unsigned long)dbz, 257);
   //event_dump();
-  mysleep(200);
+//  mysleep(200);
   /* asm volatile ("int $1\n"); */
   //i = 42 / j;
 /*   printf(" div 0... "); */

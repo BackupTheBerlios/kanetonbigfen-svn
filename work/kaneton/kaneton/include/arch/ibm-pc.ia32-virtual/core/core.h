@@ -116,13 +116,13 @@ t_error			ia32_segment_clean(void);
  * ../../../../core/arch/machdep/event.c
  */
 
-void			set_gate(unsigned char	number,
-				 unsigned long	offset,
-				 unsigned short	segment_selector);
+void			set_gate(t_uint8	number,
+				 t_uint32	offset,
+				 t_uint16	segment_selector);
 
 void dbz();
 
-void			lidt(void *base, unsigned short limit);
+void			lidt__(void *base, unsigned short limit);
 
 int			idt_init();
 

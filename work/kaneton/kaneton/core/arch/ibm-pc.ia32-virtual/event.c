@@ -73,32 +73,32 @@ static struct s_idt_entry gl_idt[256];
 
 struct s_idt_entry
 {
-  unsigned char field[8];
+  t_uint8	field[8];
 }__attribute__((packed));
 
 struct s_idt_ptr
 {
-  unsigned short        limit;
-  unsigned int          base;
+  t_uint16	limit;
+  t_uint32	base;
 }__attribute__((packed));
 
-void			set_gate(unsigned char	number,
-				 unsigned long	offset,
-				 unsigned short	segment_selector)
+void			set_gate(t_uint8	number,
+				 t_uint32	offset,
+				 t_uint16	segment_selector)
 {
   unsigned short        offsetH;
   unsigned short        offsetL;
 
-  offsetH = offset >> 16;
-  offsetL = offset & 0x0000FFFF;
-  gl_idt[number].field[0] = offsetL;
-  gl_idt[number].field[1] = offsetL >> 8;
-  gl_idt[number].field[2] = segment_selector;
-  gl_idt[number].field[3] = segment_selector >> 8;
+  offsetH = (offset >> 16) & 0xFFFF;
+  offsetL = offset & 0xFFFF;
+  gl_idt[number].field[0] = offsetL & 0xFF;
+  gl_idt[number].field[1] = (offsetL >> 8) & 0xFF;
+  gl_idt[number].field[2] = segment_selector & 0xFF;
+  gl_idt[number].field[3] = (segment_selector >> 8) & 0xFF;
   gl_idt[number].field[4] = 0;
-  gl_idt[number].field[5] = 0xEE; //1 11 0 1 110
-  gl_idt[number].field[6] = offsetH;
-  gl_idt[number].field[7] = offsetH >> 8;
+  gl_idt[number].field[5] = 0x8E; //1 00 0 1 110
+  gl_idt[number].field[6] = offsetH & 0xFF;
+  gl_idt[number].field[7] = (offsetH >> 8) & 0xFF;
 }
 
 void dbz()
@@ -127,7 +127,7 @@ void dbz()
 /*   asm volatile("lidt %0":: "m" (idtr)); */
 /* } */
 
-void			lidt(void *base, unsigned short limit)
+void			lidt__(void *base, unsigned short limit)
 {
   struct s_idt_ptr	idtr;
 
@@ -151,19 +151,27 @@ int			idt_init()
 /*   printf(" kcs=%i ", kcs); */
 /*   gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs); */
 /*   printf(" kcs=%i ", kcs); */
-  gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs);
-  printf(" kcs=%i ", kcs);
-  for (i=0; i<16; i++)
-    set_gate( i, (unsigned long)dbz, 0x8E);
+  if (gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs) == ERROR_UNKNOWN)
+    printf("error!\n");;
+  printf(" kcs=%i tab=%x ", kcs, gl_idt);
+  for (i=0; i<255; i++)
+    set_gate(i, dbz, kcs);
+  struct s_idt_ptr	idtr;
 
-  lidt(gl_idt, 256 * 8);
-  asm volatile ("int $1\n");
+  idtr.limit = 256 * 8;
+  idtr.base = (unsigned int) gl_idt;
+  LIDT(idtr);
+  //asm volatile ("int $1\n");
   return 0;
 }
 
 t_error ia32_event_init(void)
 {
-  //idt_init();
+  idt_init();
  /*  asm volatile ("int $1"); */
+  int a = 42;
+  int b = 0;
+  int c;
+  //c = a / b;
   return ERROR_NONE;
 }
