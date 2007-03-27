@@ -22,7 +22,7 @@
 
 #include <klibc.h>
 #include <kaneton.h>
-
+#include "../../../include/core/event.h" //FIXME
 
 /*
  * ---------- globals ---------------------------------------------------------
@@ -128,12 +128,12 @@ void			set_gate(t_uint8	number,
 /* 16 Coprocessor Error  */
 
 
-void dbz()
-{
-  printf("Division by zero : Looser...\n");
-  while (1)
-    ;
-}
+/* void dbz() */
+/* { */
+/*   printf("Division by zero : Looser...\n"); */
+/*   while (1) */
+/*     ; */
+/* } */
 
 /* void idt_init() */
 /* { */
@@ -154,47 +154,47 @@ void dbz()
 /*   asm volatile("lidt %0":: "m" (idtr)); */
 /* } */
 
-void			lidt__(void *base, unsigned short limit)
-{
-  struct s_idt_ptr	idtr;
+/* void			lidt__(void *base, unsigned short limit) */
+/* { */
+/*   struct s_idt_ptr	idtr; */
 
-  idtr.limit = limit;
-  idtr.base = (unsigned int) base;
-  //asm volatile("lgdt %0":: "m" (idtr));
-  asm volatile("lidt %0\n":: "m" (idtr):"memory");
-}
+/*   idtr.limit = limit; */
+/*   idtr.base = (unsigned int) base; */
+/*   //asm volatile("lgdt %0":: "m" (idtr)); */
+/*   asm volatile("lidt %0\n":: "m" (idtr):"memory"); */
+/* } */
 
-int			idt_init()
-{
-  int			i;
-  int			j;
+/* int			idt_init() */
+/* { */
+/*   int			i; */
+/*   int			j; */
 
-  for (j = 0; j < 256; ++j)
-    for (i = 0; i < 8; ++i)
-      gl_idt[j].field[i] = 0x00;
+/*   for (j = 0; j < 256; ++j) */
+/*     for (i = 0; i < 8; ++i) */
+/*       gl_idt[j].field[i] = 0x00; */
 
-  t_uint16		kcs;
-/*   gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs); */
-/*   printf(" kcs=%i ", kcs); */
-/*   gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs); */
-/*   printf(" kcs=%i ", kcs); */
-  if (gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs) == ERROR_UNKNOWN)
-    printf("error!\n");;
-  printf(" kcs=%i tab=%x ", kcs, gl_idt);
-  for (i=0; i<255; i++)
-    set_gate(i, dbz, kcs);
-  struct s_idt_ptr	idtr;
+/*   t_uint16		kcs; */
+/* /\*   gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs); *\/ */
+/* /\*   printf(" kcs=%i ", kcs); *\/ */
+/* /\*   gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs); *\/ */
+/* /\*   printf(" kcs=%i ", kcs); *\/ */
+/*   if (gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs) == ERROR_UNKNOWN) */
+/*     printf("error!\n");; */
+/*   printf(" kcs=%i tab=%x ", kcs, gl_idt); */
+/*   for (i=0; i<255; i++) */
+/*     set_gate(i, dbz, kcs); */
+/*   struct s_idt_ptr	idtr; */
 
-  idtr.limit = 256 * 8;
-  idtr.base = (unsigned int) gl_idt;
-  LIDT(idtr);
-  //asm volatile ("int $1\n");
-  return 0;
-}
+/*   idtr.limit = 256 * 8; */
+/*   idtr.base = (unsigned int) gl_idt; */
+/*   LIDT(idtr); */
+/*   //asm volatile ("int $1\n"); */
+/*   return 0; */
+/* } */
 
-t_error event_reserve(i_event event,
-		      t_uint32 type,
-		      u_event_handler handler)
+t_error ia32_event_reserve(i_event event,
+			   t_uint32 type,
+			   int handler)
 {
   if (type == EVENT_FUNCTION)
     {
