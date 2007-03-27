@@ -67,6 +67,7 @@ t_error			segment_clone(i_as			asid,
   // FIXED: some code was removed here
   t_perms		perms;
   o_segment*		oseg;
+  o_as*			oas;
 
   if (as_get(asid, &oas) == ERROR_NONE)
     {
