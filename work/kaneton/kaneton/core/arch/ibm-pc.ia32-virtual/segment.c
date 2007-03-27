@@ -43,15 +43,15 @@ d_segment		segment_dispatch =
     NULL,
     NULL,
     NULL,
-    segment_read,
-    segment_write,
-    segment_copy,
+    ia32_segment_read,
+    ia32_segment_write,
+    ia32_segment_copy,
     NULL,
     NULL,
     NULL,
     NULL,
-    segment_init,
-    segment_clean
+    ia32_segment_init,
+    ia32_segment_clean
 // FIXED: don't forget to fill this structure
 
   };
