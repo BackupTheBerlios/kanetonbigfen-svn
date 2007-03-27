@@ -120,10 +120,6 @@ void			set_gate(t_uint8	number,
 				 t_uint32	offset,
 				 t_uint16	segment_selector);
 
-t_error ia32_event_reserve(i_event event,
-			   t_uint32 type,
-			   int handler);
-
 t_error ia32_event_init(void);
 
 

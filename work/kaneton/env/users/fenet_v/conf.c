@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-Last update Wed Mar 21 21:29:47 2007 FENET Vincent
+Last update Tue Mar 27 18:29:39 2007 FENET Vincent
 */
 
 #include <klibc.h>
@@ -45,6 +45,7 @@ void check_1(void)
   int i, j;
   i = 42;
   j = 0;
+  i = i / j;
   /* printf(" ready... "); */
 /*   mysleep(100); */
 //  idt_init();
@@ -66,8 +67,25 @@ void check_1(void)
 /*   printf("\n"); */
 }
 
+void ia32_pf_handler(t_id id,
+		     t_uint32 error_code)
+{
+  t_uint32 addr;
+  SCR2(addr);
+  printf("#PF @ %p\n", addr);
+  while (1)
+    ;
+}
+
+
+
+void check_2()
+{
+  event_reserve(14, EVENT_FUNCTION, EVENT_HANDLER(ia32_pf_handler));
+}
+
 void check_tests(void)
 {
-  check_1();
+  check_2();
   printf("end.\n");
 }

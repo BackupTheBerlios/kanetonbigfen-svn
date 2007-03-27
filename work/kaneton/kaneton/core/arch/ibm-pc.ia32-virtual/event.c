@@ -22,7 +22,7 @@
 
 #include <klibc.h>
 #include <kaneton.h>
-#include "../../../include/core/event.h" //FIXME
+#include <core/event.h>
 
 /*
  * ---------- globals ---------------------------------------------------------
@@ -57,6 +57,44 @@ static struct s_idt_entry gl_idt[256];
  */
 
 // FIXME: lot of code has been removed here
+
+#define _handler_(_num_, _string_)	\
+void int_##_num_()			\
+{					\
+  printf(_string_);			\
+  while (1)				\
+    ;					\
+}
+
+_handler_(0, "Divide Error");
+_handler_(1, "Debug Exceptions");
+_handler_(2, "Intel reserved");
+_handler_(3, "Breakpoint");
+_handler_(4, "Overflow");
+_handler_(5, "Bounds Check");
+_handler_(6, "Invalid Opcode");
+_handler_(7, "Coprocessor Not Available");
+_handler_(8, "Double Fault");
+_handler_(9, "Coprocessor Segment Overrun");
+_handler_(10, "Invalid TSS");
+_handler_(11, "Segment Not Present");
+_handler_(12, "Stack Exception");
+_handler_(13, "General Protection Exception(Triple Fault)");
+_handler_(14, "Page Fault");
+_handler_(16, "Coprocessor Error");
+
+void int_32()
+{
+  int id = 32;
+  o_event* o;
+  event_get(id, &o);
+  t_uint32 addr;
+  SCR2(addr);
+  ((t_event_handler2)o->handler.function)(id, addr);;
+  printf("int_32");
+  while (1)
+    ;
+}
 
 /* void idt_set(int interupt, */
 /* 	     unsigned long pointer) */
@@ -101,31 +139,8 @@ void			set_gate(t_uint8	number,
   gl_idt[number].field[7] = (offsetH >> 8) & 0xFF;
 }
 
-/* #define _handler_(_num_, _string_)	\ */
-/* void int__num_()			\ */
-/* {					\ */
-/*   printf(_string_);			\ */
-/*   while (1)				\ */
-/*     ;					\ */
-/* } */
 
-/* _handler_(0, "Divide Error"); */
-/* 1 Debug Exceptions  */
-/* 2 Intel reserved  */
-/* 3 Breakpoint  */
-/* 4 Overflow  */
-/* 5 Bounds Check  */
-/* 6 Invalid Opcode  */
-/* 7 Coprocessor Not Available  */
-/* 8 Double Fault  */
-/* 9 Coprocessor Segment Overrun  */
-/* 10 Invalid TSS  */
-/* 11 Segment Not Present  */
-/* 12 Stack Exception  */
-/* 13 General Protection Exception(Triple Fault)  */
-/* 14 Page Fault  */
-/* 15 Intel reserved  */
-/* 16 Coprocessor Error  */
+
 
 
 /* void dbz() */
@@ -192,23 +207,21 @@ void			set_gate(t_uint8	number,
 /*   return 0; */
 /* } */
 
-t_error ia32_event_reserve(i_event event,
-			   t_uint32 type,
-			   int handler)
-{
-  if (type == EVENT_FUNCTION)
-    {
-      t_uint16		kcs;
-      if (gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs) == ERROR_UNKNOWN)
-	return ERROR_UNKNOWN;
-      /* set_gate(event, handler.function, kcs); */
-    }
-  else
-    if (type == EVENT_MESSAGE)
-      {
-	return ERROR_UNKNOWN;
-      }
-}
+/* t_error ia32_event_reserve(i_event event, */
+/* 			   t_uint32 type, */
+/* 			   t_uint32 handler) */
+/* { */
+/*   u_event_handler ab; */
+/*   if (type == EVENT_FUNCTION) */
+/*     { */
+
+/*     } */
+/*   else */
+/*     if (type == EVENT_MESSAGE) */
+/*       { */
+/* 	return ERROR_UNKNOWN; */
+/*       } */
+/* } */
 
 t_error ia32_event_init(void)
 {
@@ -224,5 +237,25 @@ t_error ia32_event_init(void)
   idtr.limit = 256 * 8;
   idtr.base = (unsigned int) gl_idt;
   LIDT(idtr);
+  t_uint16		kcs;
+  if (gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &kcs) == ERROR_UNKNOWN)
+    return ERROR_UNKNOWN;
+  set_gate(0, (t_uint32)int_0, kcs);
+  set_gate(1, (t_uint32)int_1, kcs);
+  set_gate(2, (t_uint32)int_2, kcs);
+  set_gate(3, (t_uint32)int_3, kcs);
+  set_gate(4, (t_uint32)int_4, kcs);
+  set_gate(5, (t_uint32)int_5, kcs);
+  set_gate(6, (t_uint32)int_6, kcs);
+  set_gate(7, (t_uint32)int_7, kcs);
+  set_gate(8, (t_uint32)int_8, kcs);
+  set_gate(9, (t_uint32)int_9, kcs);
+  set_gate(10, (t_uint32)int_10, kcs);
+  set_gate(11, (t_uint32)int_11, kcs);
+  set_gate(12, (t_uint32)int_12, kcs);
+  set_gate(13, (t_uint32)int_13, kcs);
+  set_gate(14, (t_uint32)int_14, kcs);
+  set_gate(16, (t_uint32)int_16, kcs);
+  set_gate(32, (t_uint32)int_32, kcs);
   return ERROR_NONE;
 }

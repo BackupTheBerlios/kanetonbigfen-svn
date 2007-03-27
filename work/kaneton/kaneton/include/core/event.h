@@ -48,6 +48,7 @@
  */
 
 typedef void                    (*t_event_handler)(t_id);
+typedef void                    (*t_event_handler2)(t_id, t_uint32);
 
 /*
  * event handler type
