@@ -64,8 +64,12 @@ union				u_timer_handler
 
 typedef struct
 {
-
-  // FIXME: think about what is needed here...
+  t_type type;
+  u_timer_handler handler;
+  t_uint32 delay;
+  t_uint32 repeat;
+  i_timer timerid;
+  // FIXED: I thought about what was needed here...
 
   machdep_data(o_timer);
 }				o_timer;
@@ -83,7 +87,8 @@ typedef struct
 
   t_uint32			timeref;
 
-  // FIXME: think about what is needed here...
+  i_set				timers; 
+ // FIXED: think about what is needed here...
 
   machdep_data(m_timer);
 }				m_timer;
@@ -158,6 +163,8 @@ typedef struct
 /*
  * ../../core/time/timer.c
  */
+
+t_error			timer_get(i_timer id, o_timer** o);
 
 t_error			timer_init(void);
 

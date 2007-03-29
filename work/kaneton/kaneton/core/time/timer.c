@@ -45,7 +45,117 @@ m_timer*		timer = NULL;
  * ---------- functions -------------------------------------------------------
  */
 
-// FIXME: lot of code has been removed here
+// FIXED: lot of code has been removed here
+
+/*   t_error			timer_show(i_timer id) */
+/* { */
+
+/* } */
+
+/*   t_error			timer_delay(i_timer, */
+/* 					       t_uint32) */
+/* { */
+
+/* } */
+
+/*   t_error			timer_repeat(i_timer id, */
+/* 						t_uint32 delay) */
+/* { */
+
+/* } */
+
+/*   t_error			timer_modify(timer id, */
+/* 						t_uint32 delay, */
+/* 						t_uint32 repeat) */
+/*      { */
+
+/* } */
+
+t_error			timer_get(i_timer id, o_timer** o)
+{
+  TIMER_ENTER(timer);
+
+  if (set_get(timer->timers, id, (void**)o) != ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+  TIMER_LEAVE(timer, ERROR_NONE);
+}
+
+t_error			timer_reserve(t_type type,
+					      u_timer_handler handler,
+					      t_uint32 delay,
+					      t_uint32 repeat,
+					      i_timer* id)
+{
+  o_timer*		tmp;
+  o_timer		o;
+
+  TIMER_ENTER(timer);
+
+  /*
+   * 1)
+   */
+
+  if (timer_get(*id, &tmp) == ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+  /*
+   * 2)
+   */
+
+  memset(&o, 0x0, sizeof(o_timer));
+
+  o.timerid = id;
+
+  o.type = type;
+
+  o.handler = handler;
+
+  o.delay = delay;
+
+  o,repeat = repeat;
+  /*
+   * 3)
+   */
+
+  if (set_add(timer->timers, &o) != ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+  TIMER_LEAVE(timer, ERROR_NONE);
+
+}
+
+t_error			timer_release(i_timer id)
+{
+  o_timer*		o;
+
+  TIMER_ENTER(timer);
+
+  /*
+   * 1)
+   */
+
+  if (timer_get(id, &o) != ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+  /*
+   * 2)
+   */
+
+  if (set_remove(timer->timers, o->timerid) != ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+  /*
+   * 3)
+   */
+
+  if (machdep_call(timer, timer_release, o->timerid) != ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+  TIMER_LEAVE(timer, ERROR_NONE);
+
+}
+
 
 /*
  * initialize the timer manager.
