@@ -159,44 +159,43 @@ t_error			timer_reserve(t_type type,
 					      i_timer* id)
 {
   o_timer*		tmp;
-  o_timer		o;
+  o_timer*		o;
 
   TIMER_ENTER(timer);
+
+
+  if ((o = malloc(sizeof(o_timer))) == NULL)
+TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
 
   /*
    * 1)
    */
 
-  if (timer_get(*id, &tmp) == ERROR_NONE)
-    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+  memset(o, 0x0, sizeof(o_timer));
 
-  /*
-   * 2)
-   */
-
-  memset(&o, 0x0, sizeof(o_timer));
-
- if (id_build(id) != ERROR_NONE)
+ if (id_reserve(&timer->id, id) != ERROR_NONE)
     {
       cons_msg('!', "timer: unable to initialize the identifier object\n");
 
       return ERROR_UNKNOWN;
     }
 
-  o.timerid = *id;
 
-  o.type = type;
+  o->timerid = (i_timer) o;
+  *id = (i_timer) o;
+  o->type = type;
+      cons_msg('!', "timer id: %p \n", *id);
+  o->handler = handler;
 
-  o.handler = handler;
+  o->delay = delay;
 
-  o.delay = delay;
-
-  o.repeat = repeat;
+  o->repeat = repeat;
   /*
-   * 3)
+   * 2)
    */
 
-  if (set_add(timer->timers, &o) != ERROR_NONE)
+  if (set_add(timer->timers, o) != ERROR_NONE)
     TIMER_LEAVE(timer, ERROR_UNKNOWN);
 
   TIMER_LEAVE(timer, ERROR_NONE);
