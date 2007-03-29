@@ -191,7 +191,7 @@ t_error			timer_reserve(t_type type,
 
   o.delay = delay;
 
-  o,repeat = repeat;
+  o.repeat = repeat;
   /*
    * 3)
    */
