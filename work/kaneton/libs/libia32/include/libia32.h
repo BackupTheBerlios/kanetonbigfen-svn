@@ -269,6 +269,8 @@ void			ipi_acknowledge(void);
  * ../time/timer.c
  */
 
+t_error ia32_timer_init();
+
 
 /*
  * ../task/context.c

@@ -36,12 +36,29 @@ extern m_timer*		timer;
 /*
  * the ia32 timer manager dispatch.
  */
+/* typedef struct */
+/* { */
 
+/* }				d_timer; */
 d_timer				timer_dispatch =
   {
-
-// FIXME: don't forget to fill this structure
-
+    NULL, /*   t_error			(*timer_show)(i_timer); */
+    NULL, /*   t_error			(*timer_delay)(i_timer, */
+    /* 					       t_uint32); */
+    NULL, /*   t_error			(*timer_repeat)(i_timer, */
+    /* 						t_uint32); */
+    NULL, /*   t_error			(*timer_modify)(i_timer, */
+    /* 						t_uint32, */
+    /* 						t_uint32); */
+    NULL, /*   t_error			(*timer_notify)(i_timer); */
+    NULL, /*   t_error			(*timer_reserve)(t_type, */
+    /*	 						 u_timer_handler, */
+    /* 						 t_uint32, */
+    /* 						 t_uint32, */
+    /* 						 i_timer*); */
+    NULL, /*   t_error			(*timer_release)(i_timer); */
+    ia32_timer_init, /*   t_error			(*timer_init)(void); */
+    NULL  /*   t_error			(*timer_clean)(void); */
   };
 
 /*

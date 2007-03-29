@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-Last update Wed Mar 28 21:33:57 2007 FENET Vincent
+Last update Thu Mar 29 21:50:05 2007 FENET Vincent
 */
 
 #include <klibc.h>
@@ -86,13 +86,20 @@ void check_2()
   c = a / b;
 }
 
+void check_4();
+static int go = 0;
+static int tic = 0;
+static int toc = 0;
+
 void getkey(void)
 {
   int i,j;
   INB(0x60, i);
   INB(0x64, j);
-  printf("%i\n", i);
   mysleep(100);
+  go = (go + 1) % 4;
+  tic = 0;
+
 }
 
 void check_3()
@@ -100,8 +107,27 @@ void check_3()
   event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
 }
 
+void tick()
+{
+  if (go)
+    if (!(toc = (toc + 1) % 100))
+      printf("\n %d ", tic++);
+}
+
+void check_4()
+{
+  timer_init();
+  event_reserve(32+0, EVENT_FUNCTION, EVENT_HANDLER(tick));
+}
+
+void check_5()
+{
+  event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
+  event_reserve(32+0, EVENT_FUNCTION, EVENT_HANDLER(tick));
+}
+
 void check_tests(void)
 {
-  check_3();
+  check_5();
   printf("end.\n");
 }
