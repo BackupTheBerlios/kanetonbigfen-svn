@@ -164,7 +164,28 @@ typedef struct
  * ../../core/time/timer.c
  */
 
+t_error			timer_show(i_timer id);
+
+t_error			timer_dump(void);
+
+t_error			timer_repeat(i_timer id,
+				     t_uint32 repeat);
+
+t_error			timer_modify(i_timer id,
+				     t_uint32 delay,
+				     t_uint32 repeat);
+
+t_error			timer_delay(i_timer id, t_uint32 delay);
+
 t_error			timer_get(i_timer id, o_timer** o);
+
+t_error			timer_reserve(t_type type,
+					      u_timer_handler handler,
+					      t_uint32 delay,
+					      t_uint32 repeat,
+					      i_timer* id);
+
+t_error			timer_release(i_timer id);
 
 t_error			timer_init(void);
 

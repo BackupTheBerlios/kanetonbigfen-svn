@@ -47,29 +47,99 @@ m_timer*		timer = NULL;
 
 // FIXED: lot of code has been removed here
 
-/*   t_error			timer_show(i_timer id) */
-/* { */
+t_error			timer_show(i_timer id)
+{
+  o_timer*		o;
 
-/* } */
+  TIMER_ENTER(timer);
 
-/*   t_error			timer_delay(i_timer, */
-/* 					       t_uint32) */
-/* { */
+  /*
+   * 1)
+   */
 
-/* } */
+  if (timer_get(id, &o) != ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
 
-/*   t_error			timer_repeat(i_timer id, */
-/* 						t_uint32 delay) */
-/* { */
+  /*
+   * 2)
+   */
 
-/* } */
+  cons_msg('#', "  timer %qd: task %qd: delay %qd: repeat %qd\n", o->timerid, o->handler.taskid, o->delay, o->repeat);
 
-/*   t_error			timer_modify(timer id, */
-/* 						t_uint32 delay, */
-/* 						t_uint32 repeat) */
-/*      { */
+  TIMER_LEAVE(timer, ERROR_NONE);
+}
 
-/* } */
+t_error			timer_dump(void)
+{
+  t_state		state;
+  o_timer*		data;
+  t_setsz		size;
+  t_iterator		i;
+
+  TIMER_ENTER(timer);
+
+  /*
+   * 1)
+   */
+
+  if (set_size(timer->timers, &size) != ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+  /*
+   * 2)
+   */
+
+  cons_msg('#', "dumping %qu timer(s):\n", size);
+
+  set_foreach(SET_OPT_FORWARD, timer->timers, &i, state)
+    {
+      if (set_object(timer->timers, i, (void**)&data) != ERROR_NONE)
+	TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+      if (timer_show(data->timerid) != ERROR_NONE)
+	TIMER_LEAVE(timer, ERROR_UNKNOWN);
+    }
+
+  TIMER_LEAVE(timer, ERROR_NONE);
+}
+
+t_error			timer_repeat(i_timer id,
+				     t_uint32 repeat)
+{
+  o_timer*		tmp;
+
+if (timer_get(id, &tmp) == ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+ tmp->repeat = repeat;
+}
+
+t_error			timer_modify(i_timer id,
+				     t_uint32 delay,
+				     t_uint32 repeat)
+{
+ if (timer_delay(id, delay) == ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+ if (timer_repeat(id, repeat) == ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+TIMER_LEAVE(timer, ERROR_NONE);
+}
+
+t_error			timer_delay(i_timer id, t_uint32 delay)
+{
+  o_timer*		tmp;
+
+  TIMER_ENTER(timer);
+
+  if (timer_get(id, &tmp) == ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+  tmp->delay = delay;
+
+TIMER_LEAVE(timer, ERROR_NONE);
+}
 
 t_error			timer_get(i_timer id, o_timer** o)
 {
@@ -96,16 +166,23 @@ t_error			timer_reserve(t_type type,
    * 1)
    */
 
-  if (timer_get(*id, &tmp) == ERROR_NONE)
+  if ((type != EVENT_FUNCTION) || (type != EVENT_MESSAGE))
     TIMER_LEAVE(timer, ERROR_UNKNOWN);
 
   /*
    * 2)
    */
 
+  if (timer_get(*id, &tmp) == ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+  /*
+   * 3)
+   */
+
   memset(&o, 0x0, sizeof(o_timer));
 
-  o.timerid = id;
+  o.timerid = *id;
 
   o.type = type;
 
@@ -115,7 +192,7 @@ t_error			timer_reserve(t_type type,
 
   o,repeat = repeat;
   /*
-   * 3)
+   * 4)
    */
 
   if (set_add(timer->timers, &o) != ERROR_NONE)
