@@ -167,21 +167,21 @@ t_error			timer_reserve(t_type type,
    * 1)
    */
 
-  if ((type != EVENT_FUNCTION) || (type != EVENT_MESSAGE))
+  if (timer_get(*id, &tmp) == ERROR_NONE)
     TIMER_LEAVE(timer, ERROR_UNKNOWN);
 
   /*
    * 2)
    */
 
-  if (timer_get(*id, &tmp) == ERROR_NONE)
-    TIMER_LEAVE(timer, ERROR_UNKNOWN);
-
-  /*
-   * 3)
-   */
-
   memset(&o, 0x0, sizeof(o_timer));
+
+ if (id_build(id) != ERROR_NONE)
+    {
+      cons_msg('!', "timer: unable to initialize the identifier object\n");
+
+      return ERROR_UNKNOWN;
+    }
 
   o.timerid = *id;
 
@@ -193,7 +193,7 @@ t_error			timer_reserve(t_type type,
 
   o,repeat = repeat;
   /*
-   * 4)
+   * 3)
    */
 
   if (set_add(timer->timers, &o) != ERROR_NONE)
@@ -310,6 +310,18 @@ t_error			timer_init(void)
 
   if (machdep_call(timer, timer_init) != ERROR_NONE)
     return ERROR_UNKNOWN;
+
+  /*
+   * 3)
+   */
+
+  if (set_reserve(ll, SET_OPT_ALLOC | SET_OPT_SORT,
+		  sizeof(o_timer), &timer->timers) != ERROR_NONE)
+    {
+      cons_msg('!', "timer: unable to reserve the timer set\n");
+
+      return ERROR_UNKNOWN;
+    }
 
 return ERROR_NONE;
 }

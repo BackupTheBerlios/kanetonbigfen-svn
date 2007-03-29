@@ -185,6 +185,8 @@ t_error			timer_reserve(t_type type,
 					      t_uint32 repeat,
 					      i_timer* id);
 
+t_error			timer_notify(i_timer id);
+
 t_error			timer_release(i_timer id);
 
 t_error			timer_init(void);
