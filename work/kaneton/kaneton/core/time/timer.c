@@ -311,7 +311,7 @@ t_error			timer_init(void)
   if (machdep_call(timer, timer_init) != ERROR_NONE)
     return ERROR_UNKNOWN;
 
-  return ERROR_NONE;
+return ERROR_NONE;
 }
 
 /*
