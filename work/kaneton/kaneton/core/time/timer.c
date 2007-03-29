@@ -112,6 +112,7 @@ if (timer_get(id, &tmp) == ERROR_NONE)
     TIMER_LEAVE(timer, ERROR_UNKNOWN);
 
  tmp->repeat = repeat;
+  TIMER_LEAVE(timer, ERROR_NONE);
 }
 
 t_error			timer_modify(i_timer id,
@@ -200,6 +201,28 @@ t_error			timer_reserve(t_type type,
 
   TIMER_LEAVE(timer, ERROR_NONE);
 
+}
+
+t_error			timer_notify(i_timer id)
+{
+  o_timer*              o;
+
+  TIMER_ENTER(timer);
+
+  /*
+   * 1)
+   */
+
+  if (timer_get(id, &o) != ERROR_NONE)
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
+
+  /*
+   * 2)
+   */
+
+  /* XXX TIMER message the task ! */
+
+  TIMER_LEAVE(timer, ERROR_NONE);
 }
 
 t_error			timer_release(i_timer id)
