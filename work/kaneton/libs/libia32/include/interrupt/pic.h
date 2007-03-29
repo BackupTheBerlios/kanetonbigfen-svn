@@ -20,4 +20,15 @@
 
 // FIXME: some declarations has beed removed here
 
+# define PIC_ACK(irq)			\
+  {					\
+    if (irq < 8 && irq != 2)		\
+      OUTB(0x20, 1 << 5);		\
+    else				\
+      {					\
+	OUTB(0x20, 1 << 5);		\
+	OUTB(0xA0, 1 << 5);		\
+      }					\
+  }
+
 #endif

@@ -116,11 +116,13 @@ t_error			ia32_segment_clean(void);
  * ../../../../core/arch/machdep/event.c
  */
 
-void			set_gate(t_uint8	number,
-				 t_uint32	offset,
-				 t_uint16	segment_selector);
-
 t_error ia32_event_init(void);
+
+t_error			ia32_event_reserve(i_event		id,
+					   t_uint32		type,
+					   t_uint32		handler);
+
+t_error			ia32_event_release(i_event id);
 
 
 /*

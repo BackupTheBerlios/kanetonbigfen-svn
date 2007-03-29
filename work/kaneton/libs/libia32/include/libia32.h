@@ -235,10 +235,20 @@ t_error			tlb_flush(void);
  * ../interrupt/pic.c
  */
 
+void init_pics();
+
+void irq_enable(int i);
+
+void irq_disable(int i);
+
 
 /*
  * ../interrupt/interrupt.c
  */
+
+void			set_gate(t_uint8	number,
+				 t_uint32	offset,
+				 t_uint16	segment_selector);
 
 
 /*

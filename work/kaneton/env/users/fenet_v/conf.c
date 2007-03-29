@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-Last update Tue Mar 27 19:20:28 2007 FENET Vincent
+Last update Wed Mar 28 21:33:57 2007 FENET Vincent
 */
 
 #include <klibc.h>
@@ -80,10 +80,28 @@ void ia32_pf_handler(t_id id,
 void check_2()
 {
   event_reserve(0, EVENT_FUNCTION, EVENT_HANDLER(ia32_pf_handler));
+  int a = 1;
+  int b = 0;
+  int c;
+  c = a / b;
+}
+
+void getkey(void)
+{
+  int i,j;
+  INB(0x60, i);
+  INB(0x64, j);
+  printf("%i\n", i);
+  mysleep(100);
+}
+
+void check_3()
+{
+  event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
 }
 
 void check_tests(void)
 {
-  check_2();
+  check_3();
   printf("end.\n");
 }

@@ -68,7 +68,7 @@ void*			mmap(void*			start,
 
   // FIXED: Lou - some easy code has been removed here
   if ((addr = malloc(sizeof (t_vaddr))) == NULL)
-    MAP_LEAVE(map, ERROR_UNKNOWN);
+    return NULL;
   map_reserve(kasid, MAP_OPT_PRIVILEGED, length, perms, addr);
   return addr;
 }
