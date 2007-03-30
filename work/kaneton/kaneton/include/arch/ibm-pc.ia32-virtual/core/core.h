@@ -129,6 +129,10 @@ t_error			ia32_event_release(i_event id);
  * ../../../../core/arch/machdep/timer.c
  */
 
+void ia32_timer_tick();
+
+t_error ia32_timer_init();
+
 
 /*
  * ../../../../core/arch/machdep/task.c

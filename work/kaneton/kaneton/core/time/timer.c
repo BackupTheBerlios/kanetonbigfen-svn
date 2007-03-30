@@ -152,11 +152,11 @@ t_error			timer_get(i_timer id, o_timer** o)
   TIMER_LEAVE(timer, ERROR_NONE);
 }
 
-t_error			timer_reserve(t_type type,
-					      u_timer_handler handler,
-					      t_uint32 delay,
-					      t_uint32 repeat,
-					      i_timer* id)
+t_error			timer_reserve(t_type		type,
+				      u_timer_handler	handler,
+				      t_uint32		delay,
+				      t_uint32		repeat,
+				      i_timer*		id)
 {
   o_timer*		tmp;
   o_timer*		o;
@@ -165,7 +165,7 @@ t_error			timer_reserve(t_type type,
 
 
   if ((o = malloc(sizeof(o_timer))) == NULL)
-TIMER_LEAVE(timer, ERROR_UNKNOWN);
+    TIMER_LEAVE(timer, ERROR_UNKNOWN);
 
 
   /*

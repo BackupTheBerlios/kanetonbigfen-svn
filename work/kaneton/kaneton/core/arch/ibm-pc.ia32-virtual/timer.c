@@ -66,3 +66,46 @@ d_timer				timer_dispatch =
  */
 
 // FIXME: lot of code has been removed here
+
+/* #define TIMER_REPEAT_DISABLE    0 */
+/* #define TIMER_REPEAT_ENABLE     1 */
+
+void ia32_timer_tick()
+{
+  t_state		state;
+  o_timer*		timer_elt;
+  t_iterator		i;
+  t_setsz		size;
+  int			bo = 0;
+
+  if (set_size(timer->timers, &size) != ERROR_NONE)
+    return;
+  //printf("[%d/1]", size);
+  set_foreach(SET_OPT_FORWARD, timer->timers, &i, state)
+  {
+    if (set_object(timer->timers, i, (void**)&timer_elt) != ERROR_NONE)
+      return;
+    if (timer_elt->type == EVENT_FUNCTION)
+      {
+	if (timer->timeref == timer_elt->next)
+	  {
+	    printf("[%x/%x]", timer_elt->handler.function, timer_elt->timerid);
+	    bo = 1;
+	    //((t_timer_handler)timer_elt->handler.function)();
+	    if (timer_elt->repeat == TIMER_REPEAT_ENABLE)
+	      timer_elt->next += timer_elt->delay;
+	    else
+	      timer_release(timer_elt->timerid);
+	  }
+      }
+  }
+  timer->timeref++;
+  if (bo)
+    printf("\n");
+}
+
+t_error ia32_timer_init()
+{
+  ia32_pit_init();
+  event_reserve(32+0, EVENT_FUNCTION, EVENT_HANDLER(ia32_timer_tick));
+}

@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-Last update Thu Mar 29 21:50:05 2007 FENET Vincent
+Last update Fri Mar 30 19:31:07 2007 FENET Vincent
 */
 
 #include <klibc.h>
@@ -91,15 +91,53 @@ static int go = 0;
 static int tic = 0;
 static int toc = 0;
 
+char *kbdus[128] =
+{
+    "",  "\0x17", "1", "2", "3", "4", "5", "6", "7", "8",	/* 9 */
+  "9", "0", "-", "=", "\b",	/* Backspace */
+  "\t",			/* Tab */
+  "q", "w", "e", "r",	/* 19 */
+  "t", "y", "u", "i", "o", "p", "[", "]", "\r\n",	/* Enter key */
+    "",			/* 29   - Control */
+  "a", "s", "d", "f", "g", "h", "j", "k", "l", ";",	/* 39 */
+ "\"", "`",   "",		/* Left shift */
+ "\\", "z", "x", "c", "v", "b", "n",			/* 49 */
+  "m", ",", ".", "/",   "",				/* Right shift */
+  "*",
+    "",	/* Alt */
+  " ",	/* Space bar */
+    "",	/* Caps lock */
+    "",	/* 59 - F1 key ... > */
+    "",   "",   "",   "",   "",   "",   "",   "",
+    "",	/* < ... F10 */
+    "",	/* 69 - Num lock*/
+    "",	/* Scroll Lock */
+    "",	/* Home key */
+    "",	/* Up Arrow */
+    "",	/* Page Up */
+  "-",
+    "",	/* Left Arrow */
+    "",
+    "",	/* Right Arrow */
+  "+",
+    "",	/* 79 - End key*/
+    "",	/* Down Arrow */
+    "",	/* Page Down */
+    "",	/* Insert Key */
+    "",	/* Delete Key */
+    "",   "",   "",
+    "",	/* F11 Key */
+    "",	/* F12 Key */
+    "",	/* All other keys are undefined */
+};
+
 void getkey(void)
 {
-  int i,j;
+  char i,j;
   INB(0x60, i);
   INB(0x64, j);
-  mysleep(100);
-  go = (go + 1) % 4;
-  tic = 0;
-
+  if (i < 128 && i > 0 && kbdus[i][0])
+    printf("%s", kbdus[i]);
 }
 
 void check_3()
@@ -128,6 +166,16 @@ void check_5()
 
 void check_tests(void)
 {
-  check_5();
+  i_timer res = 42;
+  timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick), 200, TIMER_REPEAT_ENABLE, &res);
+  timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick), 200, TIMER_REPEAT_ENABLE, &res);
+  timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick), 200, TIMER_REPEAT_ENABLE, &res);
+  timer_dump();
+
+  o_timer *o;
+  timer_get(res, &o);
+  printf("[%x/handlerfunc]", o->handler.function);
+
+  event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
   printf("end.\n");
 }

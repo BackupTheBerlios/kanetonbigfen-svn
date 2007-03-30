@@ -64,13 +64,13 @@ union				u_timer_handler
 
 typedef struct
 {
-  t_type type;
-  u_timer_handler handler;
-  t_uint32 delay;
-  t_uint32 repeat;
-  i_timer timerid;
+  i_timer		timerid;
+  t_type		type;
+  u_timer_handler	handler;
+  t_uint32		delay;
+  t_uint32		repeat; // will we repeat
+  t_uint32		next; // when next tick ?
   // FIXED: I thought about what was needed here...
-
   machdep_data(o_timer);
 }				o_timer;
 
@@ -82,14 +82,10 @@ typedef struct
 typedef struct
 {
   o_id				id;
-
   i_stats			stats;
-
   t_uint32			timeref;
-
-  i_set				timers; 
+  i_set				timers;
  // FIXED: think about what is needed here...
-
   machdep_data(m_timer);
 }				m_timer;
 
@@ -179,11 +175,11 @@ t_error			timer_delay(i_timer id, t_uint32 delay);
 
 t_error			timer_get(i_timer id, o_timer** o);
 
-t_error			timer_reserve(t_type type,
-					      u_timer_handler handler,
-					      t_uint32 delay,
-					      t_uint32 repeat,
-					      i_timer* id);
+t_error			timer_reserve(t_type		type,
+				      u_timer_handler	handler,
+				      t_uint32		delay,
+				      t_uint32		repeat,
+				      i_timer*		id);
 
 t_error			timer_notify(i_timer id);
 

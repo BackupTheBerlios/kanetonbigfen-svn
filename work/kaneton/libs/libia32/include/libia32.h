@@ -269,7 +269,7 @@ void			ipi_acknowledge(void);
  * ../time/timer.c
  */
 
-t_error ia32_timer_init();
+void ia32_pit_init();
 
 
 /*

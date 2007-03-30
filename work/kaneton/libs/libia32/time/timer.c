@@ -26,10 +26,9 @@
 
 // FIXME: lot of code has beed removed here
 
-t_error ia32_timer_init()
+void ia32_pit_init()
 {
   OUTB(0x43, 0x34); //00 11 010 0
   OUTB(0x40, 0xA9); //least
   OUTB(0x40, 0x04); //most, 1khz
-  return ERROR_NONE;
 }
