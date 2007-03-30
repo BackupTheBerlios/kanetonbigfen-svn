@@ -26,23 +26,33 @@ if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch),
    cons_msg('+', "Timer Reserve failed !\n");
 
 if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch),
-20, TIMER_REPEAT_ENABLE,
+125, TIMER_REPEAT_ENABLE,
 &idtimer) != ERROR_NONE)
    cons_msg('+', "Timer Reserve failed !\n");
 
 if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch),
-20, TIMER_REPEAT_ENABLE,
+156, TIMER_REPEAT_DISABLE,
 &idtimer) != ERROR_NONE)
    cons_msg('+', "Timer Reserve failed !\n");
+
+/* if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch), */
+/* 20, TIMER_REPEAT_ENABLE, */
+/* &idtimer) != ERROR_NONE) */
+/*    cons_msg('+', "Timer Reserve failed !\n"); */
+
+/* if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch), */
+/* 20, TIMER_REPEAT_ENABLE, */
+/* &idtimer) != ERROR_NONE) */
+/*    cons_msg('+', "Timer Reserve failed !\n"); */
 
 if (timer_dump() != ERROR_NONE)
    cons_msg('+', "Timer Dump failed !\n");
 
-if (timer_show(idtimer)  != ERROR_NONE)
-   cons_msg('+', "Timer Show failed !\n");
+/* if (timer_show(idtimer)  != ERROR_NONE) */
+/*    cons_msg('+', "Timer Show failed !\n"); */
 
-if (timer_get(idtimer, &tmp)  != ERROR_NONE)
-   cons_msg('+', "Timer Get failed !\n");
+/* if (timer_get(idtimer, &tmp)  != ERROR_NONE) */
+/*    cons_msg('+', "Timer Get failed !\n"); */
 
   cons_msg('+', "Ending Tests\n");
 }

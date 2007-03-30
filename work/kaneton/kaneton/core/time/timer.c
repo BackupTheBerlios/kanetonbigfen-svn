@@ -64,7 +64,8 @@ t_error			timer_show(i_timer id)
    * 2)
    */
 
-  cons_msg('#', "  timer %qd: task %qd: delay %qd: repeat %qd\n", o->timerid, o->handler.taskid, o->delay, o->repeat);
+  cons_msg('#', "  timer %qd: function %p: delay %u: repeat %u\n",
+	   o->timerid, o->handler.function, o->delay, o->repeat);
 
   TIMER_LEAVE(timer, ERROR_NONE);
 }
@@ -159,47 +160,40 @@ t_error			timer_reserve(t_type		type,
 				      i_timer*		id)
 {
   o_timer*		tmp;
-  o_timer*		o;
+  o_timer		o;
 
   TIMER_ENTER(timer);
-
-
-  if ((o = malloc(sizeof(o_timer))) == NULL)
-    TIMER_LEAVE(timer, ERROR_UNKNOWN);
 
 
   /*
    * 1)
    */
 
-  memset(o, 0x0, sizeof(o_timer));
+  memset(&o, 0x0, sizeof(o_timer));
 
-/*  if (id_reserve(&timer->id, id) != ERROR_NONE) */
-/*     { */
-/*       cons_msg('!', "timer: unable to initialize the identifier object\n"); */
+ if (id_reserve(&timer->id, id) != ERROR_NONE)
+    {
+      cons_msg('!', "timer: unable to initialize the identifier object\n");
 
-/*       return ERROR_UNKNOWN; */
-/*     } */
+      return ERROR_UNKNOWN;
+    }
 
+  o.timerid = *id;
 
-  *id = timer->id.id++;
+  o.type = type;
 
-  o->timerid = *id;
+  o.handler = handler;
 
-      cons_msg('!', "timer id: %d \n", *id);
+  o.delay = delay;
 
-  o->type = type;
+  o.repeat = repeat;
 
-  o->handler = handler;
-
-  o->delay = delay;
-
-  o->repeat = repeat;
+  //  cons_msg('#', "  timer %qd: task %qd: delay %qd: repeat %qd\n", o.timerid, o.handler.taskid, o.delay, o.repeat);
   /*
    * 2)
    */
 
-  if (set_add(timer->timers, o) != ERROR_NONE)
+  if (set_add(timer->timers,(void*) &o) != ERROR_NONE)
     TIMER_LEAVE(timer, ERROR_UNKNOWN);
 
   TIMER_LEAVE(timer, ERROR_NONE);
@@ -318,7 +312,7 @@ t_error			timer_init(void)
    * 3)
    */
 
-  if (set_reserve(ll, SET_OPT_ALLOC | SET_OPT_SORT,
+  if (set_reserve(ll, SET_OPT_ALLOC,
 		  sizeof(o_timer), &timer->timers) != ERROR_NONE)
     {
       cons_msg('!', "timer: unable to reserve the timer set\n");

@@ -89,7 +89,7 @@ void ia32_timer_tick()
       {
 	if (timer->timeref == timer_elt->next)
 	  {
-	    printf("[%x/%x]", timer_elt->handler.function, timer_elt->timerid);
+/* 	    printf("[%x/%x]", timer_elt->handler.function, timer_elt->timerid); */
 	    bo = 1;
 	    //((t_timer_handler)timer_elt->handler.function)();
 	    if (timer_elt->repeat == TIMER_REPEAT_ENABLE)
@@ -100,8 +100,8 @@ void ia32_timer_tick()
       }
   }
   timer->timeref++;
-  if (bo)
-    printf("\n");
+/*   if (bo) */
+/*     printf("\n"); */
 }
 
 t_error ia32_timer_init()

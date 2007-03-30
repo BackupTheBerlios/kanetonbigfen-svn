@@ -82,9 +82,13 @@ typedef struct
 typedef struct
 {
   o_id				id;
+
   i_stats			stats;
+
   t_uint32			timeref;
+
   i_set				timers;
+
  // FIXED: think about what is needed here...
   machdep_data(m_timer);
 }				m_timer;
