@@ -182,8 +182,8 @@ TIMER_LEAVE(timer, ERROR_UNKNOWN);
     }
 
 
-  o->timerid = (i_timer) o;
-  *id = (i_timer) o;
+ o->timerid = id;
+
   o->type = type;
       cons_msg('!', "timer id: %p \n", *id);
   o->handler = handler;

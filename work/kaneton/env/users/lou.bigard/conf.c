@@ -14,8 +14,8 @@ void		check_tests(void)
 {
   i_as		as;
   i_timer		idtimer;
-i_timer		idtimer2;
-o_timer*		tmp;
+  i_timer		idtimer2;
+  o_timer*		tmp;
 
 /* if (as_reserve(ktask, &as) != ERROR_NONE) */
 /*   cons_msg('+', "AS Reserve failed !\n"); */
