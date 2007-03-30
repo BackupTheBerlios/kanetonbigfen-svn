@@ -188,7 +188,6 @@ t_error			timer_reserve(t_type		type,
 
   o.repeat = repeat;
 
-  //  cons_msg('#', "  timer %qd: task %qd: delay %qd: repeat %qd\n", o.timerid, o.handler.taskid, o.delay, o.repeat);
   /*
    * 2)
    */
