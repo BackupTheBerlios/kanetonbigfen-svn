@@ -76,11 +76,9 @@ void ia32_timer_tick()
   o_timer*		timer_elt;
   t_iterator		i;
   t_setsz		size;
-  int			bo = 0;
 
   if (set_size(timer->timers, &size) != ERROR_NONE)
     return;
-  //printf("[%d/1]", size);
   set_foreach(SET_OPT_FORWARD, timer->timers, &i, state)
   {
     if (set_object(timer->timers, i, (void**)&timer_elt) != ERROR_NONE)
@@ -89,9 +87,7 @@ void ia32_timer_tick()
       {
 	if (timer->timeref == timer_elt->next)
 	  {
-/* 	    printf("[%x/%x]", timer_elt->handler.function, timer_elt->timerid); */
-	    bo = 1;
-	    //((t_timer_handler)timer_elt->handler.function)();
+	    ((t_timer_handler)timer_elt->handler.function)();
 	    if (timer_elt->repeat == TIMER_REPEAT_ENABLE)
 	      timer_elt->next += timer_elt->delay;
 	    else
@@ -100,8 +96,6 @@ void ia32_timer_tick()
       }
   }
   timer->timeref++;
-/*   if (bo) */
-/*     printf("\n"); */
 }
 
 t_error ia32_timer_init()

@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-Last update Fri Mar 30 19:31:07 2007 FENET Vincent
+Last update Fri Mar 30 22:29:35 2007 FENET Vincent
 */
 
 #include <klibc.h>
@@ -145,11 +145,21 @@ void check_3()
   event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
 }
 
+void tick3()
+{
+  printf("3");
+}
+
+void tick2()
+{
+  printf("2");
+}
 void tick()
 {
-  if (go)
-    if (!(toc = (toc + 1) % 100))
-      printf("\n %d ", tic++);
+  printf(".");
+/*   if (go) */
+/*     if (!(toc = (toc + 1) % 100)) */
+/*       printf("\n %d ", tic++); */
 }
 
 void check_4()
@@ -168,13 +178,13 @@ void check_tests(void)
 {
   i_timer res = 42;
   timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick), 200, TIMER_REPEAT_ENABLE, &res);
-  timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick), 200, TIMER_REPEAT_ENABLE, &res);
-  timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick), 200, TIMER_REPEAT_ENABLE, &res);
-  timer_dump();
+  timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick2), 200, TIMER_REPEAT_ENABLE, &res);
+  timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick3), 200, TIMER_REPEAT_ENABLE, &res);
+  //timer_dump();
 
-  o_timer *o;
-  timer_get(res, &o);
-  printf("[%x/handlerfunc]", o->handler.function);
+  //o_timer *o;
+  //timer_get(res, &o);
+  //printf("[%x/handlerfunc]", o->handler.function);
 
   event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
   printf("end.\n");
