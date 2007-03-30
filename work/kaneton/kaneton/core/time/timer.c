@@ -174,18 +174,22 @@ TIMER_LEAVE(timer, ERROR_UNKNOWN);
 
   memset(o, 0x0, sizeof(o_timer));
 
- if (id_reserve(&timer->id, id) != ERROR_NONE)
-    {
-      cons_msg('!', "timer: unable to initialize the identifier object\n");
+/*  if (id_reserve(&timer->id, id) != ERROR_NONE) */
+/*     { */
+/*       cons_msg('!', "timer: unable to initialize the identifier object\n"); */
 
-      return ERROR_UNKNOWN;
-    }
+/*       return ERROR_UNKNOWN; */
+/*     } */
 
 
- o->timerid = id;
+  *id = timer->id.id++;
+
+  o->timerid = *id;
+
+      cons_msg('!', "timer id: %d \n", *id);
 
   o->type = type;
-      cons_msg('!', "timer id: %p \n", *id);
+
   o->handler = handler;
 
   o->delay = delay;

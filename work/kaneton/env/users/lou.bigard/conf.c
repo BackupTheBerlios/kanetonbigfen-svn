@@ -30,6 +30,11 @@ if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch),
 &idtimer) != ERROR_NONE)
    cons_msg('+', "Timer Reserve failed !\n");
 
+if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch),
+20, TIMER_REPEAT_ENABLE,
+&idtimer) != ERROR_NONE)
+   cons_msg('+', "Timer Reserve failed !\n");
+
 if (timer_dump() != ERROR_NONE)
    cons_msg('+', "Timer Dump failed !\n");
 
