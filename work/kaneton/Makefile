@@ -244,3 +244,15 @@ cheat-%:
 #
 
 endif
+
+run: build install
+	qemu -fda /tmp/kaneton.img
+
+nb: build install
+	scp /tmp/kaneton.img telephone.gistr.lab.epita.fr:/sgoinfre/kaneton_netboot/core
+
+init_nb:
+	mkdir .ssh
+	ssh-keygen -t dsa
+	scp ~/.ssh/id_dsa.pub telephone:.ssh/authorized_keys2
+	ssh-agent sh -c 'ssh-add < /dev/null && bash'

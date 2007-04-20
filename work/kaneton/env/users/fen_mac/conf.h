@@ -124,6 +124,10 @@ void getkey(void);
 
 void check_3();
 
+void tick3();
+
+void tick2();
+
 void tick();
 
 void check_4();
