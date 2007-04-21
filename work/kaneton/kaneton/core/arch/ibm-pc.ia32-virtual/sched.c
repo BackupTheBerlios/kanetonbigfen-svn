@@ -38,19 +38,35 @@ extern m_sched*		sched;
 
 d_sched			sched_dispatch =
   {
-    ia32_sched_quantum, //t_error			(*sched_quantum)(t_quantum);
-    NULL, //t_error			(*sched_yield)(i_cpu);
-    NULL, //t_error			(*sched_switch)(i_thread);
-    NULL, //t_error			(*sched_add)(i_thread);
-    NULL, //t_error			(*sched_remove)(i_thread);
-    NULL, //t_error			(*sched_update)(i_thread);
-    ia32_sched_init, //t_error		(*sched_init)(void);
-    NULL, //t_error			(*sched_clean)(void);
+    ia32_sched_quantum,
+    NULL,
+    ia32_sched_switch,
+    NULL,
+    NULL,
+    ia32_sched_init,
+    NULL,
   };
 
 /*
  * ---------- functions -------------------------------------------------------
  */
+
+
+// FIXED: lot of code has been removed here
+t_error			ia32_sched_quantum(t_quantum quantum)
+{
+    SCHED_ENTER(sched);
+  if (timer_delay(sched->timerid, quantum) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+}
+
+t_error			ia32_sched_switch(i_thread elected)
+{
+   SCHED_ENTER(sched);
+ cons_msg('+', "Switched to %pd [%pd]\n", elected);
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+}
+
 
 // You have to implement the machine-dependent part doing the context switching.
 // The architecture-dependent part of the scheduler is also responsible of
@@ -61,16 +77,6 @@ d_sched			sched_dispatch =
 
 // FIXME: lot of code has been removed here
 
-t_error ia32_sched_quantum()
-{
-  return ERROR_NONE;
-}
-
-t_error ia32_sched_switch(i_thread i)
-{
-  // does the context switching
-  return ERROR_NONE;
-}
 
 void ia32_sched_yield()
 {
@@ -87,3 +93,4 @@ t_error ia32_sched_init()
 		TIMER_REPEAT_ENABLE, &res);
   return ERROR_NONE;
 }
+

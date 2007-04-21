@@ -77,6 +77,7 @@ typedef struct
   i_task			taskid;
 
   t_prior			prior;
+  t_prior			init_prior;
 
   t_state			sched;
 

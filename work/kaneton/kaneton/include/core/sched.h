@@ -52,8 +52,10 @@ typedef struct
   i_stats	stats;
 
   t_quantum	quantum;
-
+  i_thread	current;
   i_set		cpus;
+  i_set		threads;
+  i_timer	timerid;
 
   machdep_data(m_sched);
 }		m_sched;
@@ -120,6 +122,8 @@ typedef struct
  * ../../core/sched/sched.c
  */
 
+t_error			sched_quantum(t_quantum quantum);
+
 t_error			sched_current(i_thread*			thread);
 
 t_error			sched_add(i_thread			thread);
@@ -131,6 +135,8 @@ t_error			sched_update(i_thread			thread);
 t_error			sched_init(void);
 
 t_error			sched_clean(void);
+
+t_error				sched_switch(void);
 
 
 /*

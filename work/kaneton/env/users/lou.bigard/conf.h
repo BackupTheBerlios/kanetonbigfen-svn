@@ -108,8 +108,6 @@
  * ../../core/conf/conf.c
  */
 
-void sched_switch(void);
-
 void		check_tests(void);
 
 

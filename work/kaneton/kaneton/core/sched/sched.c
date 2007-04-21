@@ -32,33 +32,90 @@ m_sched*		sched = NULL;
  * ---------- functions -------------------------------------------------------
  */
 
-// FIXME: lot of code has been removed here
+// FIXED: lot of code has been removed here
+t_error			sched_quantum(t_quantum quantum)
+{
+  SCHED_ENTER(sched);
+
+  sched->quantum = quantum;
+
+  SCHED_LEAVE(sched, ERROR_NONE);
+}
 
 t_error			sched_current(i_thread*			thread)
 {
-  // FIXME: some code was removed here
+  SCHED_ENTER(sched);
+  // FIXED: some code was removed here
+  *thread = sched->current;
 
+  SCHED_LEAVE(sched, ERROR_NONE);
   return (ERROR_UNKNOWN);
 }
 
 t_error			sched_add(i_thread			thread)
 {
-  // FIXME: some code was removed here
+  // FIXED: some code was removed here
+  o_thread*			th;
 
+  SCHED_ENTER(sched);
+
+ if (thread_get(thread, &th) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
+ /*
+  * Init Prior
+  */
+ th->init_prior = th->prior;
+
+ /*
+  * Add the thread
+  */
+  if (set_add(sched->threads, (void*)th) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
+  SCHED_LEAVE(sched, ERROR_NONE);
   return (ERROR_UNKNOWN);
 }
 
 t_error			sched_remove(i_thread			thread)
 {
-  // FIXME: some code was removed here
+  // FIXED: some code was removed here
+  SCHED_LEAVE(sched, ERROR_NONE);
 
+  if (set_remove(sched->threads, thread) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
+  SCHED_LEAVE(sched, ERROR_NONE);
   return (ERROR_UNKNOWN);
 }
 
 t_error			sched_update(i_thread			thread)
 {
-  // FIXME: some code was removed here
+  // FIXED: some code was removed here
+  o_thread*			th;
+  o_thread*			sched_th;
 
+  SCHED_ENTER(sched);
+
+  if (thread_get(thread, &th) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
+  if (set_get(sched->threads, thread, (void**)sched_th) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
+  /*
+   * Updating fields
+   */
+
+  sched_th->threadid = th->threadid;
+  sched_th->taskid = th->taskid;
+  sched_th->prior = th->prior;
+  sched_th->sched = th->sched;
+  sched_th->wait = th->wait;
+  sched_th->stack = th->stack;
+  sched_th->stacksz = th->stacksz;
+
+  SCHED_LEAVE(sched, ERROR_NONE);
   return (ERROR_UNKNOWN);
 }
 
@@ -89,7 +146,20 @@ t_error			sched_init(void)
   memset(sched, 0x0, sizeof(m_sched));
 
   sched->quantum = SCHED_QUANTUM_INIT;
-  sched->cpus = ID_UNUSED;
+  if (set_reserve(ll, SET_OPT_ALLOC, sizeof(o_thread), &sched->threads)
+      != ERROR_NONE)
+    {
+      cons_msg('!', "sched: unable to reserve the threads set\n\n");
+      return ERROR_UNKNOWN;
+    }
+
+  /*
+   * Reserve timer
+   */
+  if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch),
+		    sched->quantum, TIMER_REPEAT_ENABLE,
+		    &sched->timerid) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
   /*
    * 2)
@@ -141,3 +211,58 @@ t_error			sched_clean(void)
   return (ERROR_NONE);
 }
 
+t_error				sched_switch(void)
+{
+  t_state		state;
+  o_thread*		data;
+  t_setsz		size;
+  t_iterator		i;
+  i_thread		max_thread;
+  t_prior		max_prior;
+  o_thread*		th;
+
+ SCHED_LEAVE(sched, ERROR_NONE);
+
+  if (set_size(sched->threads, &size) != ERROR_NONE)
+    SCHED_LEAVE(region, ERROR_UNKNOWN);
+
+  /*
+   * 1)
+   */
+
+  set_foreach(SET_OPT_FORWARD, sched->threads, &i, state)
+    {
+      if (set_object(sched->threads, i, (void**)&data) != ERROR_NONE)
+	{
+	  cons_msg('!', "sched: cannot find the sched object "
+		   "corresponding to its identifier\n");
+
+	  SCHED_LEAVE(sched, ERROR_UNKNOWN);
+	}
+
+      /*
+       * Selecta
+       */
+      if (data->prior >= max_prior)
+	max_thread = data->threadid;
+      max_prior = data->prior;
+      /*
+       * Ageing
+       */
+      data->prior++;
+    }
+
+  /*
+   * Pull Up !
+   */
+  sched->current = max_thread;
+
+ if (thread_get(sched->current, &th) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+ th->prior = th->init_prior;
+
+  if (machdep_call(sched, sched_switch, th->threadid) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
+  SCHED_LEAVE(sched, ERROR_NONE);
+}
