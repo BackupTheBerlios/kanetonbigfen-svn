@@ -250,6 +250,10 @@ void			set_gate(t_uint8	number,
 				 t_uint32	offset,
 				 t_uint16	segment_selector);
 
+void event_call(int id);
+
+void event_call_error(int id, t_uint32 error);
+
 
 /*
  * ../interrupt/ipi.c

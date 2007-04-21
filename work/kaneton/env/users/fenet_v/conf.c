@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-Last update Fri Apr 20 16:03:59 2007 FENET Vincent
+Last update Fri Apr 20 18:58:32 2007 FENET Vincent
 */
 
 #include <klibc.h>
@@ -147,16 +147,16 @@ void check_3()
 
 void tick3()
 {
-  printf(" 1000ms");
+  printf(" 1.s");
 }
 
 void tick2()
 {
-  printf(" 500ms");
+  printf(" .5s");
 }
 void tick()
 {
-  printf(" 500ms");
+  printf(" .5s");
 /*   if (go) */
 /*     if (!(toc = (toc + 1) % 100)) */
 /*       printf("\n %d ", tic++); */
@@ -177,9 +177,9 @@ void check_5()
 void check_tests(void)
 {
   i_timer res = 42;
-  timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick3), 1000, TIMER_REPEAT_ENABLE, &res);
-  timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick ), 500, TIMER_REPEAT_ENABLE, &res);
-  timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick2), 500, TIMER_REPEAT_ENABLE, &res);
+  //timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick3), 1000, TIMER_REPEAT_ENABLE, &res);
+  //timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick ),  500, TIMER_REPEAT_ENABLE, &res);
+  //timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick2),  500, TIMER_REPEAT_ENABLE, &res);
   //timer_dump();
 
   //o_timer *o;

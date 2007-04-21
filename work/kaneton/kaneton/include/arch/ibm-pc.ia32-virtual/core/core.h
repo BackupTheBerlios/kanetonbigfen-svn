@@ -160,6 +160,14 @@ t_error			ia32_thread_init(void);
  * ../../../../core/arch/machdep/sched.c
  */
 
+t_error ia32_sched_quantum();
+
+t_error ia32_sched_switch(i_thread i);
+
+void ia32_sched_yield();
+
+t_error ia32_sched_init();
+
 
 /*
  * ../../../../core/arch/machdep/message.c

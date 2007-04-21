@@ -49,19 +49,26 @@ extern i_as		kasid;
 // FIXME: don't forget to fill this structure
 d_thread			thread_dispatch =
   {
-// FIXME: don't forget to fill this structure
-/*     NULL, */
-/*     NULL, */
-/*     NULL, */
-/*     NULL, */
-/*     NULL, */
-/*     NULL, */
-/*     NULL, */
-/*     NULL, */
-/*     NULL, */
-/*     NULL, */
-/*     ia32_thread_init, */
-/*     NULL, */
+    NULL,//t_error			(*thread_show)(i_thread);
+    NULL,/*t_error			(*thread_clone)(i_task,
+							i_thread,
+							i_thread*);*/
+    NULL,//t_error			(*thread_flush)(i_task);
+    NULL,/*t_error			(*thread_load)(i_thread,
+						       t_thread_context);*/
+    NULL,/*t_error			(*thread_store)(i_thread,
+							t_thread_context*);*/
+    NULL,/*t_error			(*thread_reserve)(i_task,
+							  i_thread*);*/
+    NULL,//t_error			(*thread_release)(i_thread);
+    NULL,/*t_error			(*thread_priority)(i_thread,
+							   t_prior);*/
+    NULL,/*t_error			(*thread_state)(i_thread,
+							t_state);*/
+    NULL,/*t_error			(*thread_stack)(i_thread,
+							t_stack);*/
+    NULL,//ia32_thread_init,//t_error	       	(*thread_init)(void);
+    NULL //t_error			(*thread_clean)(void);
   };
 
 /*

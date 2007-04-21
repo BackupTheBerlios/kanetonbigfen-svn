@@ -248,8 +248,11 @@ endif
 run: build install
 	qemu -fda /tmp/kaneton.img
 
+debug: build install
+	qemu -fda /tmp/kaneton.img -s -S
+
 nb: build install
-	scp /tmp/kaneton.img telephone.gistr.lab.epita.fr:/sgoinfre/kaneton_netboot/core
+	scp kaneton/core/core telephone.gistr.lab.epita.fr:/sgoinfre/kaneton_netboot/core
 
 init_nb:
 	mkdir .ssh

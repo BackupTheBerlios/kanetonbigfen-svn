@@ -6,13 +6,19 @@ __handler__(4);
 __handler__(5);
 __handler__(6);
 __handler__(7);
-__handler__(8);
 __handler__(9);
-__handler__(10);
-__handler__(11);
-__handler__(12);
-__handler__(13);
-__handler__(14);
+__handler_error__(8);
+__handler_error__(10);
+__handler_error__(11);
+__handler_error__(12);
+__handler_error__(13);
+__handler_error__(14);
+/* __handler__(8); */
+/* __handler__(10); */
+/* __handler__(11); */
+/* __handler__(12); */
+/* __handler__(13); */
+/* __handler__(14); */
 __handler__(15);
 __handler__(16);
 __handler__(17);
@@ -30,6 +36,22 @@ __handler__(28);
 __handler__(29);
 __handler__(30);
 __handler__(31);
+/* __handler_irq__(32); */
+/* __handler_irq__(33); */
+/* __handler_irq__(34); */
+/* __handler_irq__(35); */
+/* __handler_irq__(36); */
+/* __handler_irq__(37); */
+/* __handler_irq__(38); */
+/* __handler_irq__(39); */
+/* __handler_irq__(40); */
+/* __handler_irq__(41); */
+/* __handler_irq__(42); */
+/* __handler_irq__(43); */
+/* __handler_irq__(44); */
+/* __handler_irq__(45); */
+/* __handler_irq__(46); */
+/* __handler_irq__(47); */
 __handler__(32);
 __handler__(33);
 __handler__(34);

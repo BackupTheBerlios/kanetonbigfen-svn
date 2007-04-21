@@ -34,8 +34,6 @@ typedef struct
 typedef struct
 {
 
-  // FIXME: think about what is needed here...
-
 }			ao_thread;
 
 /*
