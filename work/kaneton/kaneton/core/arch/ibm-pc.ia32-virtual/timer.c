@@ -101,5 +101,6 @@ void ia32_timer_tick()
 t_error ia32_timer_init()
 {
   ia32_pit_init();
-  return event_reserve(32+0, EVENT_FUNCTION, EVENT_HANDLER(ia32_timer_tick));
+/*   return event_reserve(32+0, EVENT_FUNCTION, EVENT_HANDLER(ia32_timer_tick)); */
+  return ERROR_NONE;
 }

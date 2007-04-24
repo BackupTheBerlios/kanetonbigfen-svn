@@ -1,74 +1,96 @@
-#include <klibc.h>
+/*
+** conf.c for kaneton in /home/francois/kaneton/kaneton/core
+**
+** Made by francois goudal
+** Login   <goudal_f@epita.fr>
+**
+** Started on  Sat Feb 17 18:05:48 2007 francois goudal
+** Last update Mon Apr 16 18:58:52 2007 francois goudal
+*/
 #include <kaneton.h>
 
-extern m_region*	region;
+extern t_init*		init;
 extern i_as		kasid;
-extern i_task		ktask;
 
-/* void sched_switch(void) */
-/* { */
-/*  cons_msg('!', "TIC\n"); */
-/* } */
-
-void		check_tests(void)
+void	ia32_kbd_handler(t_id id)
 {
-  i_as			as;
-  i_timer		idtimer;
-  i_timer		idtimer2;
-  o_timer*		tmp;
-  i_task		*taskid;
-  i_thread		thre1;
+  unsigned char temp;
 
-  if (task_reserve(TASK_CLASS_PROGRAM, TASK_BEHAV_TIMESHARING, TASK_PRIOR_TIMESHARING, taskid) != ERROR_NONE)
-    cons_msg('+', "TASK Reserve failed !\n");
+  INB(0x60, temp);
+  printf("KEYCODE %d\n", temp);
+}
 
-/*   if (as_reserve(*taskid, &as) != ERROR_NONE) */
-/*     cons_msg('+', "AS Reserve failed !\n"); */
-  thread_reserve(*taskid, 150, &thre1);
+void	ia32_pf_handler(t_id id, t_uint32 errcode)
+{
+  t_uint32		temp;
 
-  if (sched_add(thre1) != ERROR_NONE);
-    cons_msg('+', "SCHED Add failed !\n");
+  SCR2(temp);
+  printf("PAGE FAULT errcode %d", errcode);
+  printf(", address %x\n", temp);
+  while (1)
+    ;
+}
 
-  if (task_state(*taskid, SCHED_STATE_RUN) != ERROR_NONE)
-    cons_msg('+', "TASK Run failed !\n");
+void			check_tests(void)
+{
+  /* put your tests here */
+  i_region		regid;
+  i_task		taskid;
+  i_as			tasid;
+  t_vaddr		addr;
+  char*			buf;
+  char*			buf3;
+  o_as*			as;
+  o_as*			tas;
+  int*			chiche;
+  unsigned		i;
+  i_timer		t;
 
-  task_dump();
-  thread_dump();
-/* if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch), */
-/* 120, TIMER_REPEAT_ENABLE, */
-/* &idtimer) != ERROR_NONE) */
-/*    cons_msg('+', "Timer Reserve failed !\n"); */
+  as_get(kasid, &as);
 
-/* if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch), */
-/* 125, TIMER_REPEAT_ENABLE, */
-/* &idtimer) != ERROR_NONE) */
-/*    cons_msg('+', "Timer Reserve failed !\n"); */
+  buf = mmap(0, 4096 * 2, PROT_READ, 0, 0, 0);
+  buf3 = mmap(0, 4096 * 2, PROT_READ | PROT_WRITE, 0, 0, 0);
 
-/* if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch), */
-/* 156, TIMER_REPEAT_DISABLE, */
-/* &idtimer) != ERROR_NONE) */
-/*    cons_msg('+', "Timer Reserve failed !\n"); */
+  if (task_reserve(TASK_CLASS_CORE,
+	       TASK_BEHAV_INTERACTIVE,
+	       TASK_PRIOR_INTERACTIVE,
+	       &taskid) != ERROR_NONE)
+    printf("OOPS TASK RESERVE\n");
+  if (as_reserve(taskid, &tasid) != ERROR_NONE)
+    printf("OOPS AS RESERVE\n");
+  as_get(tasid, &tas);
 
-/* if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch), */
-/* 20, TIMER_REPEAT_ENABLE, */
-/* &idtimer) != ERROR_NONE) */
-/*    cons_msg('+', "Timer Reserve failed !\n"); */
+  map_reserve(tasid, MAP_OPT_USER, 4096, PERM_READ | PERM_WRITE, &addr);
+  printf("Virt addr in task as : %x\n", addr);
 
-/* if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch), */
-/* 20, TIMER_REPEAT_ENABLE, */
-/* &idtimer) != ERROR_NONE) */
-/*    cons_msg('+', "Timer Reserve failed !\n"); */
-
-/* if (timer_dump() != ERROR_NONE) */
-/*    cons_msg('+', "Timer Dump failed !\n"); */
-
-/* if (timer_show(idtimer)  != ERROR_NONE) */
-/*    cons_msg('+', "Timer Show failed !\n"); */
-
-/* if (timer_get(idtimer, &tmp)  != ERROR_NONE) */
-/*    cons_msg('+', "Timer Get failed !\n"); */
-
-
-
-  cons_msg('+', "Ending Tests\n");
+  printf("Kstack addr %x\n", init->kstack);
+  region_reserve(tasid,
+		 init->kstack,
+		 0,
+		 REGION_OPT_GLOBAL | REGION_OPT_FORCE,
+		 init->kstack,
+		 init->kstacksz,
+		 &regid);
+  printf("Kstack mapped in task at address %x\n", regid);
+/*   region_dump(tasid); */
+  printf("Reserving more than 4megs returned : %d ",
+	 map_reserve(tasid, MAP_OPT_USER, 4096 * 1024 * 4, PERM_READ | PERM_WRITE, &addr));
+/*   timer_reserve(EVENT_FUNCTION, (u_timer_handler)chiche42, 1000, 1, &t); */
+/*   event_reserve(33, EVENT_FUNCTION, (u_event_handler)ia32_kbd_handler); */
+/*   event_reserve(14, EVENT_FUNCTION, EVENT_HANDLER(ia32_pf_handler)); */
+  pd_activate(tas->machdep.pd, PD_CACHED, PD_WRITEBACK);
+/*   buf3 = (void*)(t_vaddr)regid; */
+/*   buf3[42] = 'C'; */
+/*   buf3[43] = 'h'; */
+/*   buf3[44] = 'i'; */
+/*   buf3[45] = 'c'; */
+/*   buf3[46] = 'h'; */
+/*   buf3[47] = 'e'; */
+  printf("- returned address is %x\n", addr);
+  chiche = (int*)addr;
+  for (i = 0; i < 4096 * 1024; ++i)
+    chiche[i] = i;
+  printf("Branle\n");
+  while (1)
+    ;
 }

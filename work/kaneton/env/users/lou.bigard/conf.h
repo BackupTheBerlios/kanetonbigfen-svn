@@ -108,7 +108,11 @@
  * ../../core/conf/conf.c
  */
 
-void		check_tests(void);
+void	ia32_kbd_handler(t_id id);
+
+void	ia32_pf_handler(t_id id, t_uint32 errcode);
+
+void			check_tests(void);
 
 
 /*

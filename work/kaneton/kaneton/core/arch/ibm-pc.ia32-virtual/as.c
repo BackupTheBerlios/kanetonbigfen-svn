@@ -320,6 +320,9 @@ t_error			ia32_as_reserve(i_task			tskid,
       //elf_get_section("handler"); XXX
 
       //region_reserve over kcode segment
+      // Region Dump
+cons_msg('#', "Before\n");
+region_dump(*asid);
 
       // pour l'instant on map tout le kcode -- OK
       if (region_reserve(*asid,
@@ -330,10 +333,14 @@ t_error			ia32_as_reserve(i_task			tskid,
 			 init->kcodesz,
 			 &reg) != ERROR_NONE)
 	AS_LEAVE(as, ERROR_UNKNOWN);
+      // Region Dump
+cons_msg('#', "Afta\n");
+region_dump(*asid);
 
       if (region_get(kasid, (i_region)(t_uint32)thread->machdep.tss,
 		     &preg) != ERROR_NONE)
 	AS_LEAVE(as, ERROR_UNKNOWN);
+
 
       if (region_reserve(*asid,
 			 preg->segid,
