@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-Last update Fri Apr 20 18:58:32 2007 FENET Vincent
+Last update Wed Apr 25 16:21:09 2007 FENET Vincent
 */
 
 #include <klibc.h>
@@ -174,9 +174,59 @@ void check_5()
   event_reserve(32+0, EVENT_FUNCTION, EVENT_HANDLER(tick));
 }
 
+void task1()
+{
+  printf("hello from task1\n");
+  mysleep(1000);
+  printf("sleep from task1\n");
+  while (1)
+    ;
+}
+
+void task2()
+{
+  printf("hello from task2\n");
+  mysleep(1000);
+  printf("sleep from task2\n");
+  while (1)
+    ;
+}
+
+int mycurrent_task = 1;
+
+
+
+void minisched()
+{
+    mycurrent_task = !mycurrent_task;
+}
+
 void check_tests(void)
 {
-  i_timer res = 42;
+  //i_timer res = 42;
+
+  i_task tsk;
+  //i_as as;
+  i_thread thr;
+  o_thread* o;
+  t_thread_context ctx;
+  t_stack stack;
+  task_reserve(TASK_CLASS_PROGRAM,
+	       TASK_BEHAV_INTERACTIVE,
+	       TASK_PRIOR_INTERACTIVE,
+	       &tsk);
+  //as_reserve(tsk, &as);
+  thread_reserve(tsk, THREAD_PRIOR, &thr);
+  stack.base = 0;
+  stack.size = THREAD_MIN_STACKSZ;
+  thread_stack(thr, stack);
+  thread_get(thr, &o);
+  ctx.sp = o->stack + o->stacksz - 16;
+  ctx.pc = (t_vaddr)task1;
+  thread_load(thr, ctx);
+  task_state(tsk, SCHED_STATE_RUN);
+  o.machdep;
+
   //timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick3), 1000, TIMER_REPEAT_ENABLE, &res);
   //timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick ),  500, TIMER_REPEAT_ENABLE, &res);
   //timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(tick2),  500, TIMER_REPEAT_ENABLE, &res);
@@ -186,6 +236,13 @@ void check_tests(void)
   //timer_get(res, &o);
   //printf("[%x/handlerfunc]", o->handler.function);
 
-  event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
+  //event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
+
+  //void(*mypf)(void);
+  //void *mytasks[2] = { task1, task2 };
+
+  //mypf = mytasks[mycurrent_task];
+  while (1)
+    ;
   printf("end.\n");
 }

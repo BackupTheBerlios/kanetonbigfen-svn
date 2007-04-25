@@ -155,6 +155,8 @@ t_error			ia32_task_init(void);
 
 t_error			ia32_thread_init(void);
 
+t_error ia32_thread_reserve(i_task task, i_thread* thread);
+
 
 /*
  * ../../../../core/arch/machdep/sched.c

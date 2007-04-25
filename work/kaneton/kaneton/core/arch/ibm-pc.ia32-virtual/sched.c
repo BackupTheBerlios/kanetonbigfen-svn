@@ -80,7 +80,7 @@ t_error			ia32_sched_switch(i_thread elected)
 
 void ia32_sched_yield()
 {
-  printf(".");
+  //printf(".");
   //sched_yield(0);
 }
 

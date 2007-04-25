@@ -68,7 +68,6 @@ void			kaneton(t_init*				bootloader)
   /*
    * 1)
    */
-
   init = bootloader;
 
   /*

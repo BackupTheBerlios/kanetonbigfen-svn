@@ -49,7 +49,7 @@ void			set_gate(t_uint8	number,
 
 void event_call(int id)
 {
-  printf("c");
+  //printf("c");
   t_uint32 esp;
   asm volatile("movl %%edi, %0\n"
                : "=m" (esp)

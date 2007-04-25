@@ -254,6 +254,8 @@ debug: build install
 nb: build install
 	scp kaneton/core/core telephone.gistr.lab.epita.fr:/sgoinfre/kaneton_netboot/core
 
+bochs: build install
+	scp /tmp/kaneton.img fenet_v@riker.epita.fr:/goinfre/fenet_v/
 init_nb:
 	mkdir .ssh
 	ssh-keygen -t dsa

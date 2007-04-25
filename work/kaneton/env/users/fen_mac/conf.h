@@ -134,6 +134,12 @@ void check_4();
 
 void check_5();
 
+void task1();
+
+void task2();
+
+void minisched();
+
 void check_tests(void);
 
 

@@ -33,8 +33,35 @@ typedef struct
 
 typedef struct
 {
+  t_uint32 ds;
+  t_uint32 es;
+  t_uint32 fs;
+  t_uint32 gs;
+  t_uint32 eax;
+  t_uint32 ebx;
+  t_uint32 ecx;
+  t_uint32 edx;
+  t_uint32 esi;
+  t_uint32 edi;
+  t_uint32 ss;
+  t_uint32 esp;
+  t_uint32 eflags;
+  t_uint32 cs;
+  t_uint32 eip;
+  t_uint32 error;
+  t_uint32 cr3;
+} ao_thread_named;
 
-}			ao_thread;
+typedef union
+{
+  ao_thread_named named;
+  t_uint32 unamed[17];
+} ao_thread;
+
+/* typedef struct */
+/* { */
+
+/* }			ao_thread; */
 
 /*
  * ---------- macro functions -------------------------------------------------
