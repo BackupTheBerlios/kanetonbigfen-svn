@@ -33,6 +33,53 @@ m_sched*		sched = NULL;
  */
 
 // FIXED: lot of code has been removed here
+/* t_error			sched_dump(void) */
+/* { */
+/*   t_state		state; */
+/*   o_as*			o; */
+/*   o_sched*		data; */
+/*   t_setsz		size; */
+/*   t_iterator		i; */
+
+/*   SCHED_ENTER(sched); */
+
+/*   /\* */
+/*    * 1) */
+/*    *\/ */
+
+/*   if (as_get(asid, &o) != ERROR_NONE) */
+/*     SCHED_LEAVE(sched, ERROR_UNKNOWN); */
+
+/*   /\* */
+/*    * 2) */
+/*    *\/ */
+
+/*   if (set_size(o->scheds, &size) != ERROR_NONE) */
+/*     SCHED_LEAVE(sched, ERROR_UNKNOWN); */
+
+/*   /\* */
+/*    * 3) */
+/*    *\/ */
+
+/*   cons_msg('#', "dumping %qu scheds(s) from the sched set:\n", size); */
+
+/*   set_foreach(SET_OPT_FORWARD, o->scheds, &i, state) */
+/*     { */
+/*       if (set_object(o->scheds, i, (void**)&data) != ERROR_NONE) */
+/* 	{ */
+/* 	  cons_msg('!', "sched: cannot find the sched object " */
+/* 		   "corresponding to its identifier\n"); */
+
+/* 	  SCHED_LEAVE(sched, ERROR_UNKNOWN); */
+/* 	} */
+
+/*       if (sched_show(asid, data->regid) != ERROR_NONE) */
+/* 	SCHED_LEAVE(sched, ERROR_UNKNOWN); */
+/*     } */
+
+/*   SCHED_LEAVE(sched, ERROR_NONE); */
+/* } */
+
 t_error			sched_quantum(t_quantum quantum)
 {
   SCHED_ENTER(sched);

@@ -58,7 +58,7 @@ d_thread			thread_dispatch =
 						       t_thread_context);*/
     NULL,/*t_error			(*thread_store)(i_thread,
 							t_thread_context*);*/
-    NULL,//ia32_thread_reserve,/*t_error	(*thread_reserve)(i_task,
+    NULL,/*t_error	(*thread_reserve)(i_task,
 							  i_thread*);*/
     NULL,//t_error			(*thread_release)(i_thread);
     NULL,/*t_error			(*thread_priority)(i_thread,
@@ -67,7 +67,7 @@ d_thread			thread_dispatch =
 							t_state);*/
     NULL,/*t_error			(*thread_stack)(i_thread,
 							t_stack);*/
-    NULL,//t_error	       	(*thread_init)(void);
+    ia32_thread_init,//t_error	       	(*thread_init)(void);
     NULL //t_error			(*thread_clean)(void);
   };
 

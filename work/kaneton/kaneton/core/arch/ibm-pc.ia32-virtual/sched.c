@@ -87,10 +87,10 @@ void ia32_sched_yield()
 t_error ia32_sched_init()
 {
   i_timer res = 42;
-/*   timer_reserve(EVENT_FUNCTION, */
-/* 		TIMER_HANDLER(ia32_sched_yield), */
-/* 		1, */
-/* 		TIMER_REPEAT_ENABLE, &res); */
+  timer_reserve(EVENT_FUNCTION,
+		TIMER_HANDLER(ia32_sched_yield),
+		1,
+		TIMER_REPEAT_ENABLE, &res);
   return ERROR_NONE;
 }
 

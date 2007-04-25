@@ -108,6 +108,8 @@
  * ../../core/conf/conf.c
  */
 
+void entry_point();
+
 void		check_tests(void);
 
 
