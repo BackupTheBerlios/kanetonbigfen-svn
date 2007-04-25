@@ -71,7 +71,7 @@ void getkey(void)
  if (i < 128 && i > 0 && kbdus[i][0])
 /*     printf("%s", kbdus[i]); */
   if (kbdus[i][0] == 's')
-     printf("Comment dit on Alice au Pays des Merveilles en Arabe ? \nFatima chez Tatie ! \nYuuuurk Yuuuuurk !\n(Ceci etait une blague debile et xenophobe, veuillez envoyer les missiles chez Carlos, Les Grosses Tetes, et tous les editeurs de blagues)\n");
+    sched_dump();
 
 }
 
@@ -86,27 +86,27 @@ t_thread_context ctx;
 t_stack stack;
 
 event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
-/* if (task_reserve(TASK_CLASS_PROGRAM, */
-/* TASK_BEHAV_INTERACTIVE, */
-/* TASK_PRIOR_INTERACTIVE, */
-/* &tsk) != ERROR_NONE) */
-/* cons_msg('+', "task_reserve failed !\n"); */
-/* if (as_reserve(tsk, &as) != ERROR_NONE) */
-/* cons_msg('+', "as_reserve failed !\n"); */
-/* if (thread_reserve(tsk, THREAD_PRIOR, &thr) != ERROR_NONE) */
-/* cons_msg('+', "thread_reserve failed !\n"); */
-/* stack.base = 0; */
-/* stack.size = THREAD_MIN_STACKSZ; */
-/* if (thread_stack(thr, stack) != ERROR_NONE) */
-/* cons_msg('+', "thread_stack failed !\n"); */
-/* if (thread_get(thr, &o) != ERROR_NONE) */
-/* cons_msg('+', "thread_get failed !\n"); */
-/* ctx.sp = o->stack + o->stacksz - 16; */
-/* ctx.pc = (t_vaddr)entry_point; */
-/* if (thread_load(thr, ctx) != ERROR_NONE) */
-/* cons_msg('+', "thread_load failed !\n"); */
-/* if (task_state(tsk, SCHED_STATE_RUN) != ERROR_NONE) */
-/* cons_msg('+', "task_state failed !\n"); */
+if (task_reserve(TASK_CLASS_PROGRAM,
+TASK_BEHAV_INTERACTIVE,
+TASK_PRIOR_INTERACTIVE,
+&tsk) != ERROR_NONE)
+cons_msg('+', "task_reserve failed !\n");
+if (as_reserve(tsk, &as) != ERROR_NONE)
+cons_msg('+', "as_reserve failed !\n");
+if (thread_reserve(tsk, THREAD_PRIOR, &thr) != ERROR_NONE)
+cons_msg('+', "thread_reserve failed !\n");
+stack.base = 0;
+stack.size = THREAD_MIN_STACKSZ;
+if (thread_stack(thr, stack) != ERROR_NONE)
+cons_msg('+', "thread_stack failed !\n");
+if (thread_get(thr, &o) != ERROR_NONE)
+cons_msg('+', "thread_get failed !\n");
+ctx.sp = o->stack + o->stacksz - 16;
+ctx.pc = (t_vaddr)entry_point;
+if (thread_load(thr, ctx) != ERROR_NONE)
+cons_msg('+', "thread_load failed !\n");
+if (task_state(tsk, SCHED_STATE_RUN) != ERROR_NONE)
+cons_msg('+', "task_state failed !\n");
 
 /*
 /*   i_timer		idtimer; */
