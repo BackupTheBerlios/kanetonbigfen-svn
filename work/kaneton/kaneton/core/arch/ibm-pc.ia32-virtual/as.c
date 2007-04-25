@@ -321,7 +321,7 @@ t_error			ia32_as_reserve(i_task			tskid,
 
       //region_reserve over kcode segment
       // Region Dump
-cons_msg('#', "Before\n");
+cons_msg('#', "AS id\n");
 region_dump(*asid);
 
       // pour l'instant on map tout le kcode -- OK
@@ -334,8 +334,8 @@ region_dump(*asid);
 			 &reg) != ERROR_NONE)
 	AS_LEAVE(as, ERROR_UNKNOWN);
       // Region Dump
-cons_msg('#', "Afta\n");
-region_dump(*asid);
+cons_msg('#', "KAS id\n");
+region_dump(kasid);
 
       if (region_get(kasid, (i_region)(t_uint32)thread->machdep.tss,
 		     &preg) != ERROR_NONE)
