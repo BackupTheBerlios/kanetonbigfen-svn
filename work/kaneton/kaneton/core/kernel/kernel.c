@@ -105,7 +105,6 @@ void			kernel_init(void)
    */
 
   cons_msg('+', "starting id manager\n");
-
   if (id_init() != ERROR_NONE)
     core_error("cannot initialise the id manager\n");
 
@@ -155,6 +154,7 @@ void			kernel_init(void)
   if (map_init() != ERROR_NONE)
     core_error("cannot initialise the map manager\n");
 
+
   /*
    * 8)
    */
@@ -170,10 +170,16 @@ void			kernel_init(void)
    * 9)
    */
 
+
   cons_msg('+', "starting thread manager\n");
 
   if (thread_init() != ERROR_NONE)
     core_error("cannot initialise the thread manager\n");
+
+  /*
+   * PAS OUBLIER
+   */
+  while(1);
 
   /*
    * 10)

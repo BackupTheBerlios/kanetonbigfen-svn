@@ -114,6 +114,10 @@ t_error			ia32_thread_init(void)
 		  PERM_READ | PERM_WRITE,
 		  (t_vaddr*)&thread->machdep.tss) != ERROR_NONE)
     THREAD_LEAVE(thread, ERROR_UNKNOWN);
+  /*
+   * PAS OUBLIER
+   */
+  while(1);
 
   memset(thread->machdep.tss, 0x0, sizeof(t_ia32_tss));
 

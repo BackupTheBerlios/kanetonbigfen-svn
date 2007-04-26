@@ -137,98 +137,98 @@ void getkey(void)
 
 void		check_tests(void)
 {
-i_task tsk;
-i_as as;
-i_thread thr;
-i_thread thr2;
-o_thread* o;
-t_thread_context ctx;
-t_stack stack;
+/* i_task tsk; */
+/* i_as as; */
+/* i_thread thr; */
+/* i_thread thr2; */
+/* o_thread* o; */
+/* t_thread_context ctx; */
+/* t_stack stack; */
 
-event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
+/* event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey)); */
 
-if (task_reserve(TASK_CLASS_PROGRAM,
-TASK_BEHAV_INTERACTIVE,
-TASK_PRIOR_INTERACTIVE,
-&tsk) != ERROR_NONE)
-cons_msg('!', "task_reserve failed !\n");
+/* if (task_reserve(TASK_CLASS_PROGRAM, */
+/* TASK_BEHAV_INTERACTIVE, */
+/* TASK_PRIOR_INTERACTIVE, */
+/* &tsk) != ERROR_NONE) */
+/* cons_msg('!', "task_reserve failed !\n"); */
 
-if (as_reserve(tsk, &as) != ERROR_NONE)
-cons_msg('!', "as_reserve failed !\n");
+/* if (as_reserve(tsk, &as) != ERROR_NONE) */
+/* cons_msg('!', "as_reserve failed !\n"); */
 
-/*
- *Ther 1
- */
-if (thread_reserve(tsk, THREAD_PRIOR, &thr) != ERROR_NONE)
-cons_msg('!', "thread_reserve failed !\n");
+/* /\* */
+/*  *Ther 1 */
+/*  *\/ */
+/* if (thread_reserve(tsk, THREAD_PRIOR, &thr) != ERROR_NONE) */
+/* cons_msg('!', "thread_reserve failed !\n"); */
 
-stack.base = 0;
-stack.size = THREAD_MIN_STACKSZ;
+/* stack.base = 0; */
+/* stack.size = THREAD_MIN_STACKSZ; */
 
-if (thread_stack(thr, stack) != ERROR_NONE)
-cons_msg('!', "thread_stack failed !\n");
+/* if (thread_stack(thr, stack) != ERROR_NONE) */
+/* cons_msg('!', "thread_stack failed !\n"); */
 
-if (thread_get(thr, &o) != ERROR_NONE)
-cons_msg('!', "thread_get failed !\n");
+/* if (thread_get(thr, &o) != ERROR_NONE) */
+/* cons_msg('!', "thread_get failed !\n"); */
 
-ctx.sp = o->stack + o->stacksz - 16;
-ctx.pc = (t_vaddr)entry_point;
-
-
-if (thread_load(thr, ctx) != ERROR_NONE)
-cons_msg('!', "thread_load failed !\n");
-
-/*
- *Ther 2
- */
-if (thread_reserve(tsk, THREAD_PRIOR, &thr2) != ERROR_NONE)
-cons_msg('!', "thread_reserve failed !\n");
-
-stack.base = 0;
-stack.size = THREAD_MIN_STACKSZ;
-
-if (thread_stack(thr2, stack) != ERROR_NONE)
-cons_msg('!', "thread_stack failed !\n");
-
-if (thread_get(thr2, &o) != ERROR_NONE)
-cons_msg('!', "thread_get failed !\n");
-
-ctx.sp = o->stack + o->stacksz - 16;
-ctx.pc = (t_vaddr)entry_point;
+/* ctx.sp = o->stack + o->stacksz - 16; */
+/* ctx.pc = (t_vaddr)entry_point; */
 
 
-if (thread_load(thr2, ctx) != ERROR_NONE)
-cons_msg('!', "thread_load failed !\n");
+/* if (thread_load(thr, ctx) != ERROR_NONE) */
+/* cons_msg('!', "thread_load failed !\n"); */
+
+/* /\* */
+/*  *Ther 2 */
+/*  *\/ */
+/* if (thread_reserve(tsk, THREAD_PRIOR, &thr2) != ERROR_NONE) */
+/* cons_msg('!', "thread_reserve failed !\n"); */
+
+/* stack.base = 0; */
+/* stack.size = THREAD_MIN_STACKSZ; */
+
+/* if (thread_stack(thr2, stack) != ERROR_NONE) */
+/* cons_msg('!', "thread_stack failed !\n"); */
+
+/* if (thread_get(thr2, &o) != ERROR_NONE) */
+/* cons_msg('!', "thread_get failed !\n"); */
+
+/* ctx.sp = o->stack + o->stacksz - 16; */
+/* ctx.pc = (t_vaddr)entry_point; */
+
+
+/* if (thread_load(thr2, ctx) != ERROR_NONE) */
+/* cons_msg('!', "thread_load failed !\n"); */
 
 
 
-/*
- *Ther 3
- */
-if (thread_reserve(tsk, THREAD_PRIOR, &thr2) != ERROR_NONE)
-cons_msg('!', "thread_reserve failed !\n");
+/* /\* */
+/*  *Ther 3 */
+/*  *\/ */
+/* if (thread_reserve(tsk, THREAD_PRIOR, &thr2) != ERROR_NONE) */
+/* cons_msg('!', "thread_reserve failed !\n"); */
 
-stack.base = 0;
-stack.size = THREAD_MIN_STACKSZ;
+/* stack.base = 0; */
+/* stack.size = THREAD_MIN_STACKSZ; */
 
-if (thread_stack(thr2, stack) != ERROR_NONE)
-cons_msg('!', "thread_stack failed !\n");
+/* if (thread_stack(thr2, stack) != ERROR_NONE) */
+/* cons_msg('!', "thread_stack failed !\n"); */
 
-if (thread_get(thr2, &o) != ERROR_NONE)
-cons_msg('!', "thread_get failed !\n");
+/* if (thread_get(thr2, &o) != ERROR_NONE) */
+/* cons_msg('!', "thread_get failed !\n"); */
 
-ctx.sp = o->stack + o->stacksz - 16;
-ctx.pc = (t_vaddr)entry_point;
+/* ctx.sp = o->stack + o->stacksz - 16; */
+/* ctx.pc = (t_vaddr)entry_point; */
 
 
-if (thread_load(thr2, ctx) != ERROR_NONE)
-cons_msg('!', "thread_load failed !\n");
+/* if (thread_load(thr2, ctx) != ERROR_NONE) */
+/* cons_msg('!', "thread_load failed !\n"); */
 
-/**
- * End tread
- */
-    if (task_state(tsk, SCHED_STATE_RUN) != ERROR_NONE)
-cons_msg('!', "task_state failed !\n");
+/* /\** */
+/*  * End tread */
+/*  *\/ */
+/*     if (task_state(tsk, SCHED_STATE_RUN) != ERROR_NONE) */
+/* cons_msg('!', "task_state failed !\n"); */
 
 
 /*  mynewtask((t_vaddr)task1); */

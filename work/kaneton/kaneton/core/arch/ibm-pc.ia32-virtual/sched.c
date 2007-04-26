@@ -57,8 +57,8 @@ t_error			ia32_sched_quantum(t_quantum quantum)
 {
     SCHED_ENTER(sched);
 
-  if (timer_delay(sched->timerid, quantum) != ERROR_NONE)
-    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+/*   if (timer_delay(sched->timerid, quantum) != ERROR_NONE) */
+/*     SCHED_LEAVE(sched, ERROR_UNKNOWN); */
 
     SCHED_LEAVE(sched, ERROR_NONE);
 }

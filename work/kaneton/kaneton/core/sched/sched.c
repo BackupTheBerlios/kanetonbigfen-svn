@@ -182,10 +182,10 @@ t_error			sched_init(void)
   /*
    * Reserve timer
    */
-  if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch),
-		    sched->quantum, TIMER_REPEAT_ENABLE,
-		    &sched->timerid) != ERROR_NONE)
-    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+/*   if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch), */
+/* 		    sched->quantum, TIMER_REPEAT_ENABLE, */
+/* 		    &sched->timerid) != ERROR_NONE) */
+/*     SCHED_LEAVE(sched, ERROR_UNKNOWN); */
 
   /*
    * 2)
