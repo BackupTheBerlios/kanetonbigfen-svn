@@ -70,6 +70,21 @@ t_error			thread_show(i_thread			threadid)
    * 2)
    */
 
+  cons_msg('#', " thread %qd in task %qd:\n",
+	   o->threadid,
+	   o->taskid);
+
+  cons_msg('#', " priority : %qd [%qd]\n",
+	   o->prior,
+	   o->init_prior);
+
+  cons_msg('#', " sched : %qd | wait : %qd\n",
+	   o->sched,
+	   o->wait);
+
+  cons_msg('#', " stack : 0x%08x | stack size : %qd\n\t---------------------\n",
+	   o->stack,
+	   o->stacksz);
 
   /*
    * 3)
@@ -255,6 +270,7 @@ t_error			thread_reserve(i_task			taskid,
   o.threadid = *threadid;
   o.taskid = taskid;
   o.prior = prior;
+  o.init_prior = prior;
   o.sched = SCHED_STATE_STOP;
   o.waits = ID_UNUSED; // XXX
 

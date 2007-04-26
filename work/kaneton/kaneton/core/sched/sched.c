@@ -43,43 +43,28 @@ t_error			sched_dump(void)
 
   SCHED_ENTER(sched);
 
-cons_msg('#', "---- SCHEDULER Dump ----\n");
-cons_msg('#', "- Quantum : %qd\n", sched->quantum);
-cons_msg('#', "- Current thread : %qd\n", sched->current);
-cons_msg('#', "- Timerid : %qd\n", sched->timerid);
+cons_msg('#', "----[ SCHEDULER Dump ]----\n");
+cons_msg('#', "- Quantum : %qd          -\n", sched->quantum);
+cons_msg('#', "- Current thread : %qd   -\n", sched->current);
+cons_msg('#', "- Timerid : %qd          -\n", sched->timerid);
 
-  /*
-   * 1)
-   */
-
+    if (set_size(sched->threads, &size) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
   /*
    * 2)
    */
 
-  if (set_size(sched->threads, &size) != ERROR_NONE)
-    SCHED_LEAVE(sched, ERROR_UNKNOWN);
-
-  /*
-   * 3)
-   */
-
-  cons_msg('#', "dumping %qu threads(s) from the sched set:\n", size);
+  cons_msg('#', "dumping %qu thread(s):\n", size);
 
   set_foreach(SET_OPT_FORWARD, sched->threads, &i, state)
     {
       if (set_object(sched->threads, i, (void**)&data) != ERROR_NONE)
-	{
-	  cons_msg('!', "sched: cannot find the thread object "
-		   "corresponding to its identifier\n");
-
-	  SCHED_LEAVE(sched, ERROR_UNKNOWN);
-	}
+	SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
       if (thread_show(data->threadid) != ERROR_NONE)
 	SCHED_LEAVE(sched, ERROR_UNKNOWN);
     }
-
 
   SCHED_LEAVE(sched, ERROR_NONE);
 }
@@ -100,7 +85,6 @@ t_error			sched_current(i_thread*			thread)
   *thread = sched->current;
 
   SCHED_LEAVE(sched, ERROR_NONE);
-  return (ERROR_UNKNOWN);
 }
 
 t_error			sched_add(i_thread			thread)
@@ -125,7 +109,6 @@ t_error			sched_add(i_thread			thread)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
   SCHED_LEAVE(sched, ERROR_NONE);
-  return (ERROR_UNKNOWN);
 }
 
 t_error			sched_remove(i_thread			thread)
@@ -137,7 +120,6 @@ t_error			sched_remove(i_thread			thread)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
   SCHED_LEAVE(sched, ERROR_NONE);
-  return (ERROR_UNKNOWN);
 }
 
 t_error			sched_update(i_thread			thread)
@@ -151,7 +133,7 @@ t_error			sched_update(i_thread			thread)
   if (thread_get(thread, &th) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
-  if (set_get(sched->threads, thread, (void**)sched_th) != ERROR_NONE)
+  if (set_get(sched->threads, thread, (void**)&sched_th) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
   /*
@@ -167,7 +149,6 @@ t_error			sched_update(i_thread			thread)
   sched_th->stacksz = th->stacksz;
 
   SCHED_LEAVE(sched, ERROR_NONE);
-  return (ERROR_UNKNOWN);
 }
 
 /*
@@ -272,7 +253,7 @@ t_error				sched_switch(void)
   t_prior		max_prior;
   o_thread*		th;
 
- SCHED_LEAVE(sched, ERROR_NONE);
+ SCHED_ENTER(sched);
 
   if (set_size(sched->threads, &size) != ERROR_NONE)
     SCHED_LEAVE(region, ERROR_UNKNOWN);
@@ -312,7 +293,7 @@ t_error				sched_switch(void)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
  th->prior = th->init_prior;
 
-  if (machdep_call(sched, sched_switch, th->threadid) != ERROR_NONE)
+  if (machdep_call(sched, sched_switch, sched->current) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
   SCHED_LEAVE(sched, ERROR_NONE);

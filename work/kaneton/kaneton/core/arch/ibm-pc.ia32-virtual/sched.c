@@ -63,7 +63,7 @@ t_error			ia32_sched_quantum(t_quantum quantum)
 t_error			ia32_sched_switch(i_thread elected)
 {
    SCHED_ENTER(sched);
- cons_msg('+', "Switched to %pd [%pd]\n", elected);
+ cons_msg('+', "Switched to %i\n", elected);
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 }
 
@@ -86,11 +86,7 @@ void ia32_sched_yield()
 
 t_error ia32_sched_init()
 {
-  i_timer res = 42;
-  timer_reserve(EVENT_FUNCTION,
-		TIMER_HANDLER(ia32_sched_yield),
-		1,
-		TIMER_REPEAT_ENABLE, &res);
+
   return ERROR_NONE;
 }
 

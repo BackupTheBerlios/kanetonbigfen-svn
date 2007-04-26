@@ -110,6 +110,8 @@
 
 void entry_point();
 
+void getkey(void);
+
 void		check_tests(void);
 
 

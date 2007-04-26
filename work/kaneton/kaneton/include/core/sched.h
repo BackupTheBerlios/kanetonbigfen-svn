@@ -122,6 +122,8 @@ typedef struct
  * ../../core/sched/sched.c
  */
 
+t_error			sched_dump(void);
+
 t_error			sched_quantum(t_quantum quantum);
 
 t_error			sched_current(i_thread*			thread);
