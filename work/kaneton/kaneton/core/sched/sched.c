@@ -269,7 +269,7 @@ t_error				sched_switch(void)
       /*
        * Selecta
        */
-      if (data->prior >= max_prior)
+      if (data->prior > max_prior)
 	{
 	max_thread = data->threadid;
       max_prior = data->prior;
@@ -279,10 +279,11 @@ t_error				sched_switch(void)
        */
 
       data->prior += 1;
-  cons_msg('#', "threadid: %i - priority : %i [%i]\n",
-	   data->threadid,
-	   data->prior,
-	   data->init_prior);
+
+/*   cons_msg('#', "threadid: %i - priority : %i [%i]\n", */
+/* 	   data->threadid, */
+/* 	   data->prior, */
+/* 	   data->init_prior); */
 
       sched_update(data->threadid);
     }
@@ -292,14 +293,17 @@ t_error				sched_switch(void)
    */
   sched->current = max_thread;
 
- if (thread_get(sched->current, &th) != ERROR_NONE)
+if (set_get(sched->threads, sched->current, (void**)&th) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
  th->prior = th->init_prior;
 
 sched_update(sched->current);
 
   if (machdep_call(sched, sched_switch, sched->current) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
+  sched_dump();
 
   SCHED_LEAVE(sched, ERROR_NONE);
 }
