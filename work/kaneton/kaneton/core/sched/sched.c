@@ -98,11 +98,6 @@ t_error			sched_add(i_thread			thread)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
  /*
-  * Init Prior
-  */
- th->init_prior = th->prior;
-
- /*
   * Add the thread
   */
   if (set_add(sched->threads, (void*)th) != ERROR_NONE)
@@ -276,12 +271,14 @@ t_error				sched_switch(void)
        * Selecta
        */
       if (data->prior >= max_prior)
+	{
 	max_thread = data->threadid;
       max_prior = data->prior;
+	}
       /*
        * Ageing
        */
-      data->prior++;
+      data->prior += 1;
     }
 
   /*

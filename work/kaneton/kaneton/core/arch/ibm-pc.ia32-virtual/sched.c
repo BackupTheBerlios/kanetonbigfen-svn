@@ -63,7 +63,7 @@ t_error			ia32_sched_quantum(t_quantum quantum)
 t_error			ia32_sched_switch(i_thread elected)
 {
    SCHED_ENTER(sched);
- cons_msg('+', "Switched to %i\n", elected);
+ cons_msg('+', "Switched to %i - ", elected);
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 }
 
