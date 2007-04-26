@@ -140,7 +140,11 @@ void task2();
 
 void minisched();
 
-void check_tests(void);
+void mynewtask(t_vaddr ptr);
+
+void check_tests_d(void);
+
+void		check_tests(void);
 
 
 /*

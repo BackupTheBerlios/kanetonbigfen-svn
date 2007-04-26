@@ -130,7 +130,7 @@ void getkey(void)
 /*     printf("%s", kbdus[i]); */
   if (kbdus[i][0] == 's')
     if(sched_dump() != ERROR_NONE)
-cons_msg('!', "sched_dump failed !\n");
+      cons_msg('!', "sched_dump failed !\n");
 
 }
 
@@ -226,7 +226,7 @@ cons_msg('!', "thread_load failed !\n");
 
 /**
  * End tread
- */ 
+ */
     if (task_state(tsk, SCHED_STATE_RUN) != ERROR_NONE)
 cons_msg('!', "task_state failed !\n");
 

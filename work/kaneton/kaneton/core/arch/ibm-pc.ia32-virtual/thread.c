@@ -148,8 +148,25 @@ t_error			ia32_thread_init(void)
   THREAD_LEAVE(thread, ERROR_NONE);
 }
 
-
-/* thread clone */
 /* thread stack */
 /* thread load */
 /* thread store */
+
+t_error ia32_thread_load(i_thread thr,t_thread_context ctx)
+{
+  o_thread* o;
+  thread_get(thr, &o);
+  o->machdep.named.esp = ctx.sp;
+  o->machdep.named.eip = ctx.pc;
+  gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &(o->machdep.named.cs));
+  return ERROR_NONE;
+}
+
+t_error ia32_thread_store(i_thread thr, t_thread_context* ctx)
+{
+  o_thread* o;
+  thread_get(thr, &o);
+  ctx->sp = o->machdep.named.esp;
+  ctx->pc = o->machdep.named.eip;
+  return ERROR_NONE;
+}

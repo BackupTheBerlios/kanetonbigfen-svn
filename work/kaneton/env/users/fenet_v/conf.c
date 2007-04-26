@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-Last update Wed Apr 25 18:56:57 2007 FENET Vincent
+Last update Thu Apr 26 19:41:10 2007 FENET Vincent
 */
 
 #include <klibc.h>
@@ -136,8 +136,12 @@ void getkey(void)
   char i,j;
   INB(0x60, i);
   INB(0x64, j);
-  if (i < 128 && i > 0 && kbdus[i][0])
-    printf("%s", kbdus[i]);
+ /*  if (i < 128 && i > 0 && kbdus[i][0]) */
+/*     printf("%s", kbdus[i]); */
+  if (i < 128 && i > 0)
+    if (kbdus[i][0] == 's')
+      if(sched_dump() != ERROR_NONE)
+	cons_msg('!', "sched_dump failed !\n");
 }
 
 void check_3()
@@ -226,7 +230,7 @@ void mynewtask(t_vaddr ptr)
   MYCHECK("task_state", task_state(tsk, SCHED_STATE_RUN));
 }
 
-void check_tests(void)
+void check_tests_d(void)
 {
   i_timer res = 42;
 
@@ -258,4 +262,100 @@ void check_tests(void)
   while (1)
     ;
   printf("end.\n");
+}
+
+void		check_tests(void)
+{
+  i_task tsk;
+  i_as as;
+  i_thread thr;
+  i_thread thr2;
+  o_thread* o;
+  t_thread_context ctx;
+  t_stack stack;
+
+  event_reserve(32+1, EVENT_FUNCTION, EVENT_HANDLER(getkey));
+
+  if (task_reserve(TASK_CLASS_PROGRAM,
+		   TASK_BEHAV_INTERACTIVE,
+		   TASK_PRIOR_INTERACTIVE,
+		   &tsk) != ERROR_NONE)
+    cons_msg('!', "task_reserve failed !\n");
+
+  if (as_reserve(tsk, &as) != ERROR_NONE)
+    cons_msg('!', "as_reserve failed !\n");
+
+  /*
+   *Ther 1
+   */
+  if (thread_reserve(tsk, THREAD_PRIOR, &thr) != ERROR_NONE)
+    cons_msg('!', "thread_reserve failed !\n");
+
+  stack.base = 0;
+  stack.size = THREAD_MIN_STACKSZ;
+
+  if (thread_stack(thr, stack) != ERROR_NONE)
+    cons_msg('!', "thread_stack failed !\n");
+
+  if (thread_get(thr, &o) != ERROR_NONE)
+    cons_msg('!', "thread_get failed !\n");
+
+  ctx.sp = o->stack + o->stacksz - 16;
+  ctx.pc = (t_vaddr)task1;
+
+
+  if (thread_load(thr, ctx) != ERROR_NONE)
+    cons_msg('!', "thread_load failed !\n");
+
+  /*
+   *Ther 2
+   */
+  if (thread_reserve(tsk, THREAD_PRIOR, &thr2) != ERROR_NONE)
+    cons_msg('!', "thread_reserve failed !\n");
+
+  stack.base = 0;
+  stack.size = THREAD_MIN_STACKSZ;
+
+  if (thread_stack(thr2, stack) != ERROR_NONE)
+    cons_msg('!', "thread_stack failed !\n");
+
+  if (thread_get(thr2, &o) != ERROR_NONE)
+    cons_msg('!', "thread_get failed !\n");
+
+  ctx.sp = o->stack + o->stacksz - 16;
+  ctx.pc = (t_vaddr)task2;
+
+
+  if (thread_load(thr2, ctx) != ERROR_NONE)
+    cons_msg('!', "thread_load failed !\n");
+
+
+
+  /*
+   *Ther 3
+   */
+  if (thread_reserve(tsk, THREAD_PRIOR, &thr2) != ERROR_NONE)
+    cons_msg('!', "thread_reserve failed !\n");
+
+  stack.base = 0;
+  stack.size = THREAD_MIN_STACKSZ;
+
+  if (thread_stack(thr2, stack) != ERROR_NONE)
+    cons_msg('!', "thread_stack failed !\n");
+
+  if (thread_get(thr2, &o) != ERROR_NONE)
+    cons_msg('!', "thread_get failed !\n");
+
+  ctx.sp = o->stack + o->stacksz - 16;
+  ctx.pc = (t_vaddr)task2;
+
+
+  if (thread_load(thr2, ctx) != ERROR_NONE)
+    cons_msg('!', "thread_load failed !\n");
+
+  /**
+   * End tread
+   */
+  if (task_state(tsk, SCHED_STATE_RUN) != ERROR_NONE)
+    cons_msg('!', "task_state failed !\n");
 }

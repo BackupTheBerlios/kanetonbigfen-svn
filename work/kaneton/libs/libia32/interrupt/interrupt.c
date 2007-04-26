@@ -49,10 +49,10 @@ void			set_gate(t_uint8	number,
 
 void event_call(int id)
 {
-  t_uint32 esp;
-  asm volatile("movl %%edi, %0\n"
-               : "=m" (esp)
-               );
+/*   t_uint32 esp; */
+/*   asm volatile("movl %%edi, %0\n" */
+/*                : "=m" (esp) */
+/*                ); */
   if (id >=32 && id < 48)
     PIC_ACK(id-32);
   o_event* o;

@@ -20,19 +20,9 @@
 
 // FIXME: some declarations has beed removed here
 
-#define PUSHA							       \
-  "push %ds\n\t"						       \
-  "push %es\n\t"						       \
-  "push %fs\n\t"						       \
-  "push %gs\n\t"						       \
-  "push %eax\n\t"						       \
-  "push %ebx\n\t"						       \
-  "push %ecx\n\t"						       \
-  "push %edx\n\t"						       \
-  "push %esi\n\t"						       \
-  "push %edi\n\t"
+t_uint32 esp_global_struct;
 
-#define POPA							       \
+#define REST_CONTEXT						       \
   "pop %edi\n\t"						       \
   "pop %esi\n\t"						       \
   "pop %edx\n\t"						       \
@@ -44,28 +34,64 @@
   "pop %es\n\t"							       \
   "pop %ds\n\t"
 
+#define SAVE_CONTEXT							\
+  "push %ds\n\t"							\
+  "push %es\n\t"							\
+  "push %fs\n\t"							\
+  "push %gs\n\t"							\
+  "push %eax\n\t"							\
+  "push %ebx\n\t"							\
+  "push %ecx\n\t"							\
+  "push %edx\n\t"							\
+  "push %esi\n\t"							\
+  "push %edi\n\t"
+
+#define SET_ESP								\
+  "mov %esp, esp_global_struct\n\t"
+
+#define IF_FROM_KERNEL_LAND						\
+  "mov 48(%esp), %eax\n\t"						\
+  "\n\t"\
+  ".endif nop\n\t"
+
+
+#define __handler2__(_id_)						\
+  void int_##_id_();							\
+  asm(".globl int2_" #_id_ "\n\t"					\
+      "int_" #_id_ ":\n\t"						\
+      SAVE_CONTEXT							\
+      "push %cr3\n\t"							\
+      SET_ESP								\
+      "push $" #_id_ "\n\t"						\
+      "call scheduler\n\t"						\
+      "addl $4, %esp\n\t"						\
+      "pop %cr3\n\t"							\
+      REST_CONTEXT							\
+      "iret")
+
 #define __handler__(_id_)					       \
   void int_##_id_();						       \
   asm(".globl int_" #_id_ "\n\t"				       \
       "int_" #_id_ ":\n\t"					       \
-      PUSHA							       \
+      SAVE_CONTEXT						       \
       "push $" #_id_ "\n\t"					       \
       "movl %esp, %edi\n\t"					       \
       "call event_call\n\t"					       \
       "addl $4, %esp\n\t"					       \
-      POPA							       \
+      REST_CONTEXT						       \
       "iret")
+
 //      "push 40(%esp)\n\t"
 #define __handler_error__(_id_)					       \
   void int_##_id_();						       \
   asm(".globl int_" #_id_ "\n\t"				       \
       "int_" #_id_ ":\n\t"					       \
-      PUSHA							       \
+      SAVE_CONTEXT						       \
       "pushl $" #_id_ "\n\t"					       \
       "movl %esp, %edi\n\t"					       \
-      "call event_call_error\n\t"					       \
+      "call event_call_error\n\t"				       \
       "addl $4, %esp\n\t"					       \
-      POPA							       \
+      REST_CONTEXT						       \
       "iret")
 
 //"push %esp\n\t"						       \
