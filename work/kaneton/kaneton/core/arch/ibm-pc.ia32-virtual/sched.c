@@ -67,7 +67,7 @@ t_error			ia32_sched_switch(i_thread elected)
 {
    SCHED_ENTER(sched);
 
-/*  cons_msg('+', "Switched to %i - ", elected); */
+ cons_msg('+', "Switched to %i \n", elected);
 
     SCHED_LEAVE(sched, ERROR_NONE);
 }

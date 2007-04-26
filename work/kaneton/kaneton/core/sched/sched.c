@@ -271,42 +271,39 @@ t_error				sched_switch(void)
        */
       if (data->prior >= max_prior)
 	{
-        cons_msg('#', "[Selecta] threadid: %i - priority : %i [%i]\n",
-      	   data->threadid,
-      	   data->prior,
-      	   data->init_prior);
+/*         cons_msg('#', "[Selecta] threadid: %i - priority : %i [%i]\n", */
+/*       	   data->threadid, */
+/*       	   data->prior, */
+/*       	   data->init_prior); */
 
 	  max_thread = data->threadid;
 	  max_prior = data->prior;
 	}
-      else
-	{
+
+
 	data->prior += 1; // Ageing
 
-        cons_msg('#', "[Age]threadid: %i - priority : %i [%i]\n",
-      	   data->threadid,
-      	   data->prior,
-      	   data->init_prior);
-	}
+/*         cons_msg('#', "[Age]threadid: %i - priority : %i [%i]\n", */
+/*       	   data->threadid, */
+/*       	   data->prior, */
+/*       	   data->init_prior); */
+
     }
 
   /*
    * Pull Up !
    */
-  /*   sched->current = max_thread; */
+    sched->current = max_thread;
 
 
-  /* if (set_get(sched->threads, sched->current, (void**)&th) != ERROR_NONE) */
-  /*     SCHED_LEAVE(sched, ERROR_UNKNOWN); */
+  if (set_get(sched->threads, sched->current, (void**)&th) != ERROR_NONE)
+      SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
 
-  /* // th->prior = th->init_prior; */
-  /*  th->prior--; */
+  th->prior = th->init_prior;
 
-  /* sched_update(sched->current); */
-
-  /*    if (machdep_call(sched, sched_switch, sched->current) != ERROR_NONE) */
-  /*     SCHED_LEAVE(sched, ERROR_UNKNOWN); */
+     if (machdep_call(sched, sched_switch, sched->current) != ERROR_NONE)
+      SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
   SCHED_LEAVE(sched, ERROR_NONE);
 }

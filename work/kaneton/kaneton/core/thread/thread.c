@@ -74,7 +74,7 @@ t_error			thread_show(i_thread			threadid)
 	   o->threadid,
 	   o->taskid);
 
-  cons_msg('#', " priority : %i [%i]\n",
+  cons_msg('#', " priority : %i initial[%i]\n",
 	   o->prior,
 	   o->init_prior);
 
