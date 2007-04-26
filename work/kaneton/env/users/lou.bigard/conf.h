@@ -110,6 +110,12 @@
 
 void entry_point();
 
+void task1();
+
+void task2();
+
+void mynewtask(t_vaddr ptr);
+
 void getkey(void);
 
 void		check_tests(void);

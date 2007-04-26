@@ -42,12 +42,12 @@ t_error			sched_dump(void)
 
   SCHED_ENTER(sched);
 
-cons_msg('#', "----[ SCHEDULER Dump ]----\n");
-cons_msg('#', "- Quantum : %qd          -\n", sched->quantum);
-cons_msg('#', "- Current thread : %qd   -\n", sched->current);
-cons_msg('#', "- Timerid : %qd          -\n", sched->timerid);
+  cons_msg('#', "----[ SCHEDULER Dump ]----\n");
+  cons_msg('#', "- Quantum : %i          -\n", sched->quantum);
+  cons_msg('#', "- Current thread : %i   -\n", sched->current);
+  cons_msg('#', "- Timerid : %i          -\n", sched->timerid);
 
-    if (set_size(sched->threads, &size) != ERROR_NONE)
+  if (set_size(sched->threads, &size) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
   /*
@@ -93,12 +93,12 @@ t_error			sched_add(i_thread			thread)
 
   SCHED_ENTER(sched);
 
- if (thread_get(thread, &th) != ERROR_NONE)
+  if (thread_get(thread, &th) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
- /*
-  * Add the thread
-  */
+  /*
+   * Add the thread
+   */
   if (set_add(sched->threads, (void*)th) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
@@ -243,11 +243,11 @@ t_error				sched_switch(void)
   o_thread*		data;
   t_setsz		size;
   t_iterator		i;
-  i_thread		max_thread;
-  t_prior		max_prior;
+  i_thread		max_thread = 0;
+  t_prior		max_prior = THREAD_LPRIOR;
   o_thread*		th;
 
- SCHED_ENTER(sched);
+  SCHED_ENTER(sched);
 
   if (set_size(sched->threads, &size) != ERROR_NONE)
     SCHED_LEAVE(region, ERROR_UNKNOWN);
@@ -269,41 +269,44 @@ t_error				sched_switch(void)
       /*
        * Selecta
        */
-      if (data->prior > max_prior)
+      if (data->prior >= max_prior)
 	{
-	max_thread = data->threadid;
-      max_prior = data->prior;
+        cons_msg('#', "[Selecta] threadid: %i - priority : %i [%i]\n",
+      	   data->threadid,
+      	   data->prior,
+      	   data->init_prior);
+
+	  max_thread = data->threadid;
+	  max_prior = data->prior;
 	}
-      /*
-       * Ageing
-       */
+      else
+	{
+	data->prior += 1; // Ageing
 
-      data->prior += 1;
-
-/*   cons_msg('#', "threadid: %i - priority : %i [%i]\n", */
-/* 	   data->threadid, */
-/* 	   data->prior, */
-/* 	   data->init_prior); */
-
-      sched_update(data->threadid);
+        cons_msg('#', "[Age]threadid: %i - priority : %i [%i]\n",
+      	   data->threadid,
+      	   data->prior,
+      	   data->init_prior);
+	}
     }
 
   /*
    * Pull Up !
    */
-  sched->current = max_thread;
+  /*   sched->current = max_thread; */
 
-if (set_get(sched->threads, sched->current, (void**)&th) != ERROR_NONE)
-    SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
- th->prior = th->init_prior;
+  /* if (set_get(sched->threads, sched->current, (void**)&th) != ERROR_NONE) */
+  /*     SCHED_LEAVE(sched, ERROR_UNKNOWN); */
 
-sched_update(sched->current);
 
-  if (machdep_call(sched, sched_switch, sched->current) != ERROR_NONE)
-    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+  /* // th->prior = th->init_prior; */
+  /*  th->prior--; */
 
-  sched_dump();
+  /* sched_update(sched->current); */
+
+  /*    if (machdep_call(sched, sched_switch, sched->current) != ERROR_NONE) */
+  /*     SCHED_LEAVE(sched, ERROR_UNKNOWN); */
 
   SCHED_LEAVE(sched, ERROR_NONE);
 }

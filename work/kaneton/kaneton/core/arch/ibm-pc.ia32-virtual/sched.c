@@ -56,15 +56,20 @@ d_sched			sched_dispatch =
 t_error			ia32_sched_quantum(t_quantum quantum)
 {
     SCHED_ENTER(sched);
+
   if (timer_delay(sched->timerid, quantum) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
+    SCHED_LEAVE(sched, ERROR_NONE);
 }
 
 t_error			ia32_sched_switch(i_thread elected)
 {
    SCHED_ENTER(sched);
- cons_msg('+', "Switched to %i - ", elected);
-    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
+/*  cons_msg('+', "Switched to %i - ", elected); */
+
+    SCHED_LEAVE(sched, ERROR_NONE);
 }
 
 
