@@ -36,7 +36,6 @@ m_sched*		sched = NULL;
 t_error			sched_dump(void)
 {
   t_state		state;
-  o_as*			o;
   o_thread*		data;
   t_setsz		size;
   t_iterator		i;
@@ -278,7 +277,14 @@ t_error				sched_switch(void)
       /*
        * Ageing
        */
+
       data->prior += 1;
+  cons_msg('#', "threadid: %i - priority : %i [%i]\n",
+	   data->threadid,
+	   data->prior,
+	   data->init_prior);
+
+      sched_update(data->threadid);
     }
 
   /*
@@ -289,6 +295,8 @@ t_error				sched_switch(void)
  if (thread_get(sched->current, &th) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
  th->prior = th->init_prior;
+
+sched_update(sched->current);
 
   if (machdep_call(sched, sched_switch, sched->current) != ERROR_NONE)
     SCHED_LEAVE(sched, ERROR_UNKNOWN);
