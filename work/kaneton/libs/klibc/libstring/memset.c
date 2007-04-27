@@ -26,8 +26,9 @@ void*			memset(void*				s,
   char*			d = s;
   u_int			i;
 
-  for (i = 0; i < n; i++)
+     for (i = 0; i < n; i++)
+     {
     d[i] = c;
-
+     }
   return (d);
 }

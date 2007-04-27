@@ -57,8 +57,8 @@ t_error			ia32_sched_quantum(t_quantum quantum)
 {
     SCHED_ENTER(sched);
 
-/*   if (timer_delay(sched->timerid, quantum) != ERROR_NONE) */
-/*     SCHED_LEAVE(sched, ERROR_UNKNOWN); */
+  if (timer_delay(sched->timerid, quantum) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
     SCHED_LEAVE(sched, ERROR_NONE);
 }
@@ -67,7 +67,10 @@ t_error			ia32_sched_switch(i_thread elected)
 {
    SCHED_ENTER(sched);
 
- cons_msg('+', "Switched to %i \n", elected);
+   if (elected == 0)
+     cons_msg('!', "Switched to Kernel Thread \n", elected);
+   else
+     cons_msg('+', "Switched to Thread %i \n", elected);
 
     SCHED_LEAVE(sched, ERROR_NONE);
 }

@@ -238,7 +238,7 @@ t_error			ia32_region_reserve(i_as			asid,
 	{
 	  page.addr = x + (offset + ram_paddr);
 	  page.present = 1;
-	  page.rw = (opts & REGION_OPT_USER) ? PG_WRITABLE : PG_READONLY;
+	  page.rw = (oseg->perms & PERM_WRITE) ? PG_WRITABLE : PG_READONLY;
 	  page.present = 1;
 	  page.user = (opts & REGION_OPT_USER) ? PG_USER : PG_PRIVILEGED;
 	  page.cached = PG_CACHED;

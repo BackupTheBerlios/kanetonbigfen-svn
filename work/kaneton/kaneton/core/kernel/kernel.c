@@ -177,11 +177,6 @@ void			kernel_init(void)
     core_error("cannot initialise the thread manager\n");
 
   /*
-   * PAS OUBLIER
-   */
-  while(1);
-
-  /*
    * 10)
    */
 

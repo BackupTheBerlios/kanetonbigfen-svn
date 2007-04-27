@@ -28,6 +28,7 @@ machdep_include(sched);
 
 m_sched*		sched = NULL;
 
+i_task			ktask;
 /*
  * ---------- functions -------------------------------------------------------
  */
@@ -157,6 +158,7 @@ t_error			sched_update(i_thread			thread)
 
 t_error			sched_init(void)
 {
+  i_thread		kthrid;
   /*
    * 1)
    */
@@ -182,11 +184,18 @@ t_error			sched_init(void)
   /*
    * Reserve timer
    */
-/*   if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch), */
-/* 		    sched->quantum, TIMER_REPEAT_ENABLE, */
-/* 		    &sched->timerid) != ERROR_NONE) */
-/*     SCHED_LEAVE(sched, ERROR_UNKNOWN); */
+  if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch),
+		    sched->quantum, TIMER_REPEAT_ENABLE,
+		    &sched->timerid) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
+  /*
+   * K Thread
+   */
+if (thread_reserve(ktask, THREAD_HPRIOR, &kthrid) != ERROR_NONE)
+cons_msg('!', "thread_reserve failed !\n");
+
+ sched_add(kthrid);
   /*
    * 2)
    */

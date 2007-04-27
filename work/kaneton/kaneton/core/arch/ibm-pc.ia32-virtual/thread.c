@@ -114,12 +114,9 @@ t_error			ia32_thread_init(void)
 		  PERM_READ | PERM_WRITE,
 		  (t_vaddr*)&thread->machdep.tss) != ERROR_NONE)
     THREAD_LEAVE(thread, ERROR_UNKNOWN);
-  /*
-   * PAS OUBLIER
-   */
-  while(1);
 
-  memset(thread->machdep.tss, 0x0, sizeof(t_ia32_tss));
+
+      memset(thread->machdep.tss, 0x0, sizeof(t_ia32_tss));
 
   /*
    * 3)
@@ -162,7 +159,7 @@ t_error ia32_thread_load(i_thread thr,t_thread_context ctx)
   thread_get(thr, &o);
   o->machdep.named.esp = ctx.sp;
   o->machdep.named.eip = ctx.pc;
-  gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &(o->machdep.named.cs));
+  gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &o->machdep.named.cs);
   return ERROR_NONE;
 }
 
