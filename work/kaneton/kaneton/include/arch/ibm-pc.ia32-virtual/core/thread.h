@@ -48,12 +48,11 @@ typedef struct
   t_uint32 edx;
   t_uint32 esi;
   t_uint32 edi;
-
+  t_uint32 ebp;
   t_uint32 cr3;
 
   t_uint32 ss;
   t_uint32 esp;
-  t_uint32 ebp;
 } ao_thread_named;
 
 typedef union

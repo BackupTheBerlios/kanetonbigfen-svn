@@ -128,9 +128,9 @@ t_error			ia32_task_init(void)
    * 2)
    */
 
-/*   if (segment_perms((i_segment)(t_uint32)init->machdep.gdt.descriptor, */
-/* 		    PERM_READ) != ERROR_NONE) */
-/*     TASK_LEAVE(task, ERROR_UNKNOWN); */
+  if (segment_perms((i_segment)(t_uint32)init->machdep.gdt.descriptor,
+		    PERM_READ) != ERROR_NONE)
+    TASK_LEAVE(task, ERROR_UNKNOWN);
 
   TASK_LEAVE(task, ERROR_NONE);
 }

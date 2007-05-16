@@ -69,6 +69,7 @@ extern t_uint32 gl_stack_int;
 
 t_error			ia32_sched_switch(i_thread elected)
 {
+  printf(".");
   SCHED_ENTER(sched);
   if (elected != 0)
     cons_msg('+', "Switching to Thread %i \n", elected);
@@ -96,13 +97,14 @@ t_error			ia32_sched_switch(i_thread elected)
   //il faut switcher sur l'as cible
   MYMEMCPY(dest, stack, STACK_SIZE); //restaure le contexte
   //printf("[src=%i|int=%i|dest=%i]", global_esp, stack, dest->esp);
-  printf("[dest=%i]", dest->esp);
-  global_esp = dest->esp;
-  ((char*)(global_esp))[0] = 42;
+  //printf("[dest=%i]", dest->esp);
+  global_esp = dest->esp + STACK_SIZE;
+  //((char*)(global_esp))[100] = 42;
   printf("[has set]");
   MYMEMCPY(stack, global_esp, STACK_SIZE);
   printf("[has memcpy]");
   sched->current = elected;
+  printf("coin");
   SCHED_LEAVE(sched, ERROR_NONE);
 }
 
