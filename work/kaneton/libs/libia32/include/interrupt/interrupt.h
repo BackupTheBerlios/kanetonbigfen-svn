@@ -20,18 +20,19 @@
 
 // FIXME: some declarations has beed removed here
 
-t_uint32 esp_global_struct;
+t_uint32 global_esp;
+t_uint32 global_ebp;
 
-#define REST_CONTEXT						       \
-  "pop %edi\n\t"						       \
-  "pop %esi\n\t"						       \
-  "pop %edx\n\t"						       \
-  "pop %ecx\n\t"						       \
-  "pop %ebx\n\t"						       \
-  "pop %eax\n\t"						       \
-  "pop %gs\n\t"							       \
-  "pop %fs\n\t"							       \
-  "pop %es\n\t"							       \
+#define REST_CONTEXT							\
+  "pop %edi\n\t"							\
+  "pop %esi\n\t"							\
+  "pop %edx\n\t"							\
+  "pop %ecx\n\t"							\
+  "pop %ebx\n\t"							\
+  "pop %eax\n\t"							\
+  "pop %gs\n\t"								\
+  "pop %fs\n\t"								\
+  "pop %es\n\t"								\
   "pop %ds\n\t"
 
 #define SAVE_CONTEXT							\
@@ -47,14 +48,16 @@ t_uint32 esp_global_struct;
   "push %edi\n\t"
 
 
-#define CTX_SIZE 10
-#define STACK_SIZE 4 * (CTX_SIZE + 3)
+#define CTX_SIZE ( 8 * 4 )
+#define STACK_SIZE ( CTX_SIZE + 3 * 4 )
 
-#define SET_ESP								\
-  "mov %esp, esp_global_struct\n\t"
+#define ESP2VAR								\
+  "mov %esp, global_esp\n\t"						\
+  "mov %ebp, global_ebp\n\t"
 
-#define GET_ESP								\
-  "mov esp_global_struct, %esp\n\t"
+#define VAR2ESP								\
+  "mov global_esp, %esp\n\t"						\
+  "mov global_ebp, %ebp\n\t"
 
 #define PUT_CR3								\
   "mov gl_cr3_dest, %eax\n\t"						\
@@ -75,7 +78,7 @@ t_uint32 esp_global_struct;
 
 #define MEMCOPY_TOSTACKINT						\
   "push $40\n\t"							\
-  "push esp_global_struct\n\t"					\
+  "push global_esp\n\t"					\
   "push gl_stack_int\n\t"						\
   "call memcpy\n\t"							\
   "pop %eax\n\t"							\
@@ -105,11 +108,11 @@ t_uint32 gl_cr3_dest;
       "int_" #_id_ ":\n\t"						\
       SAVE_CONTEXT							\
       PUSH_CR3								\
-      SET_ESP								\
+      ESP2VAR								\
       "push $" #_id_ "\n\t"						\
       "call event_call\n\t"						\
       "addl $4, %esp\n\t"						\
-      GET_ESP								\
+      VAR2ESP								\
       POP_CR3								\
       REST_CONTEXT							\
       "iret")

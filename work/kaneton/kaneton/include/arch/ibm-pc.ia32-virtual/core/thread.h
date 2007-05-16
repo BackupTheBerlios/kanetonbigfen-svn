@@ -33,13 +33,10 @@ typedef struct
 
 typedef struct
 {
-  t_uint32 ss;
-  t_uint32 esp;
-
   t_uint32 eflags;
   t_uint32 cs;
   t_uint32 eip;
-  t_uint32 error;
+  //  t_uint32 error;
 
   t_uint32 ds;
   t_uint32 es;
@@ -53,6 +50,10 @@ typedef struct
   t_uint32 edi;
 
   t_uint32 cr3;
+
+  t_uint32 ss;
+  t_uint32 esp;
+  t_uint32 ebp;
 } ao_thread_named;
 
 typedef union

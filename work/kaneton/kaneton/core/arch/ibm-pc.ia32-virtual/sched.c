@@ -65,40 +65,41 @@ t_error			ia32_sched_quantum(t_quantum quantum)
 
 extern t_uint32 gl_stack_int;
 
+#define MYMEMCPY(src, dst, size) memcpy(dst, src, size)
+
 t_error			ia32_sched_switch(i_thread elected)
 {
-  printf("...");
+  printf("~");
+  //return ERROR_NONE;
   SCHED_ENTER(sched);
-  t_uint32 tmp;
-  o_thread *Bsrc;
-  o_thread *Bdest;
+  o_thread *Osrc;
+  o_thread *Odest;
   ao_thread_named *src;
   ao_thread_named *dest;
-  set_get(sched->threads, sched->current, (void**)&Bsrc);
-  set_get(sched->threads, elected, (void**)&Bdest);
-  src = &(Bsrc->machdep.named);
-  dest = &(Bdest->machdep.named) - 16;
-  t_uint32 esp = esp_global_struct;
-  /*    printf("ce=%x ", esp); */
-  /*    printf("de=%x\n", ((ao_thread_named*)dest)->esp); */
-  //printf("[@%i]", dest);
-  t_uint32 stack = gl_stack_int - STACK_SIZE - 8;
-  memcpy(stack, esp, STACK_SIZE); //met tout dans la stack int
-  ((ao_thread_named*)stack)->esp = esp - STACK_SIZE - 8;;
-  memcpy(stack, src + STACK_SIZE + 8, STACK_SIZE + 8); //sauvegarde le contexte
-  //gl_cr3_dest = ((ao_thread_named*)dest)->cr3;
-  /*    asm volatile("mov %0,%%eax\n\t" */
-  /* 		"mov %%eax, %%cr3" */
-  /* 		: */
-  /* 		: "m"(tmp)); */
-  memcpy(dest + STACK_SIZE + 8, stack, STACK_SIZE + 8); //restaure le contexte
-  //esp_global_struct = ((ao_thread_named*)dest)->esp;
+  set_get(sched->threads, sched->current, (void**)&Osrc);
+  set_get(sched->threads, elected, (void**)&Odest);
+  src = &(Osrc->machdep.named);
+  dest = &(Odest->machdep.named);
+  t_uint32 stack = gl_stack_int - STACK_SIZE;
+  MYMEMCPY(global_esp, stack, STACK_SIZE); //met tout dans la stack int
+  src->esp = global_esp;
+  src->ebp = global_ebp;
+  MYMEMCPY(global_esp, src, STACK_SIZE); //sauvegarde le contexte
+  gl_cr3_dest = dest->cr3;
+  asm volatile("mov %0,%%eax\n\t"
+	       "mov %%eax, %%cr3"
+	       :
+	       : "m"(gl_cr3_dest));
+  //il faut switcher sur l'as cible
+  MYMEMCPY(dest, stack, STACK_SIZE); //restaure le contexte
+  global_esp = dest->esp;
+  global_ebp = dest->ebp;
+  MYMEMCPY(stack, global_esp, STACK_SIZE);
   sched->current = elected;
-  /* if (elected == 0) */
-  /*      cons_msg('!', "Switched to Kernel Thread \n", elected); */
-  /*    else */
-  /*      cons_msg('+', "Switched to Thread %i \n", elected); */
-
+  if (elected == 0)
+       cons_msg('!', "Switched to Kernel Thread \n", elected);
+     else
+       cons_msg('+', "Switched to Thread %i \n", elected);
   SCHED_LEAVE(sched, ERROR_NONE);
 }
 
