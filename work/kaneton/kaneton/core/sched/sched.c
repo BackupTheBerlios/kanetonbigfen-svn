@@ -293,7 +293,7 @@ t_error				sched_switch(void)
 
 	data->prior += 1; // Ageing
 
-        /* cons_msg('#', "[Age]threadid: %i - priority : %i [%i]\n", */
+/*         cons_msg('#', "[Age]threadid: %i - priority : %i [%i]\n", */
 /*       	   data->threadid, */
 /*       	   data->prior, */
 /*       	   data->init_prior); */
@@ -303,9 +303,9 @@ t_error				sched_switch(void)
   /*
    * Pull Up !
    */
-  //sched->current = max_thread;
+/*   sched->current = max_thread; */
 
-    if (set_get(sched->threads, sched->current, (void**)&th) != ERROR_NONE)
+    if (set_get(sched->threads, max_thread, (void**)&th) != ERROR_NONE)
       SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
 

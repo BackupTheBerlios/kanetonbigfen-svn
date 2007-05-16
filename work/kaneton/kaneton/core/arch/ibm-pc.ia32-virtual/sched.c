@@ -69,9 +69,10 @@ extern t_uint32 gl_stack_int;
 
 t_error			ia32_sched_switch(i_thread elected)
 {
-  printf("~");
-  //return ERROR_NONE;
   SCHED_ENTER(sched);
+  o_thread* th;
+  o_task* otsk;
+  o_as*	oas;
   o_thread *Osrc;
   o_thread *Odest;
   ao_thread_named *src;
@@ -85,6 +86,22 @@ t_error			ia32_sched_switch(i_thread elected)
   src->esp = global_esp;
   src->ebp = global_ebp;
   MYMEMCPY(global_esp, src, STACK_SIZE); //sauvegarde le contexte
+
+  /* Getting ASID */
+
+  if (thread_get(sched->current, &th) != ERROR_NONE)
+    SCHED_LEAVE(sched, ERROR_UNKNOWN);
+
+  if (task_get(th->taskid, &otsk) != ERROR_NONE)
+    TASK_LEAVE(task, ERROR_UNKNOWN);
+
+  if (as_get(otsk->asid, &oas) != ERROR_NONE)
+    AS_LEAVE(as, ERROR_UNKNOWN);
+
+  dest->cr3 = oas->machdep.pd;
+/*
+--------------------
+*/
   gl_cr3_dest = dest->cr3;
   asm volatile("mov %0,%%eax\n\t"
 	       "mov %%eax, %%cr3"
@@ -95,11 +112,13 @@ t_error			ia32_sched_switch(i_thread elected)
   global_esp = dest->esp;
   global_ebp = dest->ebp;
   MYMEMCPY(stack, global_esp, STACK_SIZE);
+
   sched->current = elected;
   if (elected == 0)
        cons_msg('!', "Switched to Kernel Thread \n", elected);
      else
        cons_msg('+', "Switched to Thread %i \n", elected);
+
   SCHED_LEAVE(sched, ERROR_NONE);
 }
 
