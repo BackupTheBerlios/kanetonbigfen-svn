@@ -67,6 +67,7 @@ extern t_uint32 gl_stack_int;
 
 t_error			ia32_sched_switch(i_thread elected)
 {
+  return ERROR_NONE;
    SCHED_ENTER(sched);
    t_uint32 tmp;
    o_thread *Bsrc;

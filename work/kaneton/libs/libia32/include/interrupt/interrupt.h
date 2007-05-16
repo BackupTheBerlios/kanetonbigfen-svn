@@ -99,7 +99,7 @@ t_uint32 esp_global_struct;
 
 t_uint32 gl_cr3_dest;
 
-#define __handler__(_id_)						\
+#define __handler2__(_id_)						\
   void int_##_id_();							\
   asm(".globl int_" #_id_ "\n\t"					\
       "int_" #_id_ ":\n\t"						\
@@ -115,7 +115,7 @@ t_uint32 gl_cr3_dest;
       REST_CONTEXT							\
       "iret")
 
-#define __handler2__(_id_)					       \
+#define __handler__(_id_)					       \
   void int_##_id_();						       \
   asm(".globl int_" #_id_ "\n\t"				       \
       "int_" #_id_ ":\n\t"					       \
