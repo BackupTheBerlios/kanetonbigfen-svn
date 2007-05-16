@@ -184,7 +184,7 @@ t_error	ia32_thread_stack(i_thread th, t_stack stack)
  if (thread_get(th, &oth) != ERROR_NONE)
     THREAD_LEAVE(thread, ERROR_UNKNOWN);
 
- oth->machdep.named.esp = stack.base;
- oth->machdep.named.ebp = stack.base;
+ oth->machdep.named.esp = oth->stack;
+ oth->machdep.named.ebp = oth->stack;
   return ERROR_NONE;
 }
