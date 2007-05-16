@@ -65,7 +65,7 @@ d_thread			thread_dispatch =
 							   t_prior);*/
     NULL,/*t_error			(*thread_state)(i_thread,
 							t_state);*/
-    NULL,/*t_error			(*thread_stack)(i_thread,
+    ia32_thread_stack,/*t_error			(*thread_stack)(i_thread,
 							t_stack);*/
     ia32_thread_init,//t_error	       	(*thread_init)(void);
     NULL //t_error			(*thread_clean)(void);
@@ -174,5 +174,17 @@ t_error ia32_thread_store(i_thread thr, t_thread_context* ctx)
   thread_get(thr, &o);
   ctx->sp = o->machdep.named.esp;
   ctx->pc = o->machdep.named.eip;
+  return ERROR_NONE;
+}
+
+t_error	ia32_thread_stack(i_thread th, t_stack stack)
+{
+ o_thread* oth;
+
+ if (thread_get(th, &oth) != ERROR_NONE)
+    THREAD_LEAVE(thread, ERROR_UNKNOWN);
+
+ oth->machdep.named.esp = stack.base;
+ oth->machdep.named.ebp = stack.base;
   return ERROR_NONE;
 }
