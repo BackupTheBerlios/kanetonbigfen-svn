@@ -107,7 +107,6 @@ t_uint32 gl_cr3_dest;
       PUSH_CR3								\
       SET_ESP								\
       "push $" #_id_ "\n\t"						\
-      "movl %esp, %edi\n\t"						\
       "call event_call\n\t"						\
       "addl $4, %esp\n\t"						\
       GET_ESP								\

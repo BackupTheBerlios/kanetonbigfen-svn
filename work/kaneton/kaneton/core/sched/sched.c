@@ -184,7 +184,7 @@ t_error			sched_init(void)
   /*
    * Reserve timer
    */
-sched->quantum = 100;
+  //sched->quantum = 100;
   if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch),
 		    sched->quantum, TIMER_REPEAT_ENABLE,
 		    &sched->timerid) != ERROR_NONE)

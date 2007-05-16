@@ -79,8 +79,8 @@ t_error			ia32_sched_switch(i_thread elected)
    src = &(Bsrc->machdep.named);
    dest = &(Bdest->machdep.named) - 16;
    t_uint32 esp = esp_global_struct;
-   printf("ce=%x ", esp);
-   printf("de=%x\n", ((ao_thread_named*)dest)->esp);
+/*    printf("ce=%x ", esp); */
+/*    printf("de=%x\n", ((ao_thread_named*)dest)->esp); */
    //printf("[@%i]", dest);
    t_uint32 stack = gl_stack_int - STACK_SIZE - 8;
    memcpy(stack, esp, STACK_SIZE); //met tout dans la stack int

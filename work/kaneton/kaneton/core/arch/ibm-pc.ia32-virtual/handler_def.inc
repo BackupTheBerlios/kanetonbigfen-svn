@@ -1,3 +1,5 @@
+asm (".text");
+
 __handler__(0);
 __handler__(1);
 __handler__(2);
