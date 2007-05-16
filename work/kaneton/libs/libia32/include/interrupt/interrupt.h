@@ -77,13 +77,11 @@ t_uint32 global_esp;
   asm(".globl int_" #_id_ "\n\t"					\
       "int_" #_id_ ":\n\t"						\
       SAVE_CONTEXT							\
-      PUSH_CR3								\
       ESP2VAR								\
       "push $" #_id_ "\n\t"						\
       "call event_call\n\t"						\
       "addl $4, %esp\n\t"						\
       VAR2ESP								\
-      POP_CR3								\
       REST_CONTEXT							\
       "iret")
 

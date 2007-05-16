@@ -108,6 +108,8 @@
  * ../../core/conf/conf.c
  */
 
+void sswitch(void);
+
 void entry_point();
 
 void task1();
