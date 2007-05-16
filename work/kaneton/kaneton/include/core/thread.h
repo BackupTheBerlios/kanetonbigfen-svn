@@ -93,7 +93,10 @@ typedef struct
 /*
  * thread manager
  */
-
+       /*  cons_msg('#', "[Age]threadid: %i - priority : %i [%i]\n", */
+/*       	   data->threadid, */
+/*       	   data->prior, */
+/*       	   data->init_prior); */
 typedef struct
 {
   o_id				id;

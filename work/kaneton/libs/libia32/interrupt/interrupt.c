@@ -53,6 +53,7 @@ void event_call(int id)
 /*   asm volatile("movl %%edi, %0\n" */
 /*                : "=m" (esp) */
 /*                ); */
+  /* printf("."); */
   if (id >=32 && id < 48)
     PIC_ACK(id-32);
   o_event* o;

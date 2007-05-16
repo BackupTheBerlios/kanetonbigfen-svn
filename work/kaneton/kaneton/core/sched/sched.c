@@ -184,6 +184,7 @@ t_error			sched_init(void)
   /*
    * Reserve timer
    */
+sched->quantum = 100;
   if (timer_reserve(EVENT_FUNCTION, TIMER_HANDLER(sched_switch),
 		    sched->quantum, TIMER_REPEAT_ENABLE,
 		    &sched->timerid) != ERROR_NONE)
@@ -302,7 +303,7 @@ t_error				sched_switch(void)
   /*
    * Pull Up !
    */
-    sched->current = max_thread;
+  //sched->current = max_thread;
 
     if (set_get(sched->threads, sched->current, (void**)&th) != ERROR_NONE)
       SCHED_LEAVE(sched, ERROR_UNKNOWN);
@@ -310,7 +311,7 @@ t_error				sched_switch(void)
 
   th->prior = th->init_prior;
 
-     if (machdep_call(sched, sched_switch, sched->current) != ERROR_NONE)
+     if (machdep_call(sched, sched_switch, max_thread) != ERROR_NONE)
       SCHED_LEAVE(sched, ERROR_UNKNOWN);
 
   SCHED_LEAVE(sched, ERROR_NONE);

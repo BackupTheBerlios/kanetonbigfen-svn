@@ -46,30 +46,76 @@ t_uint32 esp_global_struct;
   "push %esi\n\t"							\
   "push %edi\n\t"
 
+
+#define CTX_SIZE 10
+#define STACK_SIZE 4 * (CTX_SIZE + 3)
+
 #define SET_ESP								\
   "mov %esp, esp_global_struct\n\t"
+
+#define GET_ESP								\
+  "mov esp_global_struct, %esp\n\t"
+
+#define PUT_CR3								\
+  "mov gl_cr3_dest, %eax\n\t"						\
+  "mov %eax, %cr3\n\t"
 
 #define IF_FROM_KERNEL_LAND						\
   "mov 48(%esp), %eax\n\t"						\
   "\n\t"\
   ".endif nop\n\t"
 
+#define PUSH_CR3							\
+  "mov %cr3, %eax\n\t"							\
+  "push %eax\n\t"
 
-#define __handler2__(_id_)						\
+#define POP_CR3								\
+  "pop %eax\n\t"							\
+  "mov %eax, %cr3\n\t"
+
+#define MEMCOPY_TOSTACKINT						\
+  "push $40\n\t"							\
+  "push esp_global_struct\n\t"					\
+  "push gl_stack_int\n\t"						\
+  "call memcpy\n\t"							\
+  "pop %eax\n\t"							\
+  "pop %eax\n\t"							\
+  "pop %eax\n\t"
+
+
+
+/* memcpy(void*                            dest, */
+/*                                const void*                      src, */
+/*                                size_t                           n) */
+//ao_thread_named;
+
+/*       SET_ESP								\ */
+/*       MEMCOPY_TOSTACKINT						\ */
+//     PUSH_CR3								\
+//      POP_CR3								\
+
+#define MOV_TO(_val_, _reg_)						\
+  asm("mov $" _val_ ", %##_reg_")
+
+t_uint32 gl_cr3_dest;
+
+#define __handler__(_id_)						\
   void int_##_id_();							\
-  asm(".globl int2_" #_id_ "\n\t"					\
+  asm(".globl int_" #_id_ "\n\t"					\
       "int_" #_id_ ":\n\t"						\
       SAVE_CONTEXT							\
-      "push %cr3\n\t"							\
+      PUSH_CR3								\
       SET_ESP								\
       "push $" #_id_ "\n\t"						\
-      "call scheduler\n\t"						\
+      "movl %esp, %edi\n\t"						\
+      "call event_call\n\t"						\
       "addl $4, %esp\n\t"						\
-      "pop %cr3\n\t"							\
+      GET_ESP								\
+      POP_CR3								\
       REST_CONTEXT							\
       "iret")
 
-#define __handler__(_id_)					       \
+#define __handler2__(_id_)					       \
   void int_##_id_();						       \
   asm(".globl int_" #_id_ "\n\t"				       \
       "int_" #_id_ ":\n\t"					       \

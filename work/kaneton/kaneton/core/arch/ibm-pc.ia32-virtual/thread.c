@@ -54,9 +54,9 @@ d_thread			thread_dispatch =
 							i_thread,
 							i_thread*);*/
     NULL,//t_error			(*thread_flush)(i_task);
-    NULL,/*t_error			(*thread_load)(i_thread,
+    ia32_thread_load,/*t_error			(*thread_load)(i_thread,
 						       t_thread_context);*/
-    NULL,/*t_error			(*thread_store)(i_thread,
+    ia32_thread_store,/*t_error			(*thread_store)(i_thread,
 							t_thread_context*);*/
     NULL,/*t_error	(*thread_reserve)(i_task,
 							  i_thread*);*/
@@ -70,6 +70,8 @@ d_thread			thread_dispatch =
     ia32_thread_init,//t_error	       	(*thread_init)(void);
     NULL //t_error			(*thread_clean)(void);
   };
+
+t_uint32 gl_stack_int;
 
 /*
  * ---------- functions -------------------------------------------------------
@@ -115,7 +117,6 @@ t_error			ia32_thread_init(void)
 		  (t_vaddr*)&thread->machdep.tss) != ERROR_NONE)
     THREAD_LEAVE(thread, ERROR_UNKNOWN);
 
-
       memset(thread->machdep.tss, 0x0, sizeof(t_ia32_tss));
 
   /*
@@ -139,6 +140,8 @@ t_error			ia32_thread_init(void)
 	       0x68) != ERROR_NONE)
     THREAD_LEAVE(thread, ERROR_UNKNOWN);
 
+  gl_stack_int = int_stack + 2 * PAGESZ - 16;
+
   /*
    * 5)
    */
@@ -158,6 +161,8 @@ t_error ia32_thread_load(i_thread thr,t_thread_context ctx)
   o_thread* o;
   thread_get(thr, &o);
   o->machdep.named.esp = ctx.sp;
+  //printf("[%i", o->machdep.named.esp = ctx.sp);
+  //printf("@%i]\n", &(o->machdep.named));
   o->machdep.named.eip = ctx.pc;
   gdt_build_selector(PMODE_GDT_CORE_CS, ia32_prvl_supervisor, &o->machdep.named.cs);
   return ERROR_NONE;
