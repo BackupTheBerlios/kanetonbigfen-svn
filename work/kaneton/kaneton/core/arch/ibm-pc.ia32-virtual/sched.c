@@ -75,6 +75,8 @@ t_error			ia32_sched_switch(i_thread elected)
     cons_msg('+', "Switching to Thread %i \n", elected);
   else
     cons_msg('!', "Switching to Kernel Thread \n", elected);
+  if (elected == sched->current)
+    return ERROR_NONE;
   o_thread* th;
   o_task* otsk;
   o_as*	oas;
@@ -86,25 +88,26 @@ t_error			ia32_sched_switch(i_thread elected)
   set_get(sched->threads, elected, (void**)&Odest);
   src = &(Osrc->machdep.named);
   dest = &(Odest->machdep.named);
-  t_uint32 stack = gl_stack_int - STACK_SIZE;
-  MYMEMCPY(global_esp, stack, STACK_SIZE); //met tout dans la stack int
+/*   t_uint32 esp_int = gl_stack_int - STACK_SIZE - 4; */
+  t_uint32 esp_src = src->esp + 4;//global_esp - 4;
+  t_uint32 esp_dest = dest->esp + 4 - STACK_SIZE;
+/*   MYMEMCPY(esp_src, esp_int, STACK_SIZE); //met tout dans la stack int */
   src->esp = global_esp;
-  MYMEMCPY(global_esp, src, STACK_SIZE); //sauvegarde le contexte
+  MYMEMCPY(esp_src, src, STACK_SIZE); //sauvegarde le contexte
   asm volatile("mov %0,%%eax\n\t"
 	       "mov %%eax, %%cr3"
 	       :
 	       : "m"(dest->cr3));
   //il faut switcher sur l'as cible
-  MYMEMCPY(dest, stack, STACK_SIZE); //restaure le contexte
-  //printf("[src=%i|int=%i|dest=%i]", global_esp, stack, dest->esp);
-  //printf("[dest=%i]", dest->esp);
-  global_esp = dest->esp + STACK_SIZE;
+/*   MYMEMCPY(dest, esp_int, STACK_SIZE); //restaure le contexte */
+/*   printf("[src=%i|int=%i|dest=%i]", esp_src, esp_int, esp_dest); */
+/*   printf("[dest=%i]", esp_dest); */
+  global_esp = esp_dest - 4;
   //((char*)(global_esp))[100] = 42;
-  printf("[has set]");
-  MYMEMCPY(stack, global_esp, STACK_SIZE);
-  printf("[has memcpy]");
+  //printf("[has set]");
+  printf("[leaving]");
+  MYMEMCPY(dest, esp_dest - STACK_SIZE, STACK_SIZE);
   sched->current = elected;
-  printf("coin");
   SCHED_LEAVE(sched, ERROR_NONE);
 }
 
