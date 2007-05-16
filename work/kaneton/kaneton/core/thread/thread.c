@@ -600,6 +600,7 @@ t_error			thread_stack(i_thread			threadid,
 		      PERM_READ | PERM_WRITE,
 		      &(o->stack)) != ERROR_NONE)
 	THREAD_LEAVE(thread, ERROR_UNKNOWN);
+      printf("[%i ]", o->stack);
     }
   else
     o->stack = stack.base;

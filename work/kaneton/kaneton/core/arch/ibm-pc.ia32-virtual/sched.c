@@ -104,9 +104,10 @@ t_error			ia32_sched_switch(i_thread elected)
 	       : "m"(gl_cr3_dest));
   //il faut switcher sur l'as cible
   MYMEMCPY(dest, stack, STACK_SIZE); //restaure le contexte
+  //printf("[src=%i|int=%i|dest=%i]", global_esp, stack, dest->esp);
+  printf("[dest=%i]", dest->esp);
   global_esp = dest->esp;
   global_ebp = dest->ebp;
-  printf("[stack=%i]", stack);
   MYMEMCPY(stack, global_esp, STACK_SIZE);
   printf("[has memcpy]");
   sched->current = elected;

@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Wed May 16 19:30:02 2007 vincent fenet
+** Last update Wed May 16 20:02:22 2007 vincent fenet
 */
 
 #include <klibc.h>
@@ -288,7 +288,7 @@ void		check_tests(void)
   /*
    *Ther 1
    */
-  if (thread_reserve(tsk, 240, &thr) != ERROR_NONE)
+  if (thread_reserve(tsk, 250, &thr) != ERROR_NONE)
     cons_msg('!', "thread_reserve failed !\n");
 
   stack.base = 0;

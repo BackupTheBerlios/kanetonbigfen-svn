@@ -179,12 +179,12 @@ t_error ia32_thread_store(i_thread thr, t_thread_context* ctx)
 
 t_error	ia32_thread_stack(i_thread th, t_stack stack)
 {
- o_thread* oth;
+  o_thread* oth;
 
- if (thread_get(th, &oth) != ERROR_NONE)
+  if (thread_get(th, &oth) != ERROR_NONE)
     THREAD_LEAVE(thread, ERROR_UNKNOWN);
 
- oth->machdep.named.esp = oth->stack;
- oth->machdep.named.ebp = oth->stack;
+  oth->machdep.named.ebp = oth->stack - oth->stacksz;
+  oth->machdep.named.esp = oth->stack - oth->stacksz + STACK_SIZE;
   return ERROR_NONE;
 }
