@@ -205,7 +205,7 @@ cons_msg('!', "thread_load failed !\n");
 /*
  *Ther 3
  */
-if (thread_reserve(tsk, THREAD_PRIOR, &thr2) != ERROR_NONE)
+if (thread_reserve(tsk, 240, &thr2) != ERROR_NONE)
 cons_msg('!', "thread_reserve failed !\n");
 
 stack.base = 0;

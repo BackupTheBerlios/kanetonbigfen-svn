@@ -58,7 +58,7 @@ d_thread			thread_dispatch =
 						       t_thread_context);*/
     ia32_thread_store,/*t_error			(*thread_store)(i_thread,
 							t_thread_context*);*/
-    NULL,/*t_error	(*thread_reserve)(i_task,
+    ia32_thread_reserve,/*t_error	(*thread_reserve)(i_task,
 							  i_thread*);*/
     NULL,//t_error			(*thread_release)(i_thread);
     NULL,/*t_error			(*thread_priority)(i_thread,
@@ -186,5 +186,25 @@ t_error	ia32_thread_stack(i_thread th, t_stack stack)
 
   oth->machdep.named.ebp = oth->stack - oth->stacksz;
   oth->machdep.named.esp = oth->stack - oth->stacksz;
+
+  return ERROR_NONE;
+}
+
+t_error	ia32_thread_reserve(i_task tsk, i_thread* th)
+{
+  o_thread *oth;
+  ao_thread_named *src;
+  o_task* otsk;
+  o_as*	oas;
+
+  if (thread_get(*th, &oth) != ERROR_NONE)
+    THREAD_LEAVE(thread, ERROR_UNKNOWN);
+  src = &(oth->machdep.named);
+  if (task_get(oth->taskid, &otsk) != ERROR_NONE)
+    TASK_LEAVE(task, ERROR_UNKNOWN);
+  if (as_get(otsk->asid, &oas) != ERROR_NONE)
+    AS_LEAVE(as, ERROR_UNKNOWN);
+  src->cr3 = oas->machdep.pd;
+
   return ERROR_NONE;
 }
