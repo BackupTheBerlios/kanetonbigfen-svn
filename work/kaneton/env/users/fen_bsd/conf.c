@@ -5,7 +5,7 @@
 ** Login <fenet_v@epita.fr>
 **
 ** Started on  Mon Feb 19 19:15:15 2007 vincent fenet
-** Last update Wed May 16 20:02:22 2007 vincent fenet
+** Last update Wed May 16 20:22:21 2007 vincent fenet
 */
 
 #include <klibc.h>
@@ -292,7 +292,7 @@ void		check_tests(void)
     cons_msg('!', "thread_reserve failed !\n");
 
   stack.base = 0;
-  stack.size = THREAD_MIN_STACKSZ;
+  printf("a=%i", stack.size = THREAD_MIN_STACKSZ);
 
   if (thread_stack(thr, stack) != ERROR_NONE)
     cons_msg('!', "thread_stack failed !\n");

@@ -21,10 +21,11 @@
 // FIXME: some declarations has beed removed here
 
 t_uint32 global_esp;
-t_uint32 global_ebp;
-t_uint32 gl_cr3_dest;
 
 #define REST_CONTEXT							\
+  "pop %eax\n\t"							\
+  "mov %eax, %cr3\n\t"							\
+  "pop %ebp\n\t"							\
   "pop %edi\n\t"							\
   "pop %esi\n\t"							\
   "pop %edx\n\t"							\
@@ -46,18 +47,19 @@ t_uint32 gl_cr3_dest;
   "push %ecx\n\t"							\
   "push %edx\n\t"							\
   "push %esi\n\t"							\
-  "push %edi\n\t"
+  "push %edi\n\t"							\
+  "push %ebp\n\t"							\
+  "mov %cr3, %eax\n\t"							\
+  "push %eax\n\t"
 
-#define CTX_SIZE ( 8 * 4 )
+#define CTX_SIZE ( 10 * 4 )
 #define STACK_SIZE ( CTX_SIZE + 3 * 4 )
 
 #define ESP2VAR								\
-  "mov %esp, global_esp\n\t"						\
-  "mov %ebp, global_ebp\n\t"
+  "mov %esp, global_esp\n\t"
 
 #define VAR2ESP								\
-  "mov global_esp, %esp\n\t"						\
-  "mov global_ebp, %ebp\n\t"
+  "mov global_esp, %esp\n\t"
 
 #define PUSH_CR3							\
   "mov %cr3, %eax\n\t"							\
