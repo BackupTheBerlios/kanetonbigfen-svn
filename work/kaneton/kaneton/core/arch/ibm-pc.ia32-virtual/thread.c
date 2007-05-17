@@ -204,7 +204,7 @@ t_error	ia32_thread_reserve(i_task tsk, i_thread* th)
     TASK_LEAVE(task, ERROR_UNKNOWN);
   if (as_get(otsk->asid, &oas) != ERROR_NONE)
     AS_LEAVE(as, ERROR_UNKNOWN);
-  src->cr3 = oas->machdep.pd;
+  src->cr3 = (t_uint32) oas->machdep.pd;
 
   return ERROR_NONE;
 }

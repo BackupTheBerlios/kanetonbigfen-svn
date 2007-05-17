@@ -39,7 +39,7 @@ extern m_sched*		sched;
 d_sched			sched_dispatch =
   {
     ia32_sched_quantum,
-    NULL,
+    ia32_sched_yield,
     ia32_sched_switch,
     NULL,
     NULL,
@@ -77,9 +77,9 @@ t_error			ia32_sched_switch(i_thread elected)
     cons_msg('!', "Switching to Kernel Thread \n", elected);
   if (elected == sched->current)
     return ERROR_NONE;
-  o_thread* th;
-  o_task* otsk;
-  o_as*	oas;
+ /*  o_thread* th; */
+/*   o_task* otsk; */
+/*   o_as*	oas; */
   o_thread *Osrc;
   o_thread *Odest;
   ao_thread_named *src;
@@ -93,7 +93,7 @@ t_error			ia32_sched_switch(i_thread elected)
   t_uint32 esp_dest = dest->esp + 4 - STACK_SIZE;
 /*   MYMEMCPY(esp_src, esp_int, STACK_SIZE); //met tout dans la stack int */
   src->esp = global_esp;
-  MYMEMCPY(esp_src, src, STACK_SIZE); //sauvegarde le contexte
+  MYMEMCPY((void *)esp_src, src, STACK_SIZE); //sauvegarde le contexte
   asm volatile("mov %0,%%eax\n\t"
 	       "mov %%eax, %%cr3"
 	       :
@@ -106,7 +106,7 @@ t_error			ia32_sched_switch(i_thread elected)
   //((char*)(global_esp))[100] = 42;
   //printf("[has set]");
   printf("[leaving]");
-  MYMEMCPY(dest, esp_dest - STACK_SIZE, STACK_SIZE);
+  MYMEMCPY(dest, (void *)esp_dest - STACK_SIZE, STACK_SIZE);
   sched->current = elected;
   SCHED_LEAVE(sched, ERROR_NONE);
 }

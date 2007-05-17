@@ -159,7 +159,6 @@ t_error			timer_reserve(t_type		type,
 				      t_uint32		repeat,
 				      i_timer*		id)
 {
-  o_timer*		tmp;
   o_timer		o;
 
   TIMER_ENTER(timer);

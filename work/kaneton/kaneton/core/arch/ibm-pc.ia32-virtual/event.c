@@ -77,7 +77,7 @@ t_error ia32_event_init(void)
 
 t_error			ia32_event_reserve(i_event		id,
 					   t_uint32		type,
-					   t_uint32		handler)
+					   u_event_handler	handler)
 {
   handler = handler;
   if (type == EVENT_FUNCTION)
