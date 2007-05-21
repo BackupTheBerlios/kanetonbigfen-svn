@@ -118,6 +118,10 @@ typedef struct
   t_error			(*timer_clean)(void);
 }				d_timer;
 
+
+void ia32_timer_tick();
+t_error ia32_timer_init();
+
 /*
  * ---------- macro functions -------------------------------------------------
  */

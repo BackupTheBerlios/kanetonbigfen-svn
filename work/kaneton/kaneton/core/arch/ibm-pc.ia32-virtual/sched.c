@@ -43,6 +43,7 @@ d_sched			sched_dispatch =
     ia32_sched_switch,
     NULL,
     NULL,
+    NULL,
     ia32_sched_init,
     NULL,
   };

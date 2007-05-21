@@ -32,3 +32,5 @@
   }
 
 #endif
+
+void init_pics();

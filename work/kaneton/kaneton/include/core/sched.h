@@ -112,6 +112,7 @@ typedef struct
     return (_error_);							\
   }
 
+
 /*
  * ---------- prototypes ------------------------------------------------------
  *
@@ -144,5 +145,7 @@ t_error				sched_switch(void);
 /*
  * eop
  */
+void ia32_sched_yield();
+t_error ia32_sched_init();
 
 #endif
