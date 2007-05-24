@@ -120,7 +120,7 @@ t_error ia32_event_init(void);
 
 t_error			ia32_event_reserve(i_event		id,
 					   t_uint32		type,
-					   u_event_handler	handler);
+					   t_uint32		handler);
 
 t_error			ia32_event_release(i_event id);
 

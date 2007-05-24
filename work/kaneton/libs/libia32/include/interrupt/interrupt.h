@@ -21,6 +21,7 @@
 // FIXME: some declarations has beed removed here
 
 t_uint32 global_esp;
+t_uint32 gl_stack_top;
 
 #define REST_CONTEXT							\
   "pop %eax\n\t"							\
@@ -74,15 +75,37 @@ t_uint32 global_esp;
 
 #define __handler__(_id_)						\
   void int_##_id_();							\
-  asm(".globl int_" #_id_ "\n\t"					\
-      "int_" #_id_ ":\n\t"						\
+  asm(".globl int_" #_id_ "					\n\t"	\
+      "int_" #_id_ ":						\n\t"	\
+      "subl $4, %esp						\n\t"	\
       SAVE_CONTEXT							\
-      ESP2VAR								\
-      "push $" #_id_ "\n\t"						\
-      "call event_call\n\t"						\
-      "addl $4, %esp\n\t"						\
-      VAR2ESP								\
+      "mov %esp, gl_stack_top					\n\t"	\
+      "pushl $64						\n\t"	\
+      "movl gl_stack_top, %eax					\n\t"	\
+      "pushl %edx						\n\t"	\
+      "movl gl_stack_int, %eax					\n\t"	\
+      "subl $72, %eax						\n\t"	\
+      "pushl %eax						\n\t"	\
+      "#call memcpy						\n\t"	\
+      "addl $12, %esp						\n\t"	\
+      "movl %eax, %esp						\n\t"	\
+      "push $" #_id_ "						\n\t"	\
+      "call event_call						\n\t"	\
+      "addl $4, %esp						\n\t"	\
+      "movl (%esp), %eax					\n\t"	\
+      "#movl %eax, %cr3						\n\t"	\
+      "pushl $64						\n\t"	\
+      "movl gl_stack_int, %eax					\n\t"	\
+      "subl $72, %eax						\n\t"	\
+      "pushl %eax						\n\t"	\
+      "movl gl_stack_top, %eax					\n\t"	\
+      "pushl %edx						\n\t"	\
+      "#call memcpy						\n\t"	\
+      "addl $12, %esp						\n\t"	\
+      "movl gl_stack_top, %eax					\n\t"	\
+      "movl %eax, %esp						\n\t"	\
       REST_CONTEXT							\
+      "addl $4, %esp						\n\t"	\
       "iret")
 
 #define __handler2__(_id_)					       \

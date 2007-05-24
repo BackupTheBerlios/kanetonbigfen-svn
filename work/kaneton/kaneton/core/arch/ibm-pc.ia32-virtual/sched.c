@@ -70,7 +70,8 @@ extern t_uint32 gl_stack_int;
 
 t_error			ia32_sched_switch(i_thread elected)
 {
-  printf(".");
+  printf("-");
+  return ERROR_NONE;
   SCHED_ENTER(sched);
   if (elected != 0)
     cons_msg('+', "Switching to Thread %i \n", elected);
@@ -85,29 +86,16 @@ t_error			ia32_sched_switch(i_thread elected)
   o_thread *Odest;
   ao_thread_named *src;
   ao_thread_named *dest;
+
   set_get(sched->threads, sched->current, (void**)&Osrc);
   set_get(sched->threads, elected, (void**)&Odest);
+
   src = &(Osrc->machdep.named);
   dest = &(Odest->machdep.named);
-/*   t_uint32 esp_int = gl_stack_int - STACK_SIZE - 4; */
-  t_uint32 esp_src = src->esp + 4;//global_esp - 4;
-  t_uint32 esp_dest = dest->esp + 4 - STACK_SIZE;
-/*   MYMEMCPY(esp_src, esp_int, STACK_SIZE); //met tout dans la stack int */
-  src->esp = global_esp;
-  MYMEMCPY((void *)esp_src, src, STACK_SIZE); //sauvegarde le contexte
-  asm volatile("mov %0,%%eax\n\t"
-	       "mov %%eax, %%cr3"
-	       :
-	       : "m"(dest->cr3));
-  //il faut switcher sur l'as cible
-/*   MYMEMCPY(dest, esp_int, STACK_SIZE); //restaure le contexte */
-/*   printf("[src=%i|int=%i|dest=%i]", esp_src, esp_int, esp_dest); */
-/*   printf("[dest=%i]", esp_dest); */
-  global_esp = esp_dest - 4;
-  //((char*)(global_esp))[100] = 42;
-  //printf("[has set]");
+
+  MYMEMCPY((void *)gl_stack_int, src, 68); //sauvegarde le contexte source
   printf("[leaving]");
-  MYMEMCPY(dest, (void *)esp_dest - STACK_SIZE, STACK_SIZE);
+  MYMEMCPY(dest, (void*)gl_stack_int, 68); //restaure le contexte destination
   sched->current = elected;
   SCHED_LEAVE(sched, ERROR_NONE);
 }
